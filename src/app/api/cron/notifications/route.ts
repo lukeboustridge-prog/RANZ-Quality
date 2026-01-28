@@ -85,7 +85,7 @@ async function checkInsuranceExpiries(): Promise<number> {
         include: {
           members: {
             where: { role: "OWNER" },
-            select: { email: true, phone: true },
+            select: { email: true, phone: true, clerkUserId: true },
           },
         },
       },
@@ -127,6 +127,7 @@ async function checkInsuranceExpiries(): Promise<number> {
           daysUntilExpiry,
           ownerEmail: owner.email,
           ownerPhone: owner.phone || undefined,
+          ownerUserId: owner.clerkUserId,  // NEW: Link to owner user
         });
 
         // Mark alert as sent (same transaction)

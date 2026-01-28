@@ -228,6 +228,7 @@ export async function notifyInsuranceExpiry(params: {
   daysUntilExpiry: number;
   ownerEmail: string;
   ownerPhone?: string;
+  ownerUserId?: string;  // NEW: Links notification to specific user
 }): Promise<void> {
   const {
     organizationId,
@@ -236,6 +237,7 @@ export async function notifyInsuranceExpiry(params: {
     daysUntilExpiry,
     ownerEmail,
     ownerPhone,
+    ownerUserId,
   } = params;
 
   const priority: NotificationPriority =
@@ -244,6 +246,7 @@ export async function notifyInsuranceExpiry(params: {
   // Send email
   await createNotification({
     organizationId,
+    userId: ownerUserId,  // NEW: Link to owner user
     type: "INSURANCE_EXPIRY",
     channel: "EMAIL",
     priority,
@@ -270,6 +273,7 @@ export async function notifyInsuranceExpiry(params: {
 
     await createNotification({
       organizationId,
+      userId: ownerUserId,  // NEW: Link to owner user
       type: "INSURANCE_EXPIRY",
       channel: "SMS",
       priority,
