@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 
 ## Current Position
 
-Phase: 8 of 8 (SSO Integration) — IN PROGRESS
-Plan: 1/2 in phase
-Status: Clerk metadata sync operational
-Last activity: 2026-01-28 — Completed 08-01-PLAN.md (Clerk metadata sync)
+Phase: 8 of 8 (SSO Integration) — COMPLETE
+Plan: 2/2 in phase
+Status: SSO satellite domain documentation complete, JWT config deferred
+Last activity: 2026-01-28 — Completed 08-02-PLAN.md (SSO satellite domain setup)
 
-Progress: [█████████░] ~93% (28/30 plans estimated)
+Progress: [██████████] 100% (29/29 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 28
+- Total plans completed: 29
 - Average duration: 4 min
-- Total execution time: 114 min
+- Total execution time: 126 min
 
 **By Phase:**
 
@@ -34,11 +34,11 @@ Progress: [█████████░] ~93% (28/30 plans estimated)
 | 05 | 3 | 9 min | 3 min |
 | 06 | 3 | 9 min | 3 min |
 | 07 | 3 | 18 min | 6 min |
-| 08 | 1 | 2 min | 2 min |
+| 08 | 2 | 14 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-03 (4 min), 07-01 (6 min), 07-02 (6 min), 07-03 (6 min), 08-01 (2 min)
-- Trend: Infrastructure tasks (SSO metadata sync) faster than UI features
+- Last 5 plans: 07-01 (6 min), 07-02 (6 min), 07-03 (6 min), 08-01 (2 min), 08-02 (12 min)
+- Trend: Documentation tasks vary; SSO satellite setup took longer due to comprehensive guide creation
 
 *Updated after each plan completion*
 
@@ -107,6 +107,10 @@ Recent decisions affecting current work:
 - 08-01: Snake_case field names (certification_tier) match Clerk Dashboard JWT template syntax
 - 08-01: Insurance validity checked via PUBLIC_LIABILITY policy expiry date
 - 08-01: Skip sync silently if no clerkOrgId (handles test/seed data gracefully)
+- 08-02: JWT template configuration deferred to Clerk Dashboard (can be done anytime before production)
+- 08-02: DNS CNAME required only for production (clerk.reports.ranz.org.nz → clerk.clerk.com)
+- 08-02: Session claims refresh every 60 seconds via Clerk's automatic mechanism
+- 08-02: Passkeys cannot be shared across satellite domains (WebAuthn limitation)
 
 ### Pending Todos
 
@@ -122,7 +126,7 @@ None.
 - Phase 5 addresses: SMS notifications with retry, LBP alerts, admin monitoring [COMPLETE - 3/3 plans]
 - Phase 6 addresses: Wrong recipient targeting (individual vs org email) [COMPLETE - 3/3 plans]
 - Phase 7 addresses: Report generation stubbed with TODO comments [COMPLETE - 3/3 plans]
-- Phase 8 addresses: SSO satellite domain not configured [IN PROGRESS - 1/2 plans]
+- Phase 8 addresses: SSO satellite domain not configured [COMPLETE - 2/2 plans]
 
 **Discovered during execution:**
 - Pre-existing Prisma schema errors (ReportStatus type undefined) - FIXED in 04-01
@@ -134,8 +138,8 @@ All 8 phases must complete before onboarding 10-30 pilot members in Q2 2026.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 08-01-PLAN.md (Clerk metadata sync)
+Stopped at: Completed 08-02-PLAN.md (SSO satellite domain setup) - ALL PHASES COMPLETE
 Resume file: None
 
 ---
-*Next step: Phase 8 Plan 2 (Satellite domain configuration) - final plan before Q2 2026 pilot launch*
+*ALL 8 PHASES COMPLETE (29/29 plans) - Ready for Q2 2026 pilot launch*
