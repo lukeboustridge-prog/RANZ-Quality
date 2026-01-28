@@ -789,6 +789,10 @@ model Notification {
   // Scheduling
   scheduledFor    DateTime?           // For scheduled notifications
 
+  // Retry scheduling for exponential backoff
+  lastRetryAt     DateTime?           // Timestamp of last retry attempt
+  nextRetryAt     DateTime?           // When next retry should occur
+
   // Read status
   readAt          DateTime?
 
@@ -799,6 +803,7 @@ model Notification {
   @@index([status])
   @@index([scheduledFor])
   @@index([type])
+  @@index([nextRetryAt])
 }
 
 model NotificationPreference {
