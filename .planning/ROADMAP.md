@@ -85,11 +85,12 @@ Plans:
   3. File upload exceeding 50MB returns 413 error before touching R2
   4. File upload validation checks size before any database writes occur
   5. Verification API returns 404 for non-existent NZBN (not enumeration hint)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Create query-parameter verification endpoint with NZBN/name lookup
+- [ ] 04-02-PLAN.md — Deprecate legacy businessId path parameter endpoint
+- [ ] 04-03-PLAN.md — Add 50MB file upload size validation to all upload endpoints
 
 ### Phase 5: SMS Notification System
 **Goal**: Critical alerts (insurance expiry, LBP status changes) reach members via SMS within minutes
