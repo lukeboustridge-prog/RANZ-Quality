@@ -44,6 +44,30 @@ export {
   type RateLimitResult,
 } from './rate-limit';
 
+// Re-export audit logging
+export { logAuthEvent, AUTH_ACTIONS, type AuthAuditEvent, type AuthAction } from './audit';
+
+// Re-export token utilities
+export {
+  generatePasswordResetToken,
+  validatePasswordResetToken,
+  consumePasswordResetToken,
+  generateActivationToken,
+  type TokenGenerationResult,
+  type TokenValidationResult,
+} from './tokens';
+
+// Re-export email utilities
+export {
+  sendWelcomeEmail,
+  sendPasswordResetEmail,
+  sendPasswordChangedEmail,
+  type WelcomeEmailParams,
+  type PasswordResetEmailParams,
+  type PasswordChangedEmailParams,
+  type EmailSendResult,
+} from './email';
+
 // Import providers
 import { clerkAuth } from './providers/clerk';
 import { customAuth } from './providers/custom';
