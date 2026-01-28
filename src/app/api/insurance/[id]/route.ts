@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { deleteFromR2, uploadToR2 } from "@/lib/r2";
 import { z } from "zod/v4";
 import { logInsuranceMutation } from "@/lib/audit-log";
+import { MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB } from "@/types";
 
 const updatePolicySchema = z.object({
   policyType: z.enum([
@@ -115,6 +116,22 @@ export async function PUT(
 
     const validatedData = updatePolicySchema.parse(data);
     const file = formData.get("certificate") as File | null;
+
+    // FAIL-FAST: Validate certificate file size before any processing
+    if (file && file.size > MAX_FILE_SIZE_BYTES) {
+      return NextResponse.json(
+        {
+          error: `Certificate file exceeds maximum size of ${MAX_FILE_SIZE_MB}MB`,
+          details: {
+            maxSizeBytes: MAX_FILE_SIZE_BYTES,
+            maxSizeMB: MAX_FILE_SIZE_MB,
+            actualSizeBytes: file.size,
+            actualSizeMB: Math.round(file.size / 1024 / 1024 * 100) / 100,
+          }
+        },
+        { status: 413 }
+      );
+    }
 
     let certificateKey = existingPolicy.certificateKey;
 
