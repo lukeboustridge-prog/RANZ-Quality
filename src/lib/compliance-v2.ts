@@ -684,7 +684,14 @@ export async function updateOrganizationComplianceScore(
 
   await db.organization.update({
     where: { id: organizationId },
-    data: { complianceScore: result.overallScore },
+    data: {
+      complianceScore: result.overallScore,
+      complianceDocScore: result.breakdown.documentation.score,
+      complianceInsScore: result.breakdown.insurance.score,
+      compliancePersScore: result.breakdown.personnel.score,
+      complianceAuditScore: result.breakdown.audit.score,
+      complianceLastCalc: new Date(),
+    },
   });
 
   return result;

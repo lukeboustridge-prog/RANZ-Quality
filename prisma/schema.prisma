@@ -28,6 +28,13 @@ model Organization {
   lastAuditDate     DateTime?
   nextAuditDue      DateTime?
 
+  // Cached dimension scores for fast bulk queries
+  complianceDocScore    Float   @default(0)  // Documentation dimension (50% weight)
+  complianceInsScore    Float   @default(0)  // Insurance dimension (25% weight)
+  compliancePersScore   Float   @default(0)  // Personnel dimension (15% weight)
+  complianceAuditScore  Float   @default(0)  // Audit dimension (10% weight)
+  complianceLastCalc    DateTime?            // Last compliance calculation timestamp
+
   // Contact
   email             String?
   phone             String?
