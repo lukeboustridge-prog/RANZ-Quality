@@ -68,6 +68,18 @@ export {
   type EmailSendResult,
 } from './email';
 
+// Re-export dual-auth middleware
+export { dualAuthCheck, type AuthResult } from './middleware/dual-auth';
+
+// Re-export cross-app utilities
+export {
+  revokeAllUserSessions,
+  isSessionValid,
+  getActiveSessionCount,
+  type LogoutReason,
+  type InitiatingApp,
+} from './cross-app/logout-broadcast';
+
 // Import providers
 import { clerkAuth } from './providers/clerk';
 import { customAuth } from './providers/custom';
