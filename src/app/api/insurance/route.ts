@@ -5,6 +5,7 @@ import { uploadToR2 } from "@/lib/r2";
 import { z } from "zod/v4";
 import { revalidatePath } from "next/cache";
 import { updateOrganizationComplianceScore } from "@/lib/compliance-v2";
+import { logInsuranceMutation } from "@/lib/audit-log";
 
 const createPolicySchema = z.object({
   policyType: z.enum([
@@ -114,6 +115,25 @@ export async function POST(req: NextRequest) {
         certificateKey,
       },
     });
+
+    // Log creation to audit trail
+    await logInsuranceMutation(
+      "CREATE",
+      policy.id,
+      null, // No previous state for CREATE
+      {
+        policyType: policy.policyType,
+        policyNumber: policy.policyNumber,
+        insurer: policy.insurer,
+        coverageAmount: policy.coverageAmount.toString(),
+        effectiveDate: policy.effectiveDate.toISOString(),
+        expiryDate: policy.expiryDate.toISOString(),
+      },
+      {
+        organizationId: organization.id,
+        certificateUploaded: !!certificateKey,
+      }
+    );
 
     // Update compliance score
     await updateOrganizationComplianceScore(organization.id);
