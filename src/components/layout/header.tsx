@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   OrganizationSwitcher,
   UserButton,
@@ -14,9 +14,16 @@ import {
   Shield,
   Users,
   FileText,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -25,9 +32,34 @@ const navigation = [
   { name: "Documents", href: "/documents", icon: FileText },
 ];
 
+// Check auth mode from environment (available at build time)
+const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE || 'clerk';
+
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Custom auth logout handler - calls API with scope='all' for cross-app logout
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scope: 'all' }),
+      });
+      // Redirect to sign-in after logout
+      router.push('/sign-in');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Still redirect on error - defensive logout
+      router.push('/sign-in');
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <>
@@ -47,31 +79,57 @@ export function Header() {
         <div className="h-6 w-px bg-slate-200 lg:hidden" aria-hidden="true" />
 
         <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-          {/* Organization switcher */}
-          <div className="flex items-center">
-            <OrganizationSwitcher
-              appearance={{
-                elements: {
-                  rootBox: "flex items-center",
-                  organizationSwitcherTrigger:
-                    "flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50",
-                },
-              }}
-              afterCreateOrganizationUrl="/onboarding"
-              afterSelectOrganizationUrl="/dashboard"
-            />
-          </div>
+          {/* Organization switcher - only show for Clerk auth */}
+          {AUTH_MODE === 'clerk' && (
+            <div className="flex items-center">
+              <OrganizationSwitcher
+                appearance={{
+                  elements: {
+                    rootBox: "flex items-center",
+                    organizationSwitcherTrigger:
+                      "flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50",
+                  },
+                }}
+                afterCreateOrganizationUrl="/onboarding"
+                afterSelectOrganizationUrl="/dashboard"
+              />
+            </div>
+          )}
 
           {/* Right side */}
           <div className="flex flex-1 items-center justify-end gap-x-4">
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "h-9 w-9",
-                },
-              }}
-              afterSignOutUrl="/sign-in"
-            />
+            {AUTH_MODE === 'clerk' ? (
+              // Clerk auth - use UserButton
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "h-9 w-9",
+                  },
+                }}
+                afterSignOutUrl="/sign-in"
+              />
+            ) : (
+              // Custom auth - custom user menu with logout
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                    <div className="h-9 w-9 rounded-full bg-blue-600 flex items-center justify-center">
+                      <span className="text-white font-medium text-sm">U</span>
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="cursor-pointer"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    {isLoggingOut ? 'Logging out...' : 'Sign out (all devices)'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
       </header>
