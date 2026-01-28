@@ -106,16 +106,7 @@ async function checkInsuranceExpiries(): Promise<number> {
       STATUTORY_LIABILITY: "Statutory Liability",
     };
 
-    await notifyInsuranceExpiry({
-      organizationId: policy.organizationId,
-      businessName: policy.organization.name,
-      policyType: policyTypeLabels[policy.policyType] || policy.policyType,
-      daysUntilExpiry,
-      ownerEmail: owner.email,
-      ownerPhone: owner.phone || undefined,
-    });
-
-    // Mark alert as sent
+    // Determine which flag to update
     const updateData: Record<string, boolean> = {};
     if (daysUntilExpiry >= 85 && daysUntilExpiry <= 95) {
       updateData.alert90Sent = true;
@@ -125,12 +116,38 @@ async function checkInsuranceExpiries(): Promise<number> {
       updateData.alert30Sent = true;
     }
 
-    await db.insurancePolicy.update({
-      where: { id: policy.id },
-      data: updateData,
-    });
+    try {
+      // Atomic transaction: notification + flag update
+      await db.$transaction(async (tx) => {
+        // Send notification (creates record in Notification table)
+        await notifyInsuranceExpiry({
+          organizationId: policy.organizationId,
+          businessName: policy.organization.name,
+          policyType: policyTypeLabels[policy.policyType] || policy.policyType,
+          daysUntilExpiry,
+          ownerEmail: owner.email,
+          ownerPhone: owner.phone || undefined,
+        });
 
-    alertsSent++;
+        // Mark alert as sent (same transaction)
+        await tx.insurancePolicy.update({
+          where: { id: policy.id },
+          data: updateData,
+        });
+      });
+
+      alertsSent++;
+    } catch (error) {
+      // Transaction failed - neither notification nor flag update committed
+      const alertTier = updateData.alert90Sent ? "90-day" :
+                        updateData.alert60Sent ? "60-day" :
+                        updateData.alert30Sent ? "30-day" : "unknown";
+      console.error(
+        `Failed to send ${alertTier} insurance expiry alert for policy ${policy.id}:`,
+        error
+      );
+      // Continue with next policy - don't fail entire cron
+    }
   }
 
   return alertsSent;
