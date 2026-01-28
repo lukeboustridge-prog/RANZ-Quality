@@ -136,11 +136,12 @@ Plans:
   3. Admin dashboard displays member list with compliance score drill-down showing dimension breakdown
   4. PDF report includes RANZ branding, organization name, generation date, score visualization
   5. CSV export includes NZBN for insurer/partner consumption
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 07-01: TBD
-- [ ] 07-02: TBD
+- [ ] 07-01-PLAN.md — Install react-pdf and create PDF compliance report template with single-org endpoint
+- [ ] 07-02-PLAN.md — Add dimension score columns and create server-side CSV export endpoint
+- [ ] 07-03-PLAN.md — Create compliance drill-down API and modal with PDF generation button
 
 ### Phase 8: SSO Integration
 **Goal**: Users sign in once at portal.ranz.org.nz and access reports.ranz.org.nz without re-authentication
@@ -171,5 +172,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 4. Public API Hardening | 3/3 | Complete | 2026-01-28 |
 | 5. SMS Notification System | 3/3 | Complete | 2026-01-28 |
 | 6. Notification Targeting | 3/3 | Complete | 2026-01-28 |
-| 7. Admin Reporting | 0/TBD | Not started | - |
+| 7. Admin Reporting | 0/3 | Not started | - |
 | 8. SSO Integration | 0/TBD | Not started | - |
