@@ -67,11 +67,13 @@ Plans:
   3. All document uploads, insurance changes, and member modifications logged to AuditLog table
   4. Audit log entries include hash chain linking to previous log entry (tamper detection)
   5. RANZ admin can view audit trail for any organization showing who changed what when
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — Secure cron endpoints with strict CRON_SECRET validation
+- [ ] 03-02-PLAN.md — Create audit-log.ts with SHA-256 hash chain implementation
+- [ ] 03-03-PLAN.md — Wire audit logging to insurance, document, and staff mutations
+- [ ] 03-04-PLAN.md — Create admin audit trail viewer UI
 
 ### Phase 4: Public API Hardening
 **Goal**: Public verification API cannot be used to enumerate member businesses or exceed storage quotas
@@ -162,7 +164,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 |-------|----------------|--------|-----------|
 | 1. Compliance Engine Consolidation | 4/4 | Complete | 2026-01-28 |
 | 2. Dashboard Real-Time Updates | 3/3 | Complete | 2026-01-28 |
-| 3. Security Foundations | 0/TBD | Not started | - |
+| 3. Security Foundations | 0/4 | Not started | - |
 | 4. Public API Hardening | 0/TBD | Not started | - |
 | 5. SMS Notification System | 0/TBD | Not started | - |
 | 6. Notification Targeting | 0/TBD | Not started | - |
