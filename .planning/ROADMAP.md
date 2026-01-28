@@ -102,11 +102,12 @@ Plans:
   3. SMS delivery failures retry up to 3 times with exponential backoff
   4. Notification record in database shows SMS status (PENDING/SENT/FAILED) and Twilio message SID
   5. Admin can view SMS delivery logs showing timestamp, recipient, content, status
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md — Implement exponential backoff retry for SMS delivery failures
+- [ ] 05-02-PLAN.md — Add SMS notification to LBP verification cron for status changes
+- [ ] 05-03-PLAN.md — Create admin SMS delivery logs UI with filters and pagination
 
 ### Phase 6: Notification Targeting
 **Goal**: Notifications reach the correct recipient (individual member, not just organization email)
@@ -167,7 +168,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 2. Dashboard Real-Time Updates | 3/3 | Complete | 2026-01-28 |
 | 3. Security Foundations | 4/4 | Complete | 2026-01-28 |
 | 4. Public API Hardening | 3/3 | Complete | 2026-01-28 |
-| 5. SMS Notification System | 0/TBD | Not started | - |
+| 5. SMS Notification System | 0/3 | Not started | - |
 | 6. Notification Targeting | 0/TBD | Not started | - |
 | 7. Admin Reporting | 0/TBD | Not started | - |
 | 8. SSO Integration | 0/TBD | Not started | - |
