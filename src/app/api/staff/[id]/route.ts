@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { z } from "zod/v4";
 import { revalidatePath } from "next/cache";
 import { updateOrganizationComplianceScore } from "@/lib/compliance-v2";
+import { logMemberMutation } from "@/lib/audit-log";
 
 const updateMemberSchema = z.object({
   firstName: z.string().min(1),
@@ -137,6 +138,27 @@ export async function PUT(
       },
     });
 
+    // Log update to audit trail
+    await logMemberMutation(
+      "UPDATE",
+      id,
+      {
+        firstName: existingMember.firstName,
+        lastName: existingMember.lastName,
+        email: existingMember.email,
+        role: existingMember.role,
+        lbpNumber: existingMember.lbpNumber,
+      },
+      {
+        firstName: member.firstName,
+        lastName: member.lastName,
+        email: member.email,
+        role: member.role,
+        lbpNumber: member.lbpNumber,
+      },
+      { organizationId: organization.id }
+    );
+
     // Update compliance score
     await updateOrganizationComplianceScore(organization.id);
     revalidatePath('/dashboard');
@@ -200,6 +222,20 @@ export async function DELETE(
     }
 
     await db.organizationMember.delete({ where: { id } });
+
+    // Log deletion to audit trail
+    await logMemberMutation(
+      "DELETE",
+      id,
+      {
+        firstName: member.firstName,
+        lastName: member.lastName,
+        email: member.email,
+        role: member.role,
+      },
+      null,
+      { organizationId: organization.id }
+    );
 
     // Update compliance score
     await updateOrganizationComplianceScore(organization.id);

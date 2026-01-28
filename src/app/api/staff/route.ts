@@ -5,6 +5,7 @@ import { z } from "zod/v4";
 import { verifyAndUpdateMember } from "@/lib/lbp-api";
 import { updateOrganizationComplianceScore } from "@/lib/compliance-v2";
 import { revalidatePath } from "next/cache";
+import { logMemberMutation } from "@/lib/audit-log";
 
 const createMemberSchema = z.object({
   firstName: z.string().min(1),
@@ -121,6 +122,21 @@ export async function POST(req: NextRequest) {
         // Continue even if verification fails - it can be retried later
       }
     }
+
+    // Log creation to audit trail
+    await logMemberMutation(
+      "CREATE",
+      member.id,
+      null,
+      {
+        firstName: member.firstName,
+        lastName: member.lastName,
+        email: member.email,
+        role: member.role,
+        lbpNumber: member.lbpNumber,
+      },
+      { organizationId: organization.id }
+    );
 
     // Update compliance score
     await updateOrganizationComplianceScore(organization.id);

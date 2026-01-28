@@ -8,6 +8,7 @@ import {
 } from "@/lib/document-versioning";
 import { updateOrganizationComplianceScore } from "@/lib/compliance-v2";
 import { revalidatePath } from "next/cache";
+import { logDocumentMutation } from "@/lib/audit-log";
 
 // Submit document for approval
 export async function POST(
@@ -128,6 +129,16 @@ export async function PUT(
 
     if (action === "approve") {
       await approveVersion(targetVersionId, userId);
+
+      // Log approval to audit trail
+      await logDocumentMutation(
+        "APPROVE",
+        documentId,
+        { status: "PENDING_APPROVAL" },
+        { status: "APPROVED" },
+        { organizationId: document.organizationId, versionId: targetVersionId }
+      );
+
       await updateOrganizationComplianceScore(document.organizationId);
       revalidatePath('/dashboard');
       return NextResponse.json({ message: "Document approved" });
@@ -139,6 +150,16 @@ export async function PUT(
         );
       }
       await rejectVersion(targetVersionId, userId, reason);
+
+      // Log rejection to audit trail
+      await logDocumentMutation(
+        "REJECT",
+        documentId,
+        { status: "PENDING_APPROVAL" },
+        { status: "REJECTED", rejectionReason: reason },
+        { organizationId: document.organizationId, versionId: targetVersionId }
+      );
+
       return NextResponse.json({ message: "Document rejected" });
     }
   } catch (error) {
