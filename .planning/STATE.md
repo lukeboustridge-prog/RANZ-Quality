@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 
 ## Current Position
 
-Phase: 3 of 8 (Security Foundations) — COMPLETE
-Plan: 4 of 4 in phase (all plans complete)
-Status: Complete
-Last activity: 2026-01-28 — Phase 3 verified and complete
+Phase: 4 of 8 (Public API Hardening) — IN PROGRESS
+Plan: 1 of 2 in phase (04-01 complete)
+Status: In progress
+Last activity: 2026-01-28 — Completed 04-01-PLAN.md
 
-Progress: [████░░░░░░] ~50% (13/24 plans estimated)
+Progress: [████▓░░░░░] ~54% (14/26 plans estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 5 min
-- Total execution time: 64 min
+- Total execution time: 67 min
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [████░░░░░░] ~50% (13/24 plans estimated)
 | 01 | 4 | 23 min | 6 min |
 | 02 | 3 | 23 min | 8 min |
 | 03 | 4 | 18 min | 5 min |
+| 04 | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (9 min), 03-01 (3 min), 03-02 (3 min), 03-03 (5 min), 03-04 (7 min)
-- Trend: Security foundation implementations averaging 5 min
+- Last 5 plans: 03-01 (3 min), 03-02 (3 min), 03-03 (5 min), 03-04 (7 min), 04-01 (3 min)
+- Trend: Rapid execution on security/API hardening tasks
 
 *Updated after each plan completion*
 
@@ -65,6 +66,10 @@ Recent decisions affecting current work:
 - 03-03: Audit logging failures logged to console but don't block operations
 - 03-03: Before/after state includes only business-critical fields (not full records)
 - 03-04: Admin audit trail viewer at /admin/organizations/[id]/audit with hash chain verification status
+- 04-01: Old /api/public/verify/[businessId] endpoint retained for backwards compatibility
+- 04-01: Badge URLs still use internal IDs (no public enumeration risk for image endpoint)
+- 04-01: NZBN format: exactly 13 digits (New Zealand Business Number standard)
+- 04-01: Name search is case-insensitive using Prisma mode: 'insensitive'
 
 ### Pending Todos
 
@@ -82,17 +87,17 @@ None.
 - Phase 8 addresses: SSO satellite domain not configured
 
 **Discovered during execution:**
-- Pre-existing Prisma schema errors (ReportStatus type undefined) - blocks Prisma client generation
-- Pre-existing TypeScript errors (unrelated to plan changes)
+- Pre-existing Prisma schema errors (ReportStatus type undefined) - FIXED in 04-01
+- Pre-existing TypeScript errors (unrelated to plan changes, require Prisma client regeneration)
 
 **Critical for pilot launch:**
 All 8 phases must complete before onboarding 10-30 pilot members in Q2 2026.
 
 ## Session Continuity
 
-Last session: 2026-01-28T22:30:00Z
-Stopped at: Phase 3 complete, verified (4/5 must-haves, 1 minor gap accepted)
+Last session: 2026-01-28T05:19:08Z
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None
 
 ---
-*Next step: Plan Phase 04 (Public API Hardening)*
+*Next step: Plan 04-02 (File Upload Validation) or plan next phase*
