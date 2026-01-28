@@ -17,6 +17,7 @@ import {
   type InsurancePolicyType,
 } from "@/types";
 import { db } from "./db";
+import { syncOrgMetadataToClerk } from "./clerk-sync";
 
 // ============================================================================
 // Types
@@ -682,7 +683,8 @@ export async function updateOrganizationComplianceScore(
 ): Promise<ComplianceResult> {
   const result = await calculateComplianceScore(organizationId);
 
-  await db.organization.update({
+  // Update database with compliance scores
+  const updatedOrg = await db.organization.update({
     where: { id: organizationId },
     data: {
       complianceScore: result.overallScore,
@@ -692,6 +694,28 @@ export async function updateOrganizationComplianceScore(
       complianceAuditScore: result.breakdown.audit.score,
       complianceLastCalc: new Date(),
     },
+    select: {
+      certificationTier: true,
+    },
+  });
+
+  // Check if insurance is valid (any PUBLIC_LIABILITY policy not expired)
+  const validInsurance = await db.insurancePolicy.findFirst({
+    where: {
+      organizationId,
+      policyType: "PUBLIC_LIABILITY",
+      expiryDate: { gte: new Date() },
+    },
+  });
+
+  // Sync to Clerk metadata for JWT session claims (non-blocking)
+  syncOrgMetadataToClerk(organizationId, {
+    certificationTier: updatedOrg.certificationTier,
+    complianceScore: result.overallScore,
+    insuranceValid: !!validInsurance,
+  }).catch((error) => {
+    // Already logged in syncOrgMetadataToClerk, just ensure no unhandled rejection
+    console.error("[compliance-v2] Clerk sync failed (non-blocking):", error);
   });
 
   return result;
