@@ -50,11 +50,12 @@ Plans:
   3. Approving document immediately increments document dimension score
   4. LBP verification status change immediately updates personnel indicator
   5. Member sees spinner/loading state during recalculation (not stale data)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — Display dimension-specific compliance indicators from breakdown data
+- [ ] 02-02-PLAN.md — Wire mutation endpoints to canonical scoring and revalidatePath
+- [ ] 02-03-PLAN.md — Add useTransition loading states to mutation forms
 
 ### Phase 3: Security Foundations
 **Goal**: Production environment requires authentication for sensitive endpoints and logs all data access
@@ -160,7 +161,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Compliance Engine Consolidation | 4/4 | Complete | 2026-01-28 |
-| 2. Dashboard Real-Time Updates | 0/TBD | Not started | - |
+| 2. Dashboard Real-Time Updates | 0/3 | Planned | - |
 | 3. Security Foundations | 0/TBD | Not started | - |
 | 4. Public API Hardening | 0/TBD | Not started | - |
 | 5. SMS Notification System | 0/TBD | Not started | - |
