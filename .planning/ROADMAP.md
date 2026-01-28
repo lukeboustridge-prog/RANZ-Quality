@@ -12,7 +12,7 @@ This roadmap addresses critical MVP gaps blocking pilot launch with 10-30 member
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Compliance Engine Consolidation** - Fix scoring inconsistencies and dashboard accuracy
+- [x] **Phase 1: Compliance Engine Consolidation** - Fix scoring inconsistencies and dashboard accuracy
 - [ ] **Phase 2: Dashboard Real-Time Updates** - Enable live compliance recalculation on data changes
 - [ ] **Phase 3: Security Foundations** - Secure cron endpoints and implement audit trail
 - [ ] **Phase 4: Public API Hardening** - Fix verification API and add upload validation
@@ -32,12 +32,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Compliance thresholds (90%/70%) defined in central constants file imported by all components
   3. Dashboard and API endpoints return identical compliance scores for same organization
   4. Four-dimension breakdown (insurance, personnel, documents, audits) consistently available across all scoring calls
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Create central compliance constants and delete legacy compliance.ts
-- [ ] 01-02-PLAN.md — Migrate UI components to use central constants
-- [ ] 01-03-PLAN.md — Migrate API routes and lib files to use central constants
+- [x] 01-01-PLAN.md — Create central compliance constants and delete legacy compliance.ts
+- [x] 01-02-PLAN.md — Migrate UI components to use central constants
+- [x] 01-03-PLAN.md — Migrate API routes and lib files to use central constants
+- [x] 01-04-PLAN.md — Gap closure: Wire notifications.ts to central constants
 
 ### Phase 2: Dashboard Real-Time Updates
 **Goal**: Members see compliance changes immediately when uploading documents or updating insurance
@@ -158,7 +159,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Compliance Engine Consolidation | 0/3 | Planned | - |
+| 1. Compliance Engine Consolidation | 4/4 | Complete | 2026-01-28 |
 | 2. Dashboard Real-Time Updates | 0/TBD | Not started | - |
 | 3. Security Foundations | 0/TBD | Not started | - |
 | 4. Public API Hardening | 0/TBD | Not started | - |

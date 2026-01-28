@@ -11,8 +11,8 @@ Requirements for MVP pilot launch (Q2 2026, 10-30 members).
 
 - [ ] **DASH-01**: Dashboard displays accurate compliance indicators per dimension (insurance, personnel, documents, audits) based on actual data, not overall score
 - [ ] **DASH-02**: Compliance score updates in real-time when documents, insurance policies, or staff credentials change
-- [ ] **COMP-01**: Single compliance scoring engine (consolidate legacy compliance.ts into compliance-v2.ts)
-- [ ] **COMP-02**: Compliance thresholds (90%/70%) defined in central constants file and used consistently
+- [x] **COMP-01**: Single compliance scoring engine (consolidate legacy compliance.ts into compliance-v2.ts)
+- [x] **COMP-02**: Compliance thresholds (90%/70%) defined in central constants file and used consistently
 
 ### Security & Infrastructure
 
@@ -86,8 +86,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| COMP-01 | Phase 1 | Pending |
-| COMP-02 | Phase 1 | Pending |
+| COMP-01 | Phase 1 | Complete |
+| COMP-02 | Phase 1 | Complete |
 | DASH-01 | Phase 2 | Pending |
 | DASH-02 | Phase 2 | Pending |
 | SEC-01 | Phase 3 | Pending |
@@ -114,4 +114,4 @@ All 17 v1 requirements mapped to exactly one phase. 100% coverage achieved.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after roadmap creation*
+*Last updated: 2026-01-28 after Phase 1 completion*
