@@ -460,6 +460,80 @@ export async function retryFailedNotifications(): Promise<number> {
   return sentCount;
 }
 
+// Generate LBP status change message for affected member (personal notification)
+export function generateMemberLBPMessage(
+  memberName: string,
+  lbpNumber: string,
+  oldStatus: string | null,
+  newStatus: string
+): string {
+  const statusExplanation =
+    newStatus === "SUSPENDED"
+      ? "You are now suspended from carrying out restricted building work. This suspension must be resolved before you can work as a Licensed Building Practitioner."
+      : newStatus === "CANCELLED"
+      ? "Your license has been revoked. You are no longer authorized to carry out restricted building work under this license."
+      : `Your license status has changed to ${newStatus}.`;
+
+  return `
+<h2>Hi ${memberName},</h2>
+
+<p>Your Licensed Building Practitioner status has changed:</p>
+
+<ul>
+  <li><strong>LBP Number:</strong> ${lbpNumber}</li>
+  <li><strong>Previous Status:</strong> ${oldStatus || "Unknown"}</li>
+  <li><strong>New Status:</strong> <span style="color: #dc2626; font-weight: 600;">${newStatus}</span></li>
+</ul>
+
+<div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 12px 16px; margin: 16px 0;">
+  <p style="margin: 0; color: #991b1b;"><strong>What this means:</strong></p>
+  <p style="margin: 8px 0 0 0; color: #991b1b;">${statusExplanation}</p>
+</div>
+
+<p>If you believe this is an error or need assistance, please contact the LBP Board immediately:</p>
+
+<ul>
+  <li><strong>Phone:</strong> 0800 729 721</li>
+  <li><strong>Email:</strong> <a href="mailto:lbp@mbie.govt.nz">lbp@mbie.govt.nz</a></li>
+</ul>
+
+<p>You can view your profile in the RANZ Portal to see how this affects your employment status.</p>
+  `.trim();
+}
+
+// Generate LBP status change message for organization (compliance notification)
+export function generateOrgLBPMessage(
+  memberName: string,
+  lbpNumber: string,
+  oldStatus: string | null,
+  newStatus: string
+): string {
+  return `
+<h2>Staff LBP License Status Change Detected</h2>
+
+<p>During our daily verification with the MBIE LBP Board, we detected a status change for one of your staff members:</p>
+
+<ul>
+  <li><strong>Staff Member:</strong> ${memberName}</li>
+  <li><strong>LBP Number:</strong> ${lbpNumber}</li>
+  <li><strong>Previous Status:</strong> ${oldStatus || "Unknown"}</li>
+  <li><strong>New Status:</strong> <span style="color: #dc2626; font-weight: 600;">${newStatus}</span></li>
+</ul>
+
+<div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 16px 0;">
+  <p style="margin: 0; color: #92400e;"><strong>Compliance Impact:</strong></p>
+  <p style="margin: 8px 0 0 0; color: #92400e;">
+    This status change may affect your organization's certification and compliance score.
+    ${newStatus === "SUSPENDED" || newStatus === "CANCELLED" ? "A suspended or cancelled LBP license means this staff member cannot carry out restricted building work." : ""}
+  </p>
+</div>
+
+<p>Please review this change and take any necessary action to maintain your certification status.</p>
+
+<p>You can view the staff member's profile in the RANZ Portal for full details.</p>
+  `.trim();
+}
+
 // Get unread in-app notifications for a user
 export async function getUnreadNotifications(userId: string) {
   return db.notification.findMany({
