@@ -9,17 +9,17 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 
 ## Current Position
 
-Phase: 6 of 8 (Notification Targeting) — IN PROGRESS
-Plan: 1 of TBD in phase
-Status: Executing Phase 6 - notification targeting improvements
-Last activity: 2026-01-28 — Completed 06-01-PLAN.md (triple notification pattern)
+Phase: 6 of 8 (Notification Targeting) — COMPLETE
+Plan: 3/3 in phase
+Status: Phase 6 complete - all notification targeting verified
+Last activity: 2026-01-28 — Completed 06-03-PLAN.md (userId linkage gap closure)
 
-Progress: [███████░░░] ~75% (21/28 plans estimated)
+Progress: [████████░░] ~82% (23/28 plans estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
+- Total plans completed: 23
 - Average duration: 4 min
 - Total execution time: 88 min
 
@@ -32,7 +32,7 @@ Progress: [███████░░░] ~75% (21/28 plans estimated)
 | 03 | 4 | 18 min | 5 min |
 | 04 | 3 | 7 min | 2 min |
 | 05 | 3 | 9 min | 3 min |
-| 06 | 1 | 3 min | 3 min |
+| 06 | 3 | 9 min | 3 min |
 
 **Recent Trend:**
 - Last 5 plans: 05-01 (3 min), 05-02 (2 min), 05-03 (4 min), 06-01 (3 min)
@@ -91,6 +91,8 @@ Recent decisions affecting current work:
 - 06-01: Organization email has userId: null (org-level), member notifications have userId: member.clerkUserId
 - 06-01: All emails now use createNotification() for database audit trail (no direct sendEmail)
 - 06-01: Message generation helpers (generateMemberLBPMessage, generateOrgLBPMessage) separate content from delivery
+- 06-02: Prisma $transaction wraps notification + flag update for atomic insurance expiry alerts
+- 06-03: Insurance notifications now include userId via ownerUserId parameter (closes verification gaps)
 
 ### Pending Todos
 
@@ -104,7 +106,7 @@ None.
 - Phase 3 addresses: Unsecured cron endpoints, missing audit trail implementation [COMPLETE - 4/4 plans]
 - Phase 4 addresses: Public API enumeration risk, no file size validation [COMPLETE - 3/3 plans]
 - Phase 5 addresses: SMS notifications with retry, LBP alerts, admin monitoring [COMPLETE - 3/3 plans]
-- Phase 6 addresses: Wrong recipient targeting (individual vs org email) [IN PROGRESS - 1 plan complete]
+- Phase 6 addresses: Wrong recipient targeting (individual vs org email) [COMPLETE - 3/3 plans]
 - Phase 7 addresses: Report generation stubbed with TODO comments
 - Phase 8 addresses: SSO satellite domain not configured
 
@@ -118,8 +120,8 @@ All 8 phases must complete before onboarding 10-30 pilot members in Q2 2026.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 06-01-PLAN.md (triple notification pattern for LBP status changes)
+Stopped at: Completed Phase 6 (all 3 plans including gap closure)
 Resume file: None
 
 ---
-*Next step: Continue Phase 6 (Notification Targeting) or proceed to Phase 7 (Report Generation)*
+*Next step: Phase 7 (Admin Reporting) - generate PDF/CSV compliance reports*

@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Security Foundations** - Secure cron endpoints and implement audit trail
 - [x] **Phase 4: Public API Hardening** - Fix verification API and add upload validation
 - [x] **Phase 5: SMS Notification System** - Complete Twilio integration for critical alerts
-- [ ] **Phase 6: Notification Targeting** - Fix LBP and insurance alert routing
+- [x] **Phase 6: Notification Targeting** - Fix LBP and insurance alert routing
 - [ ] **Phase 7: Admin Reporting** - Generate PDF/CSV compliance reports
 - [ ] **Phase 8: SSO Integration** - Connect portal as primary Clerk domain with Roofing Reports satellite
 
@@ -122,9 +122,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Add member email notification for LBP status changes, convert org email to createNotification
-- [ ] 06-02-PLAN.md — Wrap insurance expiry alerts in Prisma transactions for atomic flag updates
-- [ ] 06-03-PLAN.md — Gap closure: Add userId linkage to insurance expiry notifications
+- [x] 06-01-PLAN.md — Add member email notification for LBP status changes, convert org email to createNotification
+- [x] 06-02-PLAN.md — Wrap insurance expiry alerts in Prisma transactions for atomic flag updates
+- [x] 06-03-PLAN.md — Gap closure: Add userId linkage to insurance expiry notifications
 
 ### Phase 7: Admin Reporting
 **Goal**: RANZ staff can generate exportable compliance reports for internal review and member distribution
@@ -170,6 +170,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 3. Security Foundations | 4/4 | Complete | 2026-01-28 |
 | 4. Public API Hardening | 3/3 | Complete | 2026-01-28 |
 | 5. SMS Notification System | 3/3 | Complete | 2026-01-28 |
-| 6. Notification Targeting | 0/3 | Not started | - |
+| 6. Notification Targeting | 3/3 | Complete | 2026-01-28 |
 | 7. Admin Reporting | 0/TBD | Not started | - |
 | 8. SSO Integration | 0/TBD | Not started | - |

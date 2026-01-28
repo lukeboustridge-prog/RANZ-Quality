@@ -95,8 +95,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEC-02 | Phase 4 | Complete |
 | SEC-03 | Phase 4 | Complete |
 | NOTF-01 | Phase 5 | Complete |
-| NOTF-02 | Phase 6 | Pending |
-| NOTF-03 | Phase 6 | Pending |
+| NOTF-02 | Phase 6 | Complete |
+| NOTF-03 | Phase 6 | Complete |
 | ADMIN-01 | Phase 7 | Pending |
 | ADMIN-02 | Phase 7 | Pending |
 | ADMIN-03 | Phase 7 | Pending |
