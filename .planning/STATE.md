@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** Phase 7 - Admin Reporting
+**Current focus:** Phase 8 - SSO Integration
 
 ## Current Position
 
-Phase: 7 of 8 (Admin Reporting) — COMPLETE
-Plan: 3/3 in phase
-Status: All admin reporting tools operational
-Last activity: 2026-01-28 — Completed 07-03-PLAN.md (compliance drill-down modal)
+Phase: 8 of 8 (SSO Integration) — IN PROGRESS
+Plan: 1/2 in phase
+Status: Clerk metadata sync operational
+Last activity: 2026-01-28 — Completed 08-01-PLAN.md (Clerk metadata sync)
 
-Progress: [█████████░] ~90% (27/29 plans estimated)
+Progress: [█████████░] ~93% (28/30 plans estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27
+- Total plans completed: 28
 - Average duration: 4 min
-- Total execution time: 112 min
+- Total execution time: 114 min
 
 **By Phase:**
 
@@ -34,10 +34,11 @@ Progress: [█████████░] ~90% (27/29 plans estimated)
 | 05 | 3 | 9 min | 3 min |
 | 06 | 3 | 9 min | 3 min |
 | 07 | 3 | 18 min | 6 min |
+| 08 | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-02 (2 min), 06-03 (4 min), 07-01 (6 min), 07-02 (6 min), 07-03 (6 min)
-- Trend: Admin reporting features consistently ~6 min/plan (UI + API integration)
+- Last 5 plans: 06-03 (4 min), 07-01 (6 min), 07-02 (6 min), 07-03 (6 min), 08-01 (2 min)
+- Trend: Infrastructure tasks (SSO metadata sync) faster than UI features
 
 *Updated after each plan completion*
 
@@ -102,6 +103,10 @@ Recent decisions affecting current work:
 - 07-02: Dimension scores cached in Organization table for fast bulk queries
 - 07-03: Modal fetches data lazily on open (not at page load) to reduce initial load time
 - 07-03: Table rows clickable with cursor visual cue; View button preserved with stopPropagation
+- 08-01: Metadata sync is fire-and-forget (non-blocking) to prevent compliance calculation failures
+- 08-01: Snake_case field names (certification_tier) match Clerk Dashboard JWT template syntax
+- 08-01: Insurance validity checked via PUBLIC_LIABILITY policy expiry date
+- 08-01: Skip sync silently if no clerkOrgId (handles test/seed data gracefully)
 
 ### Pending Todos
 
@@ -117,7 +122,7 @@ None.
 - Phase 5 addresses: SMS notifications with retry, LBP alerts, admin monitoring [COMPLETE - 3/3 plans]
 - Phase 6 addresses: Wrong recipient targeting (individual vs org email) [COMPLETE - 3/3 plans]
 - Phase 7 addresses: Report generation stubbed with TODO comments [COMPLETE - 3/3 plans]
-- Phase 8 addresses: SSO satellite domain not configured
+- Phase 8 addresses: SSO satellite domain not configured [IN PROGRESS - 1/2 plans]
 
 **Discovered during execution:**
 - Pre-existing Prisma schema errors (ReportStatus type undefined) - FIXED in 04-01
@@ -129,8 +134,8 @@ All 8 phases must complete before onboarding 10-30 pilot members in Q2 2026.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 07-03-PLAN.md (compliance drill-down modal)
+Stopped at: Completed 08-01-PLAN.md (Clerk metadata sync)
 Resume file: None
 
 ---
-*Next step: Phase 8 (SSO Integration) - final phase before Q2 2026 pilot launch*
+*Next step: Phase 8 Plan 2 (Satellite domain configuration) - final plan before Q2 2026 pilot launch*
