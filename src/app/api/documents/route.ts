@@ -9,6 +9,7 @@ import {
 } from "@/lib/document-versioning";
 import { updateOrganizationComplianceScore } from "@/lib/compliance-v2";
 import { logDocumentMutation } from "@/lib/audit-log";
+import { MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB } from "@/types";
 
 const isoElements = [
   "QUALITY_POLICY",
@@ -152,6 +153,22 @@ export async function POST(req: NextRequest) {
 
     const validatedData = createDocumentSchema.parse(data);
     const file = formData.get("file") as File | null;
+
+    // FAIL-FAST: Validate file size before any processing
+    if (file && file.size > MAX_FILE_SIZE_BYTES) {
+      return NextResponse.json(
+        {
+          error: `File exceeds maximum size of ${MAX_FILE_SIZE_MB}MB`,
+          details: {
+            maxSizeBytes: MAX_FILE_SIZE_BYTES,
+            maxSizeMB: MAX_FILE_SIZE_MB,
+            actualSizeBytes: file.size,
+            actualSizeMB: Math.round(file.size / 1024 / 1024 * 100) / 100,
+          }
+        },
+        { status: 413 }
+      );
+    }
 
     if (!file || file.size === 0) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
