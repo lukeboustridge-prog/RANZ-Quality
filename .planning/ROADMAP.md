@@ -153,11 +153,11 @@ Plans:
   3. User logged in at portal can navigate to reports.ranz.org.nz and session automatically recognized
   4. JWT claims include certification_tier and compliance_score available in both apps
   5. Logging out from either app terminates session in both
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
-- [ ] 08-02: TBD
+- [ ] 08-01-PLAN.md — Create Clerk metadata sync utility and wire to compliance updates
+- [ ] 08-02-PLAN.md — Create satellite domain setup documentation and configure JWT claims
 
 ## Progress
 
@@ -173,4 +173,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 5. SMS Notification System | 3/3 | Complete | 2026-01-28 |
 | 6. Notification Targeting | 3/3 | Complete | 2026-01-28 |
 | 7. Admin Reporting | 3/3 | Complete | 2026-01-28 |
-| 8. SSO Integration | 0/TBD | Not started | - |
+| 8. SSO Integration | 0/2 | Not started | - |
