@@ -32,11 +32,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Compliance thresholds (90%/70%) defined in central constants file imported by all components
   3. Dashboard and API endpoints return identical compliance scores for same organization
   4. Four-dimension breakdown (insurance, personnel, documents, audits) consistently available across all scoring calls
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Create central compliance constants and delete legacy compliance.ts
+- [ ] 01-02-PLAN.md — Migrate UI components to use central constants
+- [ ] 01-03-PLAN.md — Migrate API routes and lib files to use central constants
 
 ### Phase 2: Dashboard Real-Time Updates
 **Goal**: Members see compliance changes immediately when uploading documents or updating insurance
@@ -153,11 +154,11 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Compliance Engine Consolidation | 0/TBD | Not started | - |
+| 1. Compliance Engine Consolidation | 0/3 | Planned | - |
 | 2. Dashboard Real-Time Updates | 0/TBD | Not started | - |
 | 3. Security Foundations | 0/TBD | Not started | - |
 | 4. Public API Hardening | 0/TBD | Not started | - |
