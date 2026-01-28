@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: SMS Notification System** - Complete Twilio integration for critical alerts
 - [x] **Phase 6: Notification Targeting** - Fix LBP and insurance alert routing
 - [x] **Phase 7: Admin Reporting** - Generate PDF/CSV compliance reports
-- [ ] **Phase 8: SSO Integration** - Connect portal as primary Clerk domain with Roofing Reports satellite
+- [x] **Phase 8: SSO Integration** - Connect portal as primary Clerk domain with Roofing Reports satellite
 
 ## Phase Details
 
@@ -156,8 +156,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Create Clerk metadata sync utility and wire to compliance updates
-- [ ] 08-02-PLAN.md — Create satellite domain setup documentation and configure JWT claims
+- [x] 08-01-PLAN.md — Create Clerk metadata sync utility and wire to compliance updates
+- [x] 08-02-PLAN.md — Create satellite domain setup documentation and configure JWT claims
 
 ## Progress
 
@@ -173,4 +173,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 5. SMS Notification System | 3/3 | Complete | 2026-01-28 |
 | 6. Notification Targeting | 3/3 | Complete | 2026-01-28 |
 | 7. Admin Reporting | 3/3 | Complete | 2026-01-28 |
-| 8. SSO Integration | 0/2 | Not started | - |
+| 8. SSO Integration | 2/2 | Complete | 2026-01-28 |

@@ -35,9 +35,9 @@ Requirements for MVP pilot launch (Q2 2026, 10-30 members).
 
 ### SSO Integration
 
-- [ ] **SSO-01**: Portal configured as primary Clerk domain (portal.ranz.org.nz)
-- [ ] **SSO-02**: Roofing Reports app configured as satellite domain reading auth from portal
-- [ ] **SSO-03**: Organization context and certification tier shared via JWT claims across both apps
+- [x] **SSO-01**: Portal configured as primary Clerk domain (portal.ranz.org.nz)
+- [x] **SSO-02**: Roofing Reports app configured as satellite domain reading auth from portal
+- [x] **SSO-03**: Organization context and certification tier shared via JWT claims across both apps
 
 ## v2 Requirements
 
@@ -100,9 +100,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADMIN-01 | Phase 7 | Complete |
 | ADMIN-02 | Phase 7 | Complete |
 | ADMIN-03 | Phase 7 | Complete |
-| SSO-01 | Phase 8 | Pending |
-| SSO-02 | Phase 8 | Pending |
-| SSO-03 | Phase 8 | Pending |
+| SSO-01 | Phase 8 | Complete |
+| SSO-02 | Phase 8 | Complete |
+| SSO-03 | Phase 8 | Complete |
 
 **Coverage:**
 - v1 requirements: 17 total
@@ -114,4 +114,4 @@ All 17 v1 requirements mapped to exactly one phase. 100% coverage achieved.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after Phase 7 completion*
+*Last updated: 2026-01-28 after Phase 8 completion (milestone complete)*
