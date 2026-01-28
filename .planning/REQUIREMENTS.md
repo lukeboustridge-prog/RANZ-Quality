@@ -16,10 +16,10 @@ Requirements for MVP pilot launch (Q2 2026, 10-30 members).
 
 ### Security & Infrastructure
 
-- [ ] **SEC-01**: Cron endpoints require CRON_SECRET header (throw error if missing, no fallback)
+- [x] **SEC-01**: Cron endpoints require CRON_SECRET header (throw error if missing, no fallback)
 - [ ] **SEC-02**: Public verification API accepts NZBN or trading name lookup (not internal organization ID)
 - [ ] **SEC-03**: File uploads validated for size with 50MB maximum limit
-- [ ] **SEC-04**: Audit trail logs all data access and changes via AuditLog model with hash chain
+- [x] **SEC-04**: Audit trail logs all data access and changes via AuditLog model with hash chain
 
 ### Notifications
 
@@ -90,8 +90,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COMP-02 | Phase 1 | Complete |
 | DASH-01 | Phase 2 | Complete |
 | DASH-02 | Phase 2 | Complete |
-| SEC-01 | Phase 3 | Pending |
-| SEC-04 | Phase 3 | Pending |
+| SEC-01 | Phase 3 | Complete |
+| SEC-04 | Phase 3 | Complete |
 | SEC-02 | Phase 4 | Pending |
 | SEC-03 | Phase 4 | Pending |
 | NOTF-01 | Phase 5 | Pending |
@@ -114,4 +114,4 @@ All 17 v1 requirements mapped to exactly one phase. 100% coverage achieved.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after Phase 2 completion*
+*Last updated: 2026-01-28 after Phase 3 completion*
