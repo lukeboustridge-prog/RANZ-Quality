@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { updateOrganizationComplianceScore } from "@/lib/compliance-v2";
 import { sendEmail } from "@/lib/email";
 import { verifyCronRequest } from "@/lib/cron-auth";
+import { createNotification } from "@/lib/notifications";
+import { SMS_TEMPLATES } from "@/lib/sms";
 
 // This endpoint should be called by a cron job (e.g., Vercel Cron)
 // Example cron: 0 2 * * * (2am daily)
@@ -50,6 +52,8 @@ export async function GET(req: NextRequest) {
 
       for (const change of criticalChanges) {
         const member = affectedMembers.find((m) => m.id === change.memberId);
+
+        // Email notification to organization
         if (member?.organization?.email) {
           try {
             await sendEmail({
@@ -72,6 +76,33 @@ export async function GET(req: NextRequest) {
             console.error(
               `Failed to send LBP status change notification:`,
               emailError
+            );
+          }
+        }
+
+        // SMS notification to affected staff member
+        if (member?.phone) {
+          try {
+            await createNotification({
+              organizationId: member.organizationId,
+              userId: member.clerkUserId,
+              type: "LBP_STATUS_CHANGE",
+              channel: "SMS",
+              priority: "CRITICAL",
+              title: "LBP License Status Changed",
+              message: SMS_TEMPLATES.lbpStatusChange(
+                `${member.firstName} ${member.lastName}`,
+                change.newStatus
+              ),
+              recipient: member.phone,
+            });
+            console.log(
+              `SMS notification sent to ${member.firstName} ${member.lastName} for LBP status change`
+            );
+          } catch (smsError) {
+            console.error(
+              `Failed to send LBP status change SMS to ${member.email}:`,
+              smsError
             );
           }
         }
