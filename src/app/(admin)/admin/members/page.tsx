@@ -24,6 +24,7 @@ import {
   getComplianceStatusLevel,
   type CertificationTier,
 } from "@/types";
+import { ComplianceBreakdownModal } from "@/components/admin/compliance-breakdown-modal";
 
 interface Organization {
   id: string;
@@ -90,6 +91,7 @@ export default function AdminMembersPage() {
   const [search, setSearch] = useState("");
   const [tierFilter, setTierFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState(initialStatus);
+  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchMembers() {
@@ -313,7 +315,11 @@ export default function AdminMembersPage() {
                 </thead>
                 <tbody className="divide-y">
                   {organizations.map((org) => (
-                    <tr key={org.id} className="hover:bg-slate-50">
+                    <tr
+                      key={org.id}
+                      className="hover:bg-slate-50 cursor-pointer"
+                      onClick={() => setSelectedOrgId(org.id)}
+                    >
                       <td className="py-3 px-4">
                         <div>
                           <p className="font-medium text-slate-900">
@@ -378,7 +384,7 @@ export default function AdminMembersPage() {
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-4 text-right">
+                      <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                         <Link href={`/admin/members/${org.id}`}>
                           <Button variant="ghost" size="sm">
                             <ExternalLink className="h-4 w-4" />
@@ -393,6 +399,11 @@ export default function AdminMembersPage() {
           )}
         </CardContent>
       </Card>
+
+      <ComplianceBreakdownModal
+        orgId={selectedOrgId}
+        onClose={() => setSelectedOrgId(null)}
+      />
     </div>
   );
 }
