@@ -37,7 +37,7 @@ export function ComplianceScore({ score, tier }: ComplianceScoreProps) {
   };
 
   // Calculate the stroke dash for the circular progress
-  const circumference = 2 * Math.PI * 45;
+  const circumference = 2 * Math.PI * 60;
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
   return (
@@ -60,28 +60,28 @@ export function ComplianceScore({ score, tier }: ComplianceScoreProps) {
         </span>
       </div>
 
-      <div className="flex items-center gap-8">
+      <div className="flex flex-col items-center justify-center">
         {/* Circular progress */}
-        <div className="relative w-32 h-32">
-          <svg className="w-32 h-32 transform -rotate-90">
+        <div className="relative w-40 h-40 mb-4">
+          <svg className="w-40 h-40 transform -rotate-90">
             {/* Background circle */}
             <circle
-              cx="64"
-              cy="64"
-              r="45"
+              cx="80"
+              cy="80"
+              r="60"
               fill="none"
               stroke="currentColor"
-              strokeWidth="10"
+              strokeWidth="12"
               className="text-slate-100"
             />
             {/* Progress circle */}
             <circle
-              cx="64"
-              cy="64"
-              r="45"
+              cx="80"
+              cy="80"
+              r="60"
               fill="none"
               stroke="url(#scoreGradient)"
-              strokeWidth="10"
+              strokeWidth="12"
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
@@ -91,13 +91,6 @@ export function ComplianceScore({ score, tier }: ComplianceScoreProps) {
               <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop
                   offset="0%"
-                  className={cn(
-                    score >= COMPLIANCE_THRESHOLDS.COMPLIANT
-                      ? "stop-color-green-500"
-                      : score >= COMPLIANCE_THRESHOLDS.AT_RISK
-                        ? "stop-color-yellow-500"
-                        : "stop-color-red-500"
-                  )}
                   style={{
                     stopColor:
                       score >= COMPLIANCE_THRESHOLDS.COMPLIANT
@@ -122,57 +115,25 @@ export function ComplianceScore({ score, tier }: ComplianceScoreProps) {
             </defs>
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={cn("text-3xl font-bold", getScoreColor(score))}>
+            <span className={cn("text-4xl font-bold", getScoreColor(score))}>
               {score}%
             </span>
           </div>
         </div>
 
-        {/* Status indicators */}
-        <div className="flex-1 space-y-3">
-          <StatusItem
-            label="Insurance"
-            status={score >= 80 ? "good" : "warning"}
-            text={score >= 80 ? "Current" : "Review needed"}
-          />
-          <StatusItem
-            label="Personnel"
-            status={score >= COMPLIANCE_THRESHOLDS.AT_RISK ? "good" : "warning"}
-            text={score >= COMPLIANCE_THRESHOLDS.AT_RISK ? "All LBPs verified" : "Verification needed"}
-          />
-          <StatusItem
-            label="QMS Documentation"
-            status={score >= 60 ? "good" : "warning"}
-            text={score >= 60 ? "Up to date" : "Updates needed"}
-          />
+        {/* Status text */}
+        <div className="text-center">
+          <p className={cn("text-lg font-semibold", getScoreColor(score))}>
+            {score >= COMPLIANCE_THRESHOLDS.COMPLIANT
+              ? "Compliant"
+              : score >= COMPLIANCE_THRESHOLDS.AT_RISK
+                ? "At Risk"
+                : "Critical"}
+          </p>
+          <p className="text-sm text-slate-500 mt-1">
+            Overall compliance status
+          </p>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function StatusItem({
-  label,
-  status,
-  text,
-}: {
-  label: string;
-  status: "good" | "warning" | "critical";
-  text: string;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <div
-        className={cn(
-          "h-2 w-2 rounded-full",
-          status === "good" && "bg-green-500",
-          status === "warning" && "bg-yellow-500",
-          status === "critical" && "bg-red-500"
-        )}
-      />
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-slate-900">{label}</p>
-        <p className="text-xs text-slate-500 truncate">{text}</p>
       </div>
     </div>
   );
