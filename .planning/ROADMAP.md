@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Compliance Engine Consolidation** - Fix scoring inconsistencies and dashboard accuracy
 - [x] **Phase 2: Dashboard Real-Time Updates** - Enable live compliance recalculation on data changes
 - [x] **Phase 3: Security Foundations** - Secure cron endpoints and implement audit trail
-- [ ] **Phase 4: Public API Hardening** - Fix verification API and add upload validation
+- [x] **Phase 4: Public API Hardening** - Fix verification API and add upload validation
 - [ ] **Phase 5: SMS Notification System** - Complete Twilio integration for critical alerts
 - [ ] **Phase 6: Notification Targeting** - Fix LBP and insurance alert routing
 - [ ] **Phase 7: Admin Reporting** - Generate PDF/CSV compliance reports
@@ -88,9 +88,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Create query-parameter verification endpoint with NZBN/name lookup
-- [ ] 04-02-PLAN.md — Deprecate legacy businessId path parameter endpoint
-- [ ] 04-03-PLAN.md — Add 50MB file upload size validation to all upload endpoints
+- [x] 04-01-PLAN.md — Create query-parameter verification endpoint with NZBN/name lookup
+- [x] 04-02-PLAN.md — Deprecate legacy businessId path parameter endpoint
+- [x] 04-03-PLAN.md — Add 50MB file upload size validation to all upload endpoints
 
 ### Phase 5: SMS Notification System
 **Goal**: Critical alerts (insurance expiry, LBP status changes) reach members via SMS within minutes
@@ -166,7 +166,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 1. Compliance Engine Consolidation | 4/4 | Complete | 2026-01-28 |
 | 2. Dashboard Real-Time Updates | 3/3 | Complete | 2026-01-28 |
 | 3. Security Foundations | 4/4 | Complete | 2026-01-28 |
-| 4. Public API Hardening | 0/TBD | Not started | - |
+| 4. Public API Hardening | 3/3 | Complete | 2026-01-28 |
 | 5. SMS Notification System | 0/TBD | Not started | - |
 | 6. Notification Targeting | 0/TBD | Not started | - |
 | 7. Admin Reporting | 0/TBD | Not started | - |
