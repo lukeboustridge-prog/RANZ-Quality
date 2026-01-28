@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { sendSMS, SMS_TEMPLATES } from "@/lib/sms";
+import { sendSMS, SMS_TEMPLATES, calculateNextRetryTime } from "@/lib/sms";
 import { Resend } from "resend";
 import {
   COMPLIANCE_THRESHOLDS,
@@ -416,20 +416,45 @@ export async function processScheduledNotifications(): Promise<number> {
   return sentCount;
 }
 
-// Retry failed notifications (called by cron)
+// Retry failed notifications with exponential backoff (called by cron)
 export async function retryFailedNotifications(): Promise<number> {
+  const now = new Date();
+
   const failedNotifications = await db.notification.findMany({
     where: {
       status: "FAILED",
       retryCount: { lt: 3 }, // Max 3 retries
+      OR: [
+        { nextRetryAt: null },        // Never scheduled (legacy records)
+        { nextRetryAt: { lte: now } } // Retry time has been reached
+      ]
     },
     take: 50,
   });
 
   let sentCount = 0;
   for (const notification of failedNotifications) {
+    // Update lastRetryAt before attempt
+    await db.notification.update({
+      where: { id: notification.id },
+      data: { lastRetryAt: now }
+    });
+
     const result = await sendNotification(notification.id);
-    if (result.success) sentCount++;
+
+    if (result.success) {
+      sentCount++;
+    } else {
+      // Calculate and schedule next retry if under limit
+      const newRetryCount = notification.retryCount + 1;
+      if (newRetryCount < 3) {
+        const nextRetry = calculateNextRetryTime(newRetryCount, now);
+        await db.notification.update({
+          where: { id: notification.id },
+          data: { nextRetryAt: nextRetry }
+        });
+      }
+    }
   }
 
   return sentCount;
