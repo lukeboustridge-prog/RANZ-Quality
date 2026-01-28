@@ -23,7 +23,7 @@ Requirements for MVP pilot launch (Q2 2026, 10-30 members).
 
 ### Notifications
 
-- [ ] **NOTF-01**: SMS notifications send via Twilio for critical alerts (insurance expiry, LBP status change)
+- [x] **NOTF-01**: SMS notifications send via Twilio for critical alerts (insurance expiry, LBP status change)
 - [ ] **NOTF-02**: LBP status change notifications email the affected staff member directly (not just organization email)
 - [ ] **NOTF-03**: Insurance expiry alerts trigger correctly at 90, 60, and 30 days before expiry
 
@@ -94,7 +94,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEC-04 | Phase 3 | Complete |
 | SEC-02 | Phase 4 | Complete |
 | SEC-03 | Phase 4 | Complete |
-| NOTF-01 | Phase 5 | Pending |
+| NOTF-01 | Phase 5 | Complete |
 | NOTF-02 | Phase 6 | Pending |
 | NOTF-03 | Phase 6 | Pending |
 | ADMIN-01 | Phase 7 | Pending |
@@ -114,4 +114,4 @@ All 17 v1 requirements mapped to exactly one phase. 100% coverage achieved.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after Phase 4 completion*
+*Last updated: 2026-01-28 after Phase 5 completion*
