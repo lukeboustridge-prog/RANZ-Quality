@@ -613,3 +613,24 @@ export const COMPLIANCE_STATUS_METADATA = {
 } as const;
 
 export type ComplianceStatusLevel = keyof typeof COMPLIANCE_STATUS_METADATA;
+
+// ============================================================================
+// File Upload Constants
+// ============================================================================
+
+/**
+ * Maximum file size for uploads (50MB)
+ * Used by document and insurance upload endpoints
+ */
+export const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50MB
+export const MAX_FILE_SIZE_MB = 50;
+
+// ============================================================================
+// NZBN Validation
+// ============================================================================
+
+/**
+ * New Zealand Business Number (NZBN) validation regex
+ * NZBN is exactly 13 digits
+ */
+export const NZBN_REGEX = /^\d{13}$/;
