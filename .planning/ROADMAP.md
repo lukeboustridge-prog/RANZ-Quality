@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Public API Hardening** - Fix verification API and add upload validation
 - [x] **Phase 5: SMS Notification System** - Complete Twilio integration for critical alerts
 - [x] **Phase 6: Notification Targeting** - Fix LBP and insurance alert routing
-- [ ] **Phase 7: Admin Reporting** - Generate PDF/CSV compliance reports
+- [x] **Phase 7: Admin Reporting** - Generate PDF/CSV compliance reports
 - [ ] **Phase 8: SSO Integration** - Connect portal as primary Clerk domain with Roofing Reports satellite
 
 ## Phase Details
@@ -139,9 +139,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Install react-pdf and create PDF compliance report template with single-org endpoint
-- [ ] 07-02-PLAN.md — Add dimension score columns and create server-side CSV export endpoint
-- [ ] 07-03-PLAN.md — Create compliance drill-down API and modal with PDF generation button
+- [x] 07-01-PLAN.md — Install react-pdf and create PDF compliance report template with single-org endpoint
+- [x] 07-02-PLAN.md — Add dimension score columns and create server-side CSV export endpoint
+- [x] 07-03-PLAN.md — Create compliance drill-down API and modal with PDF generation button
 
 ### Phase 8: SSO Integration
 **Goal**: Users sign in once at portal.ranz.org.nz and access reports.ranz.org.nz without re-authentication
@@ -172,5 +172,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 4. Public API Hardening | 3/3 | Complete | 2026-01-28 |
 | 5. SMS Notification System | 3/3 | Complete | 2026-01-28 |
 | 6. Notification Targeting | 3/3 | Complete | 2026-01-28 |
-| 7. Admin Reporting | 0/3 | Not started | - |
+| 7. Admin Reporting | 3/3 | Complete | 2026-01-28 |
 | 8. SSO Integration | 0/TBD | Not started | - |

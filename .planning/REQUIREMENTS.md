@@ -24,14 +24,14 @@ Requirements for MVP pilot launch (Q2 2026, 10-30 members).
 ### Notifications
 
 - [x] **NOTF-01**: SMS notifications send via Twilio for critical alerts (insurance expiry, LBP status change)
-- [ ] **NOTF-02**: LBP status change notifications email the affected staff member directly (not just organization email)
-- [ ] **NOTF-03**: Insurance expiry alerts trigger correctly at 90, 60, and 30 days before expiry
+- [x] **NOTF-02**: LBP status change notifications email the affected staff member directly (not just organization email)
+- [x] **NOTF-03**: Insurance expiry alerts trigger correctly at 90, 60, and 30 days before expiry
 
 ### Admin & Reporting
 
-- [ ] **ADMIN-01**: RANZ admin can generate PDF compliance reports for individual organizations
-- [ ] **ADMIN-02**: RANZ admin can export member directory as CSV with compliance summary
-- [ ] **ADMIN-03**: Admin dashboard shows compliance score breakdown per member with drill-down
+- [x] **ADMIN-01**: RANZ admin can generate PDF compliance reports for individual organizations
+- [x] **ADMIN-02**: RANZ admin can export member directory as CSV with compliance summary
+- [x] **ADMIN-03**: Admin dashboard shows compliance score breakdown per member with drill-down
 
 ### SSO Integration
 
@@ -97,9 +97,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NOTF-01 | Phase 5 | Complete |
 | NOTF-02 | Phase 6 | Complete |
 | NOTF-03 | Phase 6 | Complete |
-| ADMIN-01 | Phase 7 | Pending |
-| ADMIN-02 | Phase 7 | Pending |
-| ADMIN-03 | Phase 7 | Pending |
+| ADMIN-01 | Phase 7 | Complete |
+| ADMIN-02 | Phase 7 | Complete |
+| ADMIN-03 | Phase 7 | Complete |
 | SSO-01 | Phase 8 | Pending |
 | SSO-02 | Phase 8 | Pending |
 | SSO-03 | Phase 8 | Pending |
@@ -114,4 +114,4 @@ All 17 v1 requirements mapped to exactly one phase. 100% coverage achieved.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after Phase 5 completion*
+*Last updated: 2026-01-28 after Phase 7 completion*
