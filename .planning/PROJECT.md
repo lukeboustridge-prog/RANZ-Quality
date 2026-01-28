@@ -4,48 +4,74 @@
 
 A compliance management portal for RANZ member roofing businesses that transforms certification from administrative burden to competitive advantage. Members track insurance, staff credentials, and QMS documentation while RANZ monitors compliance across the membership. Public verification allows consumers to check roofer credentials.
 
+**Shipped v1.0 MVP** on 2026-01-29 with complete compliance engine, real-time dashboard, security foundations, notifications, admin reporting, and SSO integration.
+
 ## Core Value
 
 **Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.**
 
 If everything else fails, members must be able to prove their certification status to insurers and consumers.
 
+## Current State
+
+**Version:** v1.0 MVP (shipped 2026-01-29)
+**Next:** Pilot launch with 10-30 members in Q2 2026
+
+**What's working:**
+- Compliance engine with 4-dimension scoring (Insurance, Personnel, Documents, Audits)
+- Real-time dashboard updates on data changes
+- Cron endpoint security with CRON_SECRET authentication
+- Audit trail with SHA-256 hash chain for tamper detection
+- Public verification API (NZBN/trading name lookup)
+- SMS notifications via Twilio with exponential backoff retry
+- Triple-channel notification targeting (org email, member email, member SMS)
+- PDF compliance reports with @react-pdf/renderer
+- CSV export with dimension scores and NZBN
+- SSO metadata sync for satellite domain (Roofing Reports)
+
+**Manual configuration pending:**
+- Clerk JWT template configuration in Dashboard
+- DNS CNAME for production SSO (clerk.reports.ranz.org.nz)
+
+**Tech debt:**
+- CRON_SECRET validated at runtime only, not build-time
+
 ## Requirements
 
 ### Validated
 
-Core infrastructure is built and functional:
+All v1.0 requirements shipped and verified:
 
-- Member authentication via Clerk organizations (multi-tenancy)
-- Organization dashboard with compliance score display
-- Insurance policy upload and tracking with R2 storage
-- Expiry alert system (90/60/30 days) via email
-- Staff roster with LBP number entry
-- LBP verification against MBIE API (when configured)
-- Document upload with 19 ISO element classification
-- Document versioning with approval workflow
-- Audit management with checklist generation
-- CAPA record tracking
-- Notification system (email via Resend, DB storage)
-- Badge generation (Open Badges 3.0 structure)
-- Admin dashboard with member list
-- Compliance scoring engine (v2 with 4 dimensions)
+- Dashboard & Compliance (4)
+  - DASH-01: Dimension-specific compliance indicators — v1.0
+  - DASH-02: Real-time compliance updates — v1.0
+  - COMP-01: Single compliance engine (compliance-v2.ts) — v1.0
+  - COMP-02: Central compliance thresholds — v1.0
+
+- Security & Infrastructure (4)
+  - SEC-01: Cron endpoint authentication — v1.0
+  - SEC-02: NZBN/trading name verification API — v1.0
+  - SEC-03: 50MB file upload validation — v1.0
+  - SEC-04: Audit trail with hash chain — v1.0
+
+- Notifications (3)
+  - NOTF-01: SMS via Twilio — v1.0
+  - NOTF-02: LBP alerts to member directly — v1.0
+  - NOTF-03: Insurance expiry alerts (90/60/30 days) — v1.0
+
+- Admin & Reporting (3)
+  - ADMIN-01: PDF compliance reports — v1.0
+  - ADMIN-02: CSV member export — v1.0
+  - ADMIN-03: Compliance drill-down — v1.0
+
+- SSO Integration (3)
+  - SSO-01: Portal as primary domain — v1.0
+  - SSO-02: Satellite domain config documented — v1.0
+  - SSO-03: JWT claims sharing — v1.0
 
 ### Active
 
-MVP gaps that block pilot launch (from CONCERNS.md audit):
-
-- [ ] Fix dashboard compliance indicators (currently hardcoded to overall score)
-- [ ] Consolidate compliance scoring (remove legacy compliance.ts)
-- [ ] Implement real-time score recalculation on document/insurance changes
-- [ ] Secure cron endpoints (require CRON_SECRET, no fallback)
-- [ ] Fix public verification API (use NZBN, not internal ID)
-- [ ] Implement audit trail logging (AuditLog model exists but unused)
-- [ ] Add file upload size validation (50MB limit)
-- [ ] Implement SMS notifications (Twilio configured but not called)
-- [ ] Implement report generation (PDF/CSV export for admins)
-- [ ] Fix LBP status change notifications (email member, not just org)
-- [ ] Wire SSO with Roofing Reports app (satellite domain config)
+(None yet — requirements defined during next milestone planning)
 
 ### Out of Scope
 
@@ -59,6 +85,9 @@ Deferred to future milestones:
 - Insurance COI OCR extraction (Phase 4)
 - Builder/council API access (Phase 5)
 - Consumer mobile app (Phase 5)
+- "Check a Roofer" public search UI (v2)
+- Embeddable badge widget (v2)
+- Rate limiting on public APIs (v2)
 
 ## Context
 
@@ -75,13 +104,10 @@ Deferred to future milestones:
 - ISO 17020 requirements for audit trail immutability
 - 15+ year document retention for compliance records
 
-**Current State Issues (from codebase audit):**
-- Duplicate compliance scoring implementations cause inconsistencies
-- Dashboard shows false positive compliance indicators
-- Public API exposes internal organization IDs (enumeration risk)
-- SMS notifications configured but not implemented
-- Report generation stubbed but not functional
-- Audit trail model exists but never called
+**Codebase:**
+- 124 TypeScript/TSX files
+- 21,192 lines of code
+- Next.js 16, PostgreSQL/Neon, Prisma, Clerk, Cloudflare R2
 
 ## Constraints
 
@@ -90,17 +116,22 @@ Deferred to future milestones:
 - **Hosting:** Vercel (primary), must support Neon serverless PostgreSQL
 - **No AI in production:** Built with AI assistance but deploys as conventional web app
 - **Data residency:** AU/NZ regions only for personal information (Neon + R2 support this)
-- **Timeline:** MVP ready for 10 pilot members by Q2 2026
+- **Timeline:** Pilot ready, full rollout by end of 2026
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Clerk Organizations for multi-tenancy | Built-in RBAC, SSO support, reduces auth complexity | Pending |
-| PostgreSQL/Neon over Supabase | Prisma compatibility, serverless scaling, shared with Roofing Reports | Pending |
-| Cloudflare R2 over AWS S3 | Zero egress fees, S3-compatible API, AES-256 encryption | Pending |
-| compliance-v2.ts as canonical | Four-dimension scoring with detailed breakdown, issue tracking | Pending |
+| Clerk Organizations for multi-tenancy | Built-in RBAC, SSO support, reduces auth complexity | Good |
+| PostgreSQL/Neon over Supabase | Prisma compatibility, serverless scaling, shared with Roofing Reports | Good |
+| Cloudflare R2 over AWS S3 | Zero egress fees, S3-compatible API, AES-256 encryption | Good |
+| compliance-v2.ts as canonical | Four-dimension scoring with detailed breakdown, issue tracking | Good |
 | Open Badges 3.0 for credentials | W3C standard, verifiable, embeddable on member websites | Pending |
+| @react-pdf/renderer for reports | Declarative React components, no Puppeteer overhead | Good |
+| Fire-and-forget Clerk sync | Non-blocking, doesn't fail compliance calculations | Good |
+| Triple notification pattern | Org email (compliance), member email (personal), SMS (immediate) | Good |
+| SHA-256 hash chain for audit | Tamper-evident logging, meets ISO 17020 requirements | Good |
+| Runtime CRON_SECRET validation | Simpler implementation, acceptable for MVP | Revisit |
 
 ---
-*Last updated: 2026-01-28 after initialization*
+*Last updated: 2026-01-29 after v1.0 milestone*

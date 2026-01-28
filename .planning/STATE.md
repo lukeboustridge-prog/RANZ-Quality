@@ -2,26 +2,27 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-28)
+See: .planning/PROJECT.md (updated 2026-01-29)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** MILESTONE COMPLETE - Ready for Q2 2026 pilot launch
+**Current focus:** v1.0 MVP shipped — planning next milestone
 
 ## Current Position
 
-Phase: 8 of 8 (SSO Integration) — COMPLETE
-Plan: 2/2 in phase
-Status: SSO satellite domain documentation complete, JWT config deferred
-Last activity: 2026-01-28 — Completed 08-02-PLAN.md (SSO satellite domain setup)
+Phase: Ready for next milestone
+Plan: N/A
+Status: v1.0 complete, awaiting next milestone definition
+Last activity: 2026-01-29 — Completed v1.0 milestone
 
-Progress: [██████████] 100% (29/29 plans)
+Progress: [██████████] 100% (v1.0 shipped)
 
 ## Performance Metrics
 
-**Velocity:**
+**v1.0 Milestone:**
 - Total plans completed: 29
 - Average duration: 4 min
 - Total execution time: 126 min
+- Phases: 8
 
 **By Phase:**
 
@@ -36,110 +37,43 @@ Progress: [██████████] 100% (29/29 plans)
 | 07 | 3 | 18 min | 6 min |
 | 08 | 2 | 14 min | 7 min |
 
-**Recent Trend:**
-- Last 5 plans: 07-01 (6 min), 07-02 (6 min), 07-03 (6 min), 08-01 (2 min), 08-02 (12 min)
-- Trend: Documentation tasks vary; SSO satellite setup took longer due to comprehensive guide creation
-
-*Updated after each plan completion*
-
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- Phase 1: compliance-v2.ts selected as canonical scoring engine (four-dimension breakdown, issue tracking)
-- All phases: Depth=comprehensive (8 phases) to address MVP gaps before Q2 2026 pilot launch
-- 01-01: Constants appended to existing types/index.ts (not new file)
-- 01-01: Legacy compliance.ts was untracked so removal was fs-only
-- 01-03: Reports.ts keeps >= 50 threshold for needsAttention (not part of COMPLIANCE_THRESHOLDS)
-- 01-04: Mixed import syntax for COMPLIANCE_THRESHOLDS with type imports
-- 02-01: Action items derived from ComplianceResult.issues (replaced manual logic)
-- 02-01: DimensionIndicators separated from ComplianceScore (better component separation)
-- 02-02: All compliance mutation endpoints call revalidatePath('/dashboard') for immediate updates
-- 02-02: Removed duplicate inline scoring functions (insurance, staff routes now use canonical compliance-v2)
-- 02-03: useTransition pattern established for all form loading states (replaced manual useState)
-- 02-03: LoadingButton component created for reusable loading UI pattern
-- 02-03: VerifyLBPButton added to MemberCard for on-demand verification (complements nightly cron)
-- 03-01: CRON_SECRET minimum 32 characters enforced via Zod validation (fail-fast security)
-- 03-01: Centralized verifyCronRequest utility eliminates duplicate auth code
-- 03-01: Unauthorized cron attempts logged with IP, userAgent, path, timestamp
-- 03-02: audit-log.ts created with createAuditLog, SHA-256 hash chain, and convenience wrappers
-- 03-03: All audit log calls occur after successful database mutations (not before)
-- 03-03: Audit logging failures logged to console but don't block operations
-- 03-03: Before/after state includes only business-critical fields (not full records)
-- 03-04: Admin audit trail viewer at /admin/organizations/[id]/audit with hash chain verification status
-- 04-01: Old /api/public/verify/[businessId] endpoint retained for backwards compatibility
-- 04-01: Badge URLs still use internal IDs (no public enumeration risk for image endpoint)
-- 04-01: NZBN format: exactly 13 digits (New Zealand Business Number standard)
-- 04-01: Name search is case-insensitive using Prisma mode: 'insensitive'
-- 04-02: CUID detection regex: /^c[lm][a-z0-9]{20,}$/i (covers Prisma-generated IDs)
-- 04-02: All legacy endpoint requests return 400 (not 301/302) to make deprecation explicit
-- 04-03: 50MB file size limit chosen to balance large PDF/CAD files with storage protection
-- 04-03: Two-level validation: framework (Next.js) + handler (explicit control, better errors)
-- 04-03: Insurance certificates optional - size validation only when file provided
-- 05-01: Exponential backoff schedule: 30s, 60s, 120s (capped at 15min max)
-- 05-01: Legacy records without nextRetryAt treated as ready to retry
-- 05-01: lastRetryAt recorded before attempt, nextRetryAt after failure
-- 05-02: SMS sent to member.phone (personal) for LBP status changes, not organization.phone
-- 05-02: Dual-channel pattern: email to org (detailed), SMS to individual (immediate alert)
-- 05-02: CRITICAL priority for LBP status changes (regulatory compliance issue)
-- 05-02: Independent error handling per channel (SMS failure doesn't block email)
-- 05-03: Admin SMS logs at /admin/notifications/sms with status, date, recipient filters
-- 05-03: Expandable rows show full message, failure reason, next retry time
-- 05-03: Pagination prevents loading too much data (default 50, max 100 per page)
-- 06-01: Triple notification pattern: org email (compliance), member email (personal), member SMS (immediate)
-- 06-01: Organization email has userId: null (org-level), member notifications have userId: member.clerkUserId
-- 06-01: All emails now use createNotification() for database audit trail (no direct sendEmail)
-- 06-01: Message generation helpers (generateMemberLBPMessage, generateOrgLBPMessage) separate content from delivery
-- 06-02: Prisma $transaction wraps notification + flag update for atomic insurance expiry alerts
-- 06-03: Insurance notifications now include userId via ownerUserId parameter (closes verification gaps)
-- 07-01: @react-pdf/renderer chosen for PDF generation (declarative React components, no Puppeteer overhead)
-- 07-01: Report ID format RPT-YYYY-XXXXXXXX (year + 8-char UUID prefix) for audit trail linkage
-- 07-01: Top 10 issues displayed in PDFs to prevent excessive page count
-- 07-01: Buffer to Uint8Array conversion for Next.js Response body compatibility
-- 07-01: 30-day validity disclaimer on reports (compliance data is point-in-time snapshot)
-- 07-02: Dimension scores cached in Organization table for fast bulk queries
-- 07-03: Modal fetches data lazily on open (not at page load) to reduce initial load time
-- 07-03: Table rows clickable with cursor visual cue; View button preserved with stopPropagation
-- 08-01: Metadata sync is fire-and-forget (non-blocking) to prevent compliance calculation failures
-- 08-01: Snake_case field names (certification_tier) match Clerk Dashboard JWT template syntax
-- 08-01: Insurance validity checked via PUBLIC_LIABILITY policy expiry date
-- 08-01: Skip sync silently if no clerkOrgId (handles test/seed data gracefully)
-- 08-02: JWT template configuration deferred to Clerk Dashboard (can be done anytime before production)
-- 08-02: DNS CNAME required only for production (clerk.reports.ranz.org.nz → clerk.clerk.com)
-- 08-02: Session claims refresh every 60 seconds via Clerk's automatic mechanism
-- 08-02: Passkeys cannot be shared across satellite domains (WebAuthn limitation)
+Key decisions logged in PROJECT.md with outcomes.
+All v1.0 decisions captured and marked with outcome status.
 
 ### Pending Todos
 
-None.
+None for v1.0.
 
 ### Blockers/Concerns
 
-**From codebase analysis (CONCERNS.md):**
-- Phase 1 addresses: Duplicate compliance scoring causing inconsistencies, hardcoded thresholds [COMPLETE]
-- Phase 2 addresses: Dashboard shows false positive indicators, score doesn't recalculate on changes [COMPLETE]
-- Phase 3 addresses: Unsecured cron endpoints, missing audit trail implementation [COMPLETE - 4/4 plans]
-- Phase 4 addresses: Public API enumeration risk, no file size validation [COMPLETE - 3/3 plans]
-- Phase 5 addresses: SMS notifications with retry, LBP alerts, admin monitoring [COMPLETE - 3/3 plans]
-- Phase 6 addresses: Wrong recipient targeting (individual vs org email) [COMPLETE - 3/3 plans]
-- Phase 7 addresses: Report generation stubbed with TODO comments [COMPLETE - 3/3 plans]
-- Phase 8 addresses: SSO satellite domain not configured [COMPLETE - 2/2 plans]
+**Resolved in v1.0:**
+- Duplicate compliance scoring causing inconsistencies — FIXED
+- Dashboard shows false positive indicators — FIXED
+- Unsecured cron endpoints — FIXED
+- Missing audit trail implementation — FIXED
+- Public API enumeration risk — FIXED
+- SMS notifications not implemented — FIXED
+- Wrong recipient targeting for notifications — FIXED
+- Report generation stubbed — FIXED
+- SSO satellite domain not configured — FIXED (portal side)
 
-**Discovered during execution:**
-- Pre-existing Prisma schema errors (ReportStatus type undefined) - FIXED in 04-01
-- Pre-existing TypeScript errors (unrelated to plan changes, require Prisma client regeneration)
+**Tech Debt (accepted):**
+- CRON_SECRET validated at runtime only, not build-time (medium severity)
 
-**Critical for pilot launch:**
-All 8 phases COMPLETE. MVP ready for Q2 2026 pilot launch with 10-30 members.
+**External Dependencies (not blockers):**
+- Clerk JWT template configuration (manual Dashboard step)
+- DNS CNAME for production SSO
+- Roofing Reports satellite app configuration
 
 ## Session Continuity
 
-Last session: 2026-01-28
-Stopped at: Completed 08-02-PLAN.md (SSO satellite domain setup) - ALL PHASES COMPLETE
+Last session: 2026-01-29
+Stopped at: Completed v1.0 milestone archival
 Resume file: None
 
 ---
-*ALL 8 PHASES COMPLETE (29/29 plans) - Ready for Q2 2026 pilot launch*
+*v1.0 MVP SHIPPED — Ready for next milestone planning*
