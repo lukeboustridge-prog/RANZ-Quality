@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAllLBPNumbers } from "@/lib/lbp-api";
 import { db } from "@/lib/db";
 import { updateOrganizationComplianceScore } from "@/lib/compliance-v2";
-import { sendEmail } from "@/lib/email";
 import { verifyCronRequest } from "@/lib/cron-auth";
-import { createNotification } from "@/lib/notifications";
+import { createNotification, generateMemberLBPMessage, generateOrgLBPMessage } from "@/lib/notifications";
 import { SMS_TEMPLATES } from "@/lib/sms";
 
 // This endpoint should be called by a cron job (e.g., Vercel Cron)
@@ -53,30 +52,53 @@ export async function GET(req: NextRequest) {
       for (const change of criticalChanges) {
         const member = affectedMembers.find((m) => m.id === change.memberId);
 
-        // Email notification to organization
+        // Email notification to organization (via createNotification for audit trail)
         if (member?.organization?.email) {
           try {
-            await sendEmail({
-              to: member.organization.email,
-              subject: `LBP License Status Change - ${member.firstName} ${member.lastName}`,
-              html: `
-                <h2>LBP License Status Change Detected</h2>
-                <p>During our daily verification, we detected a status change for a staff member:</p>
-                <ul>
-                  <li><strong>Staff Member:</strong> ${member.firstName} ${member.lastName}</li>
-                  <li><strong>LBP Number:</strong> ${change.lbpNumber}</li>
-                  <li><strong>Previous Status:</strong> ${change.oldStatus || "Unknown"}</li>
-                  <li><strong>New Status:</strong> ${change.newStatus}</li>
-                </ul>
-                <p>Please log in to the RANZ Portal to review this change and take any necessary action.</p>
-                <p>This may affect your organization's compliance status.</p>
-              `,
+            await createNotification({
+              organizationId: member.organizationId,
+              // userId null = organization-level notification
+              type: "LBP_STATUS_CHANGE",
+              channel: "EMAIL",
+              priority: "CRITICAL",
+              title: `Staff LBP Alert - ${member.firstName} ${member.lastName}`,
+              message: generateOrgLBPMessage(
+                `${member.firstName} ${member.lastName}`,
+                change.lbpNumber,
+                change.oldStatus,
+                change.newStatus
+              ),
+              actionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/staff/${member.id}`,
+              recipient: member.organization.email,
             });
-          } catch (emailError) {
-            console.error(
-              `Failed to send LBP status change notification:`,
-              emailError
-            );
+            console.log(`Organization notification sent to ${member.organization.email} for LBP status change`);
+          } catch (orgEmailError) {
+            console.error(`Failed to send LBP status change org notification:`, orgEmailError);
+          }
+        }
+
+        // Email notification to affected member directly
+        if (member?.email) {
+          try {
+            await createNotification({
+              organizationId: member.organizationId,
+              userId: member.clerkUserId,  // Links to specific user
+              type: "LBP_STATUS_CHANGE",
+              channel: "EMAIL",
+              priority: "CRITICAL",
+              title: "Your LBP License Status Changed",
+              message: generateMemberLBPMessage(
+                `${member.firstName}`,
+                change.lbpNumber,
+                change.oldStatus,
+                change.newStatus
+              ),
+              actionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/staff`,
+              recipient: member.email,
+            });
+            console.log(`Member notification sent to ${member.email} for LBP status change`);
+          } catch (memberEmailError) {
+            console.error(`Failed to send LBP status change member notification:`, memberEmailError);
           }
         }
 
