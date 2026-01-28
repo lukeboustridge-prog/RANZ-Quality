@@ -119,11 +119,11 @@ Plans:
   3. Insurance expiry notification at 30 days sends to both organization email AND owner phone (SMS)
   4. Notification database record links to specific user ID (not just organization ID)
   5. Each expiry alert (90/60/30 days) sends exactly once (flag tracking prevents duplicates)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [ ] 06-01-PLAN.md — Add member email notification for LBP status changes, convert org email to createNotification
+- [ ] 06-02-PLAN.md — Wrap insurance expiry alerts in Prisma transactions for atomic flag updates
 
 ### Phase 7: Admin Reporting
 **Goal**: RANZ staff can generate exportable compliance reports for internal review and member distribution
@@ -169,6 +169,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 3. Security Foundations | 4/4 | Complete | 2026-01-28 |
 | 4. Public API Hardening | 3/3 | Complete | 2026-01-28 |
 | 5. SMS Notification System | 3/3 | Complete | 2026-01-28 |
-| 6. Notification Targeting | 0/TBD | Not started | - |
+| 6. Notification Targeting | 0/2 | Not started | - |
 | 7. Admin Reporting | 0/TBD | Not started | - |
 | 8. SSO Integration | 0/TBD | Not started | - |
