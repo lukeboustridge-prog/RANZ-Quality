@@ -12,6 +12,8 @@ import {
   Settings,
   ArrowLeft,
   Shield,
+  FileText,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +23,8 @@ const navigation = [
   { name: "Members", href: "/admin/members", icon: Users },
   { name: "Audits", href: "/admin/audits", icon: ClipboardCheck },
   { name: "Reports", href: "/admin/reports", icon: BarChart3 },
+  { name: "Audit Logs", href: "/admin/audit-logs", icon: FileText },
+  { name: "Activity", href: "/admin/activity", icon: Activity },
 ];
 
 export default function AdminLayout({
