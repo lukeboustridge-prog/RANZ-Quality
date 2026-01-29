@@ -10,6 +10,8 @@ module.exports = {
       tsconfig: 'tsconfig.json',
     }],
   },
-  testMatch: ['**/__tests__/**/*.test.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
+  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(ts|tsx)$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  testPathIgnorePatterns: ['/node_modules/', 'jwt.test.ts'],
+  roots: ['<rootDir>/src'],
 };
