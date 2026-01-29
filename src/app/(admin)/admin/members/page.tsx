@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -81,7 +81,7 @@ function getComplianceIcon(score: number) {
   return <AlertTriangle className={`h-4 w-4 ${colorClass}`} />;
 }
 
-export default function AdminMembersPage() {
+function AdminMembersContent() {
   const searchParams = useSearchParams();
   const initialStatus = searchParams.get("status") || "";
 
@@ -405,5 +405,29 @@ export default function AdminMembersPage() {
         onClose={() => setSelectedOrgId(null)}
       />
     </div>
+  );
+}
+
+function AdminMembersLoading() {
+  return (
+    <div className="p-6">
+      <div className="animate-pulse space-y-4">
+        <div className="h-8 bg-slate-200 rounded w-1/4" />
+        <div className="h-12 bg-slate-200 rounded" />
+        <div className="space-y-3">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-16 bg-slate-200 rounded" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function AdminMembersPage() {
+  return (
+    <Suspense fallback={<AdminMembersLoading />}>
+      <AdminMembersContent />
+    </Suspense>
   );
 }
