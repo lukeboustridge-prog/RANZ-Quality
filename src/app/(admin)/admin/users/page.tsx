@@ -1,0 +1,300 @@
+"use client";
+
+import * as React from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Plus, RefreshCw, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataTable } from "@/components/admin/shared/data-table";
+import { userColumns, type UserRow } from "@/components/admin/users/user-table";
+import {
+  UserFiltersComponent,
+  type UserFilters,
+  type CompanyOption,
+} from "@/components/admin/users/user-filters";
+
+/**
+ * Pagination state interface.
+ */
+interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+}
+
+/**
+ * Default filter state.
+ */
+const defaultFilters: UserFilters = {
+  search: "",
+  status: "",
+  userType: "",
+  companyId: "",
+};
+
+/**
+ * AdminUsersPage provides the user management interface for RANZ staff.
+ * Displays a filterable, paginated list of all users in the system.
+ */
+export default function AdminUsersPage() {
+  const router = useRouter();
+  const [users, setUsers] = React.useState<UserRow[]>([]);
+  const [companies, setCompanies] = React.useState<CompanyOption[]>([]);
+  const [isLoadingCompanies, setIsLoadingCompanies] = React.useState(true);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [filters, setFilters] = React.useState<UserFilters>(defaultFilters);
+  const [pagination, setPagination] = React.useState<Pagination>({
+    page: 1,
+    limit: 20,
+    total: 0,
+    pages: 0,
+  });
+
+  // Debounce search to avoid too many API calls
+  const [debouncedSearch, setDebouncedSearch] = React.useState(filters.search);
+  const searchTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  React.useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+    }, 300);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [filters.search]);
+
+  // Fetch companies for filter dropdown
+  React.useEffect(() => {
+    async function fetchCompanies() {
+      try {
+        const response = await fetch("/api/admin/companies");
+        if (response.ok) {
+          const data = await response.json();
+          setCompanies(data.companies || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch companies:", err);
+      } finally {
+        setIsLoadingCompanies(false);
+      }
+    }
+    fetchCompanies();
+  }, []);
+
+  // Fetch users when filters or pagination change
+  React.useEffect(() => {
+    async function fetchUsers() {
+      setLoading(true);
+      setError(null);
+
+      const params = new URLSearchParams();
+      params.set("page", pagination.page.toString());
+      params.set("limit", pagination.limit.toString());
+
+      if (debouncedSearch) {
+        params.set("search", debouncedSearch);
+      }
+      if (filters.status && filters.status !== "all") {
+        params.set("status", filters.status);
+      }
+      if (filters.userType && filters.userType !== "all") {
+        params.set("userType", filters.userType);
+      }
+      if (filters.companyId && filters.companyId !== "all") {
+        params.set("companyId", filters.companyId);
+      }
+
+      try {
+        const response = await fetch(`/api/admin/users?${params}`);
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || "Failed to fetch users");
+        }
+
+        const data = await response.json();
+        setUsers(data.users || []);
+        setPagination((prev) => ({
+          ...prev,
+          total: data.pagination?.total || 0,
+          pages: data.pagination?.pages || 0,
+        }));
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+        setError(err instanceof Error ? err.message : "Failed to fetch users");
+        setUsers([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUsers();
+  }, [
+    pagination.page,
+    pagination.limit,
+    debouncedSearch,
+    filters.status,
+    filters.userType,
+    filters.companyId,
+  ]);
+
+  // Handle row click - navigate to user detail
+  const handleRowClick = (row: { original: UserRow }) => {
+    router.push(`/admin/users/${row.original.id}`);
+  };
+
+  // Handle filter changes - reset to page 1
+  const handleFiltersChange = (newFilters: UserFilters) => {
+    setFilters(newFilters);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setPagination((prev) => ({ ...prev, page }));
+  };
+
+  // Handle page size change
+  const handleLimitChange = (limit: number) => {
+    setPagination((prev) => ({ ...prev, limit, page: 1 }));
+  };
+
+  // Refresh data
+  const handleRefresh = () => {
+    setPagination((prev) => ({ ...prev })); // Trigger refetch
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Page header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <Users className="h-6 w-6" />
+            User Management
+          </h1>
+          <p className="text-slate-500 mt-1">
+            Manage authentication users across RANZ applications
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={handleRefresh}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+          <Link href="/admin/users/create">
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Create User
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <UserFiltersComponent
+        filters={filters}
+        onChange={handleFiltersChange}
+        companies={companies}
+        isLoadingCompanies={isLoadingCompanies}
+      />
+
+      {/* Error message */}
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          {error}
+        </div>
+      )}
+
+      {/* User table */}
+      <Card>
+        <CardHeader className="pb-0">
+          <CardTitle className="text-lg font-medium">
+            Users{" "}
+            <span className="text-slate-500 font-normal">
+              ({pagination.total} total)
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <DataTable
+            columns={userColumns}
+            data={users}
+            isLoading={loading}
+            onRowClick={handleRowClick}
+            pageSize={pagination.limit}
+          />
+
+          {/* Pagination controls */}
+          {!loading && pagination.pages > 1 && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-500">Rows per page:</span>
+                <select
+                  value={pagination.limit}
+                  onChange={(e) => handleLimitChange(Number(e.target.value))}
+                  className="h-8 w-[70px] rounded-md border border-slate-300 bg-white px-2 text-sm"
+                >
+                  {[10, 20, 50, 100].map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-500">
+                  Page {pagination.page} of {pagination.pages}
+                </span>
+                <div className="flex gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(1)}
+                    disabled={pagination.page === 1}
+                  >
+                    First
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(pagination.page - 1)}
+                    disabled={pagination.page === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                    disabled={pagination.page >= pagination.pages}
+                  >
+                    Next
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(pagination.pages)}
+                    disabled={pagination.page >= pagination.pages}
+                  >
+                    Last
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
