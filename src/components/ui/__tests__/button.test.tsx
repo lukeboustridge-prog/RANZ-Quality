@@ -52,4 +52,23 @@ describe('Button focus visibility', () => {
     const button = container.querySelector('button');
     expect(button?.className).toContain('focus-visible:ring');
   });
+
+  it('should have ring-offset for visibility', () => {
+    const { container } = render(<Button>Test</Button>);
+    const button = container.querySelector('button');
+    expect(button?.className).toContain('focus-visible:ring-offset-2');
+  });
+
+  it('should use app-accent for focus ring color', () => {
+    const { container } = render(<Button>Test</Button>);
+    const button = container.querySelector('button');
+    expect(button?.className).toContain('focus-visible:ring-app-accent');
+  });
+
+  it('should have proper disabled state', () => {
+    const { container } = render(<Button disabled>Disabled</Button>);
+    const button = container.querySelector('button');
+    expect(button?.className).toContain('disabled:opacity-50');
+    expect(button?.className).toContain('disabled:pointer-events-none');
+  });
 });
