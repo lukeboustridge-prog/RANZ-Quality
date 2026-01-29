@@ -31,7 +31,7 @@
  */
 
 import { Redis } from '@upstash/redis';
-import { getLocation, formatLocation, type GeoLocation } from './geo-location';
+import { getLocation, getLocationFromHeaders, formatLocation, type GeoLocation } from './geo-location';
 import { parseDevice, formatDevice, type DeviceInfo } from './device-fingerprint';
 import { sendSuspiciousLoginEmail } from '../email';
 import { logAuthEvent } from '../audit';
@@ -67,6 +67,8 @@ export interface LoginContext {
   ipAddress: string;
   userAgent: string | null;
   timestamp: Date;
+  /** Request headers for serverless geolocation (Vercel/Cloudflare) */
+  headers?: Headers | Record<string, string | undefined>;
 }
 
 export interface SuspicionResult {
@@ -95,7 +97,10 @@ export async function analyzeLogin(
 
   // Parse device and location
   const device = parseDevice(context.userAgent);
-  const location = getLocation(context.ipAddress);
+  // Prefer header-based geolocation (serverless-compatible) over IP lookup
+  const location = context.headers
+    ? getLocationFromHeaders(context.headers)
+    : getLocation(context.ipAddress);
 
   // Default result for no Redis (dev mode)
   if (!redisClient) {
