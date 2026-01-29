@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { z } from "zod/v4";
 import { AUDIT_QUESTIONS } from "@/lib/audit-templates";
+import type { AuditStatus } from "@prisma/client";
 
 const isoElements = [
   "QUALITY_POLICY",
@@ -78,12 +79,12 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
 
-    const filter: { organizationId: string; status?: string } = {
+    const filter: { organizationId: string; status?: AuditStatus } = {
       organizationId: organization.id,
     };
 
     if (status) {
-      filter.status = status;
+      filter.status = status as AuditStatus;
     }
 
     const audits = await db.audit.findMany({

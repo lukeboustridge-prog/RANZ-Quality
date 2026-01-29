@@ -8,7 +8,7 @@
  * Run with: npx tsx scripts/verify-auth-mode-migration.ts
  */
 
-import { PrismaClient, AuthMode } from '@prisma/client';
+import { PrismaClient, AuthMode, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -54,7 +54,7 @@ async function verifyAuthModeMigration() {
           { migratedAt: { not: null } },
           { migratedBy: { not: null } },
           { migrationNotes: { not: null } },
-          { clerkMetadata: { not: null } }
+          { clerkMetadata: { not: Prisma.DbNull } }
         ]
       }
     });

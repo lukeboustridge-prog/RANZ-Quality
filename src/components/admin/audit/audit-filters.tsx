@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, X, Calendar } from "lucide-react";
-import { AUTH_ACTIONS } from "@/lib/auth/audit";
+import { AUTH_ACTIONS } from "@/lib/auth/constants";
 
 /**
  * Filter state for the audit log table.

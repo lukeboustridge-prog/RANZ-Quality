@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AuthUserType } from "@prisma/client";
+import { AUTH_USER_TYPES, type AuthUserTypeValue } from "@/lib/auth/constants";
 
 interface BatchActionsProps {
   selectedIds: string[];
@@ -44,7 +44,7 @@ export function BatchActions({ selectedIds, onAction, onClear }: BatchActionsPro
   const [roleOpen, setRoleOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [deactivateReason, setDeactivateReason] = React.useState("");
-  const [newRole, setNewRole] = React.useState<AuthUserType | "">("");
+  const [newRole, setNewRole] = React.useState<AuthUserTypeValue | "">("");
 
   // Don't render if no selection
   if (selectedIds.length === 0) return null;
@@ -54,7 +54,7 @@ export function BatchActions({ selectedIds, onAction, onClear }: BatchActionsPro
    */
   const executeBatchAction = async (
     action: "deactivate" | "reactivate" | "change_role",
-    options?: { reason?: string; newRole?: AuthUserType }
+    options?: { reason?: string; newRole?: AuthUserTypeValue }
   ) => {
     setIsLoading(true);
 
@@ -251,13 +251,13 @@ export function BatchActions({ selectedIds, onAction, onClear }: BatchActionsPro
               <label className="text-sm font-medium text-slate-700">New Role</label>
               <Select
                 value={newRole}
-                onValueChange={(value) => setNewRole(value as AuthUserType)}
+                onValueChange={(value) => setNewRole(value as AuthUserTypeValue)}
               >
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.values(AuthUserType).map((type) => (
+                  {Object.values(AUTH_USER_TYPES).map((type) => (
                     <SelectItem key={type} value={type}>
                       {type.replace(/_/g, " ")}
                     </SelectItem>
@@ -273,7 +273,7 @@ export function BatchActions({ selectedIds, onAction, onClear }: BatchActionsPro
             </Button>
             <Button
               onClick={() =>
-                executeBatchAction("change_role", { newRole: newRole as AuthUserType })
+                executeBatchAction("change_role", { newRole: newRole as AuthUserTypeValue })
               }
               disabled={isLoading || !newRole}
             >

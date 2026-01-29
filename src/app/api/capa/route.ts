@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { z } from "zod/v4";
+import type { CAPAStatus, Prisma } from "@prisma/client";
 
 const isoElements = [
   "QUALITY_POLICY",
@@ -79,14 +80,14 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
 
-    const filter: { organizationId: string; status?: string | object } = {
+    const filter: Prisma.CAPARecordWhereInput = {
       organizationId: organization.id,
     };
 
     if (status === "open") {
-      filter.status = { in: ["OPEN", "IN_PROGRESS", "PENDING_VERIFICATION"] };
+      filter.status = { in: ["OPEN", "IN_PROGRESS", "PENDING_VERIFICATION"] as CAPAStatus[] };
     } else if (status) {
-      filter.status = status;
+      filter.status = status as CAPAStatus;
     }
 
     const capas = await db.cAPARecord.findMany({

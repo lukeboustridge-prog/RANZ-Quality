@@ -10,6 +10,7 @@ import {
 import { updateOrganizationComplianceScore } from "@/lib/compliance-v2";
 import { logDocumentMutation } from "@/lib/audit-log";
 import { MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB } from "@/types";
+import type { DocumentStatus, ISOElement, Prisma } from "@prisma/client";
 
 const isoElements = [
   "QUALITY_POLICY",
@@ -74,21 +75,16 @@ export async function GET(req: NextRequest) {
     const includeDeleted = searchParams.get("includeDeleted") === "true";
 
     // Build filter
-    const filter: {
-      organizationId: string;
-      status?: string;
-      isoElement?: string;
-      deletedAt?: null | object;
-    } = {
+    const filter: Prisma.DocumentWhereInput = {
       organizationId: organization.id,
     };
 
     if (status) {
-      filter.status = status;
+      filter.status = status as DocumentStatus;
     }
 
     if (isoElement) {
-      filter.isoElement = isoElement;
+      filter.isoElement = isoElement as ISOElement;
     }
 
     if (!includeDeleted) {

@@ -246,7 +246,7 @@ export default async function VerifyPage({ params }: PageProps) {
                   <span>Last Audit</span>
                 </div>
                 <span className="text-slate-600">
-                  {organization.audits[0]
+                  {organization.audits[0]?.completedAt
                     ? format(
                         new Date(organization.audits[0].completedAt),
                         "MMM yyyy"

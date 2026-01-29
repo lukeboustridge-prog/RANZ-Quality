@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validation failed", details: error.errors },
+        { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
@@ -150,7 +150,7 @@ async function handleComplianceRecalc(
   data: z.infer<typeof bulkComplianceRecalcSchema>
 ): Promise<NextResponse> {
   // Import compliance calculation function
-  const { calculateOrganizationCompliance } = await import(
+  const { calculateComplianceScore } = await import(
     "@/lib/compliance-v2"
   );
 
@@ -168,7 +168,7 @@ async function handleComplianceRecalc(
 
   for (const org of organizations) {
     try {
-      const result = await calculateOrganizationCompliance(org.id);
+      const result = await calculateComplianceScore(org.id);
       await db.organization.update({
         where: { id: org.id },
         data: { complianceScore: result.overallScore },

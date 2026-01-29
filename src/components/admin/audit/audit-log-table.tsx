@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { AUTH_ACTIONS } from "@/lib/auth/audit";
+import { AUTH_ACTIONS } from "@/lib/auth/constants";
 
 /**
  * Audit log row interface matching API response.

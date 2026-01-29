@@ -78,7 +78,7 @@ export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState<ReportType | null>(null);
   const [tierFilter, setTierFilter] = useState<CertificationTier | "">("");
   const [loading, setLoading] = useState(false);
-  const [reportData, setReportData] = useState<unknown>(null);
+  const [reportData, setReportData] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const generateReport = async (reportType: ReportType) => {

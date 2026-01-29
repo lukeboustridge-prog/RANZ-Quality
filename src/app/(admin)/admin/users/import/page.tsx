@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AuthUserType } from "@prisma/client";
+import { AUTH_USER_TYPES, type AuthUserTypeValue } from "@/lib/auth/constants";
 
 /**
  * CSV row structure for preview.
@@ -65,7 +65,7 @@ function isValidEmail(email: string): boolean {
  * Validate userType against enum.
  */
 function isValidUserType(userType: string): boolean {
-  return Object.values(AuthUserType).includes(userType.toUpperCase() as AuthUserType);
+  return Object.values(AUTH_USER_TYPES).includes(userType.toUpperCase() as AuthUserTypeValue);
 }
 
 /**
@@ -530,7 +530,7 @@ jane.doe@company.co.nz,Jane,Doe,MEMBER_COMPANY_ADMIN,Example Roofing Ltd,+64 21 
               <strong>Optional columns:</strong> companyName, phone
             </li>
             <li>
-              <strong>Valid user types:</strong> {Object.values(AuthUserType).join(", ")}
+              <strong>Valid user types:</strong> {Object.values(AUTH_USER_TYPES).join(", ")}
             </li>
             <li>
               <strong>Company name:</strong> Required for MEMBER_COMPANY_ADMIN and

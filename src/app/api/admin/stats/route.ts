@@ -10,7 +10,8 @@ export async function GET() {
     }
 
     // Verify admin role
-    const userRole = sessionClaims?.metadata?.role as string | undefined;
+    const metadata = sessionClaims?.metadata as { role?: string } | undefined;
+    const userRole = metadata?.role;
     if (userRole !== "ranz:admin" && userRole !== "ranz:auditor") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -111,17 +112,7 @@ export async function GET() {
       }
     }
 
-    // Compliance distribution
-    const complianceDistribution = await db.organization.groupBy({
-      by: [],
-      _count: {
-        _all: true,
-      },
-      where: {
-        complianceScore: { gte: 90 },
-      },
-    });
-
+    // Compliance distribution counts
     const compliantCount = await db.organization.count({
       where: { complianceScore: { gte: 90 } },
     });

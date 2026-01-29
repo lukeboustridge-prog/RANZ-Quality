@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { auth } from "@clerk/nextjs/server";
-import { AuditAction } from "@prisma/client";
+import { AuditAction, Prisma } from "@prisma/client";
 import { createHash, randomUUID } from "crypto";
 
 interface AuditLogInput {
@@ -81,9 +81,9 @@ export async function createAuditLog(input: AuditLogInput): Promise<void> {
         action: input.action,
         resourceType: input.resourceType,
         resourceId: input.resourceId,
-        previousState: input.previousState || undefined,
-        newState: input.newState || undefined,
-        metadata: input.metadata || undefined,
+        previousState: input.previousState ? (input.previousState as Prisma.InputJsonValue) : Prisma.DbNull,
+        newState: input.newState ? (input.newState as Prisma.InputJsonValue) : Prisma.DbNull,
+        metadata: input.metadata ? (input.metadata as Prisma.InputJsonValue) : Prisma.DbNull,
         hash,
         previousHash,
         timestamp,

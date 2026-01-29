@@ -46,7 +46,7 @@ async function main() {
       passwordHash,
       firstName: 'Test',
       lastName: 'User',
-      userType: 'MEMBER_OWNER',
+      userType: 'MEMBER_COMPANY_ADMIN',
       companyId: company.id,
       status: 'ACTIVE',
       mustChangePassword: false,

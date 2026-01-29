@@ -25,7 +25,8 @@ export async function GET(req: NextRequest) {
     }
 
     // Authorization: RANZ admin or auditor only
-    const userRole = sessionClaims?.metadata?.role as string | undefined;
+    const metadata = sessionClaims?.metadata as { role?: string } | undefined;
+    const userRole = metadata?.role;
     if (userRole !== "ranz:admin" && userRole !== "ranz:auditor") {
       return new Response("Forbidden", { status: 403 });
     }
