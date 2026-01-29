@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm approve-builds:*)",
+      "Bash(pnpm config set:*)",
+      "Bash(pnpm prisma generate:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm build:*)",
+      "Bash(tree:*)",
+      "Bash(npx prisma format)",
+      "Bash(set CI=true)",
+      "Bash(CI=true pnpm install:*)",
+      "Bash(npx prisma db push:*)",
+      "Skill(gsd:map-codebase)",
+      "Skill(gsd:new-project)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "WebSearch",
+      "Skill(gsd:plan-phase)",
+      "Bash(pnpm tsc:*)",
+      "Skill(gsd:audit-milestone)"
+    ]
+  }
+}

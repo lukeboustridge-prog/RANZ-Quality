@@ -9,12 +9,12 @@
 
 ## Summary
 
-| Severity | Count | Must Fix |
-|----------|-------|----------|
-| Critical | 0 | Yes |
-| High | 2 | Yes |
-| Medium | 5 | If time |
-| Low | 6 | Defer |
+| Severity | Count | Open | Closed | Must Fix |
+|----------|-------|------|--------|----------|
+| Critical | 0 | 0 | 0 | Yes |
+| High | 2 | 0 | 2 | Yes |
+| Medium | 5 | 5 | 0 | If time |
+| Low | 6 | 6 | 0 | Defer |
 
 **Overall Assessment:** Application is production-ready with strong security posture.
 
@@ -39,7 +39,10 @@ None identified.
   - X-Content-Type-Options: nosniff
   - Referrer-Policy: strict-origin-when-cross-origin
 - **Estimated Effort:** Small (2-4 hours)
-- **Status:** [ ] Open
+- **Status:** [x] Closed
+- **Fix Applied:** 2026-01-29 - Added `addSecurityHeaders()` function in middleware.ts that applies all recommended headers to every response
+- **Files Modified:** src/middleware.ts
+- **Verified:** Security headers now applied on all routes
 
 ### QCTL-QP-002: Implement HIBP Password Check
 - **Category:** security
@@ -48,7 +51,10 @@ None identified.
 - **Impact:** Users may choose compromised passwords that have appeared in data breaches
 - **Remediation:** Implement HIBP k-anonymity API check during password creation/change (stub exists in password.ts)
 - **Estimated Effort:** Medium (4-8 hours)
-- **Status:** [ ] Open
+- **Status:** [x] Closed
+- **Fix Applied:** 2026-01-29 - Implemented `isPasswordCompromised()` and `validatePasswordFull()` functions using HIBP k-anonymity API. Updated all password-setting routes to use breach checking.
+- **Files Modified:** src/lib/auth/password.ts, src/lib/auth/index.ts, src/app/api/auth/change-password/route.ts, src/app/api/auth/activate/route.ts, src/app/api/auth/reset-password/route.ts
+- **Verified:** HIBP API integration implemented with k-anonymity (only first 5 chars of SHA-1 hash sent)
 
 ---
 
@@ -212,6 +218,21 @@ None identified.
 
 ---
 
-*Document Version: 1.0*
+*Document Version: 1.1*
 *Generated: 2026-01-29*
-*Phase: 09-quality-control Plan: 06*
+*Last Updated: 2026-01-29 (09-07 remediation)*
+*Phase: 09-quality-control*
+
+---
+
+## Remediation Log (09-07)
+
+| Issue | Action | Result |
+|-------|--------|--------|
+| QCTL-QP-001 | Added HTTP security headers in middleware.ts | CLOSED |
+| QCTL-QP-002 | Implemented HIBP password check via k-anonymity API | CLOSED |
+
+**Verification Results:**
+- `pnpm audit --audit-level=high`: 0 high/critical vulnerabilities
+- Type checking: Pre-existing errors (not related to remediation)
+- Linting: Pre-existing warnings (not related to remediation)

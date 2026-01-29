@@ -23,7 +23,15 @@ export default function RootLayout({
   const hasClerkKey = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   const content = (
-    <html lang="en">
+    <html
+      lang="en"
+      style={
+        {
+          "--app-accent": "#2E7D32",
+          "--app-accent-foreground": "#ffffff",
+        } as React.CSSProperties
+      }
+    >
       <body className={`${inter.variable} font-sans antialiased`}>
         {children}
       </body>

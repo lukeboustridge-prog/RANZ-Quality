@@ -197,6 +197,17 @@ export async function checkRateLimit(
   limiter: Ratelimit,
   identifier: string
 ): Promise<RateLimitResult> {
+  // Skip rate limiting in development if Upstash not configured
+  if (process.env.NODE_ENV === 'development' &&
+      (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN)) {
+    return {
+      allowed: true,
+      remaining: 999,
+      reset: Date.now() + 60000,
+      retryAfter: 0,
+    };
+  }
+
   const { success, remaining, reset } = await limiter.limit(identifier);
 
   const retryAfter = Math.ceil((reset - Date.now()) / 1000);

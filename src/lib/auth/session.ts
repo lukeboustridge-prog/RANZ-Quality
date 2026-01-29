@@ -33,10 +33,13 @@ export function createSessionCookie(
   expiresAt: Date,
   config: AuthConfig = DEFAULT_AUTH_CONFIG
 ): string {
+  // In development, don't set a domain so cookie works across localhost ports
+  const isDev = process.env.NODE_ENV === 'development';
+
   return serialize(config.sessionCookieName, token, {
     ...SESSION_COOKIE_OPTIONS,
     expires: expiresAt,
-    domain: config.sessionCookieDomain,
+    ...(isDev ? {} : { domain: config.sessionCookieDomain }),
   });
 }
 
@@ -49,10 +52,13 @@ export function createSessionCookie(
 export function clearSessionCookie(
   config: AuthConfig = DEFAULT_AUTH_CONFIG
 ): string {
+  // In development, don't set a domain so cookie works across localhost ports
+  const isDev = process.env.NODE_ENV === 'development';
+
   return serialize(config.sessionCookieName, '', {
     ...SESSION_COOKIE_OPTIONS,
     expires: new Date(0),
-    domain: config.sessionCookieDomain,
+    ...(isDev ? {} : { domain: config.sessionCookieDomain }),
   });
 }
 

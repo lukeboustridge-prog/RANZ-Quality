@@ -1,15 +1,242 @@
 @import "tailwindcss";
 
+:root {
+  --background: #ffffff;
+  --foreground: #2a2e31;
+
+  /* RANZ Brand Colors - From Brand Guidelines 2025 */
+  /* Core - Charcoal family */
+  --ranz-charcoal: #3c4b5d;
+  --ranz-charcoal-dark: #2c3546;
+  --ranz-charcoal-light: #7d8c9d;
+  --ranz-charcoal-extra-dark: #2a2e31;
+
+  /* Secondary */
+  --ranz-dark-blue: #00417a;
+  --ranz-turquoise: #4db6ac;
+  --ranz-red: #be4039;
+  --ranz-yellow: #fcb613;
+
+  /* Logo colors */
+  --ranz-black: #000000;
+  --ranz-silver: #939598;
+
+  /* Legacy blue scale (mapped to charcoal) */
+  --ranz-blue-50: #f0f2f5;
+  --ranz-blue-100: #e1e5ea;
+  --ranz-blue-200: #c3cbd5;
+  --ranz-blue-300: #7d8c9d;
+  --ranz-blue-400: #5a6d80;
+  --ranz-blue-500: #3c4b5d;
+  --ranz-blue-600: #2c3546;
+  --ranz-blue-700: #2a2e31;
+  --ranz-blue-800: #1a1d20;
+  --ranz-blue-900: #0d0e10;
+
+  --ranz-orange-300: #fcb613;
+  --ranz-orange-400: #be4039;
+  --ranz-orange-500: #be4039;
+
+  /* App-specific accent - Quality Program uses green */
+  --app-accent: #2E7D32;
+  --app-accent-foreground: #ffffff;
+
+  /* Status Colors */
+  --status-critical: #dc2626;
+  --status-high: #ea580c;
+  --status-medium: #ca8a04;
+  --status-low: #16a34a;
+
+  /* Condition Colors */
+  --condition-good: #16a34a;
+  --condition-fair: #ca8a04;
+  --condition-poor: #ea580c;
+  --condition-critical: #dc2626;
+
+  /* UI Colors - Using RANZ Charcoal as primary */
+  --card: #ffffff;
+  --card-foreground: #2a2e31;
+  --popover: #ffffff;
+  --popover-foreground: #2a2e31;
+  --primary: #3c4b5d;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f2f5;
+  --secondary-foreground: #2a2e31;
+  --muted: #f0f2f5;
+  --muted-foreground: #7d8c9d;
+  --accent: var(--app-accent);
+  --accent-foreground: var(--app-accent-foreground);
+  --destructive: #be4039;
+  --destructive-foreground: #ffffff;
+  --border: #e1e5ea;
+  --input: #e1e5ea;
+  --ring: #3c4b5d;
+  --radius: 0.5rem;
+
+  /* RANZ specific UI tokens */
+  --ranz-header-bg: #2c3546;
+  --ranz-sidebar-bg: #3c4b5d;
+  --ranz-sidebar-hover: #2c3546;
+  --ranz-highlight: #fcb613;
+  --ranz-error: #be4039;
+  --ranz-success: #16a34a;
+}
+
 @theme inline {
-  --color-background: #ffffff;
-  --color-foreground: #0f172a;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
+
+  /* RANZ Brand Colors */
+  --color-ranz-charcoal: var(--ranz-charcoal);
+  --color-ranz-charcoal-dark: var(--ranz-charcoal-dark);
+  --color-ranz-charcoal-light: var(--ranz-charcoal-light);
+  --color-ranz-charcoal-extra-dark: var(--ranz-charcoal-extra-dark);
+  --color-ranz-dark-blue: var(--ranz-dark-blue);
+  --color-ranz-red: var(--ranz-red);
+  --color-ranz-yellow: var(--ranz-yellow);
+  --color-ranz-silver: var(--ranz-silver);
+
+  /* App-specific accent */
+  --color-app-accent: var(--app-accent);
+  --color-app-accent-foreground: var(--app-accent-foreground);
+
+  /* Legacy blue scale */
+  --color-ranz-blue-50: var(--ranz-blue-50);
+  --color-ranz-blue-100: var(--ranz-blue-100);
+  --color-ranz-blue-200: var(--ranz-blue-200);
+  --color-ranz-blue-300: var(--ranz-blue-300);
+  --color-ranz-blue-400: var(--ranz-blue-400);
+  --color-ranz-blue-500: var(--ranz-blue-500);
+  --color-ranz-blue-600: var(--ranz-blue-600);
+  --color-ranz-blue-700: var(--ranz-blue-700);
+  --color-ranz-blue-800: var(--ranz-blue-800);
+  --color-ranz-blue-900: var(--ranz-blue-900);
+
+  --color-ranz-orange-300: var(--ranz-orange-300);
+  --color-ranz-orange-400: var(--ranz-orange-400);
+  --color-ranz-orange-500: var(--ranz-orange-500);
+
+  /* Status */
+  --color-status-critical: var(--status-critical);
+  --color-status-high: var(--status-high);
+  --color-status-medium: var(--status-medium);
+  --color-status-low: var(--status-low);
+
+  /* Condition */
+  --color-condition-good: var(--condition-good);
+  --color-condition-fair: var(--condition-fair);
+  --color-condition-poor: var(--condition-poor);
+  --color-condition-critical: var(--condition-critical);
+
+  /* UI */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+* {
+  border-color: var(--border);
 }
 
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Utility classes for shadcn/ui compatibility */
+.border-border {
+  border-color: var(--border);
+}
+
+/* RANZ Brand Styles */
+
+/* Diagonal chevron decorative element - signature RANZ design */
+.ranz-chevron {
+  position: relative;
+  overflow: hidden;
+}
+
+.ranz-chevron::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -10%;
+  width: 50%;
+  height: 100%;
+  background: var(--ranz-charcoal-light);
+  opacity: 0.1;
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+
+/* Header with diagonal accent */
+.ranz-header {
+  background: linear-gradient(135deg, var(--ranz-charcoal-dark) 0%, var(--ranz-charcoal) 100%);
+  position: relative;
+}
+
+.ranz-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 100%;
+  background: var(--ranz-charcoal-light);
+  opacity: 0.15;
+  clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%);
+  pointer-events: none;
+}
+
+/* Card with subtle diagonal */
+.ranz-card {
+  position: relative;
+  overflow: hidden;
+  border-left: 3px solid var(--ranz-charcoal);
+}
+
+/* Yellow accent highlight */
+.ranz-highlight {
+  border-left: 4px solid var(--ranz-yellow);
+}
+
+/* Button styles */
+.ranz-btn-primary {
+  background: var(--ranz-charcoal);
+  color: white;
+  transition: background 0.2s ease;
+}
+
+.ranz-btn-primary:hover {
+  background: var(--ranz-charcoal-dark);
+}
+
+/* Status badge overrides */
+.ranz-badge-critical {
+  background: var(--ranz-red);
+  color: white;
+}
+
+.ranz-badge-warning {
+  background: var(--ranz-yellow);
+  color: var(--ranz-charcoal-extra-dark);
 }
 
 /* Animation utilities for dialogs and popovers */

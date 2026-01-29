@@ -3,16 +3,18 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, RefreshCw, Users } from "lucide-react";
+import { Plus, RefreshCw, Users, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/admin/shared/data-table";
-import { userColumns, type UserRow } from "@/components/admin/users/user-table";
+import { userColumns, selectColumn, type UserRow } from "@/components/admin/users/user-table";
 import {
   UserFiltersComponent,
   type UserFilters,
   type CompanyOption,
 } from "@/components/admin/users/user-filters";
+import { ExportButton } from "@/components/admin/users/export-button";
+import { BatchActions } from "@/components/admin/users/batch-actions";
 
 /**
  * Pagination state interface.
@@ -52,6 +54,11 @@ export default function AdminUsersPage() {
     total: 0,
     pages: 0,
   });
+  const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+  const [batchMessage, setBatchMessage] = React.useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   // Debounce search to avoid too many API calls
   const [debouncedSearch, setDebouncedSearch] = React.useState(filters.search);
@@ -170,8 +177,48 @@ export default function AdminUsersPage() {
 
   // Refresh data
   const handleRefresh = () => {
+    setSelectedIds([]); // Clear selection on refresh
     setPagination((prev) => ({ ...prev })); // Trigger refetch
   };
+
+  // Handle row selection changes
+  const handleSelectionChange = (selectedRows: UserRow[]) => {
+    setSelectedIds(selectedRows.map((row) => row.id));
+  };
+
+  // Handle batch action result
+  const handleBatchAction = (result: {
+    success: boolean;
+    action: string;
+    updated: number;
+    failed: number;
+    error?: string;
+  }) => {
+    if (result.success) {
+      setBatchMessage({
+        type: "success",
+        message: `${result.action}: ${result.updated} user(s) updated${
+          result.failed > 0 ? `, ${result.failed} failed` : ""
+        }`,
+      });
+      setSelectedIds([]); // Clear selection after batch action
+      handleRefresh(); // Refresh user list
+    } else {
+      setBatchMessage({
+        type: "error",
+        message: result.error || "Batch operation failed",
+      });
+    }
+
+    // Clear message after 5 seconds
+    setTimeout(() => setBatchMessage(null), 5000);
+  };
+
+  // Build columns with selection
+  const columnsWithSelect = React.useMemo(
+    () => [selectColumn, ...userColumns],
+    []
+  );
 
   return (
     <div className="p-6 space-y-6">
@@ -191,6 +238,13 @@ export default function AdminUsersPage() {
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
+          <ExportButton filters={filters} />
+          <Link href="/admin/users/import">
+            <Button variant="outline" size="sm">
+              <Upload className="h-4 w-4 mr-2" />
+              Import CSV
+            </Button>
+          </Link>
           <Link href="/admin/users/create">
             <Button size="sm">
               <Plus className="h-4 w-4 mr-2" />
@@ -207,6 +261,26 @@ export default function AdminUsersPage() {
         companies={companies}
         isLoadingCompanies={isLoadingCompanies}
       />
+
+      {/* Batch actions toolbar */}
+      <BatchActions
+        selectedIds={selectedIds}
+        onAction={handleBatchAction}
+        onClear={() => setSelectedIds([])}
+      />
+
+      {/* Batch action message */}
+      {batchMessage && (
+        <div
+          className={`p-4 rounded-lg ${
+            batchMessage.type === "success"
+              ? "bg-green-50 border border-green-200 text-green-700"
+              : "bg-red-50 border border-red-200 text-red-700"
+          }`}
+        >
+          {batchMessage.message}
+        </div>
+      )}
 
       {/* Error message */}
       {error && (
@@ -227,10 +301,11 @@ export default function AdminUsersPage() {
         </CardHeader>
         <CardContent className="pt-4">
           <DataTable
-            columns={userColumns}
+            columns={columnsWithSelect}
             data={users}
             isLoading={loading}
             onRowClick={handleRowClick}
+            onSelectionChange={handleSelectionChange}
             pageSize={pagination.limit}
           />
 

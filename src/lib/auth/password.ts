@@ -140,16 +140,94 @@ export function generateSecurePassword(length: number = 16): string {
 }
 
 /**
- * Check if a password has been compromised (stub for future Have I Been Pwned integration).
- * Currently returns false (not compromised) for all passwords.
+ * Check if a password has been compromised using Have I Been Pwned API.
+ * Uses k-anonymity model: only first 5 chars of SHA-1 hash are sent to API.
+ *
+ * HIBP API Reference: https://haveibeenpwned.com/API/v3#PwnedPasswords
+ * QCTL-QP-002: Implement HIBP password check during password change
  *
  * @param password - Password to check
  * @returns Promise resolving to true if password is compromised
  */
 export async function isPasswordCompromised(
-  _password: string
+  password: string
 ): Promise<boolean> {
-  // TODO: Integrate with Have I Been Pwned API in future enhancement
-  // https://haveibeenpwned.com/API/v3#PwnedPasswords
-  return false;
+  try {
+    // Create SHA-1 hash of password (HIBP uses SHA-1)
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+
+    // k-anonymity: only send first 5 characters of hash
+    const prefix = hashHex.substring(0, 5);
+    const suffix = hashHex.substring(5);
+
+    // Query HIBP API with hash prefix
+    const response = await fetch(
+      `https://api.pwnedpasswords.com/range/${prefix}`,
+      {
+        headers: {
+          'User-Agent': 'RANZ-Quality-Program',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      // If API fails, fail open (don't block user) but log
+      console.warn(`HIBP API returned status ${response.status}`);
+      return false;
+    }
+
+    const text = await response.text();
+
+    // Check if our hash suffix appears in the response
+    // Response format: SUFFIX:COUNT\r\n per line
+    const lines = text.split('\r\n');
+    for (const line of lines) {
+      const [hashSuffix, countStr] = line.split(':');
+      if (hashSuffix === suffix) {
+        const count = parseInt(countStr, 10);
+        // Password found in breach database
+        console.log(`Password found in ${count} breaches`);
+        return true;
+      }
+    }
+
+    // Password not found in any known breaches
+    return false;
+  } catch (error) {
+    // Fail open on network errors - don't block user
+    console.error('HIBP check failed:', error);
+    return false;
+  }
+}
+
+/**
+ * Combined password validation including complexity and breach check.
+ * Use this when setting or changing passwords.
+ *
+ * @param password - Password to validate
+ * @returns Promise with validation result
+ */
+export async function validatePasswordFull(
+  password: string
+): Promise<PasswordValidationResult> {
+  // First check complexity
+  const complexityResult = validatePasswordComplexity(password);
+  if (!complexityResult.valid) {
+    return complexityResult;
+  }
+
+  // Then check if compromised
+  const isCompromised = await isPasswordCompromised(password);
+  if (isCompromised) {
+    return {
+      valid: false,
+      errors: ['This password has appeared in a data breach and cannot be used. Please choose a different password.'],
+    };
+  }
+
+  return { valid: true, errors: [] };
 }

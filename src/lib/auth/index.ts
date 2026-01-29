@@ -22,7 +22,7 @@ export * from './types';
 
 // Re-export utilities
 export { signToken, verifyToken, generateRSAKeyPair, hashToken, decodeToken, isTokenExpired } from './jwt';
-export { hashPassword, verifyPassword, validatePasswordComplexity, generateSecurePassword } from './password';
+export { hashPassword, verifyPassword, validatePasswordComplexity, validatePasswordFull, isPasswordCompromised, generateSecurePassword } from './password';
 export {
   createSessionCookie,
   clearSessionCookie,

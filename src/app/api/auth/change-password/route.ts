@@ -21,7 +21,7 @@ import {
   verifyToken,
   verifyPassword,
   hashPassword,
-  validatePasswordComplexity,
+  validatePasswordFull,
   sendPasswordChangedEmail,
   logAuthEvent,
   AUTH_ACTIONS,
@@ -137,13 +137,13 @@ export async function POST(request: Request): Promise<Response> {
       }
     }
 
-    // Validate new password complexity (SECR-04)
-    const complexity = validatePasswordComplexity(newPassword);
-    if (!complexity.valid) {
+    // Validate new password complexity and breach check (SECR-04, QCTL-QP-002)
+    const validation = await validatePasswordFull(newPassword);
+    if (!validation.valid) {
       return Response.json(
         {
           error: 'New password does not meet requirements',
-          requirements: complexity.errors,
+          requirements: validation.errors,
         },
         { status: 400 }
       );

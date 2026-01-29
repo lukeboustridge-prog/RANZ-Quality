@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { UserStatusBadge } from "./user-status-badge";
 import { UserTypeBadge } from "./user-type-badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import type { AuthUserStatus, AuthUserType } from "@prisma/client";
 
@@ -21,6 +22,31 @@ export interface UserRow {
   lastLoginAt: string | null;
   createdAt: string;
 }
+
+/**
+ * Selection column for batch operations.
+ * Call getSelectColumn() to get a column with checkbox selection.
+ */
+export const selectColumn: ColumnDef<UserRow> = {
+  id: "select",
+  header: ({ table }) => (
+    <Checkbox
+      checked={table.getIsAllPageRowsSelected()}
+      onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      aria-label="Select all"
+    />
+  ),
+  cell: ({ row }) => (
+    <Checkbox
+      checked={row.getIsSelected()}
+      onCheckedChange={(value) => row.toggleSelected(!!value)}
+      aria-label="Select row"
+      onClick={(e) => e.stopPropagation()}
+    />
+  ),
+  enableSorting: false,
+  enableHiding: false,
+};
 
 /**
  * Column definitions for the user management table.

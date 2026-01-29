@@ -19,7 +19,7 @@ import { db } from '@/lib/db';
 import {
   validatePasswordResetToken,
   hashPassword,
-  validatePasswordComplexity,
+  validatePasswordFull,
   sendPasswordChangedEmail,
   logAuthEvent,
   AUTH_ACTIONS,
@@ -65,24 +65,24 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     // Validate the token
-    const validation = await validatePasswordResetToken(token);
+    const tokenValidation = await validatePasswordResetToken(token);
 
-    if (!validation.valid || !validation.userId) {
+    if (!tokenValidation.valid || !tokenValidation.userId) {
       // Log failed attempt
       await logAuthEvent({
         action: AUTH_ACTIONS.PASSWORD_RESET_FAILED,
         ipAddress: ip,
         metadata: {
-          reason: validation.reason,
+          reason: tokenValidation.reason,
           tokenProvided: !!token,
         },
       });
 
       // Provide user-friendly error messages
       let errorMessage = 'Invalid or expired reset link';
-      if (validation.reason === 'token_expired') {
+      if (tokenValidation.reason === 'token_expired') {
         errorMessage = 'This reset link has expired. Please request a new one.';
-      } else if (validation.reason === 'token_already_used') {
+      } else if (tokenValidation.reason === 'token_already_used') {
         errorMessage = 'This reset link has already been used. Please request a new one.';
       }
 
@@ -92,13 +92,13 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    // Validate password complexity (SECR-04)
-    const complexity = validatePasswordComplexity(newPassword);
-    if (!complexity.valid) {
+    // Validate password complexity and breach check (SECR-04, QCTL-QP-002)
+    const passwordValidation = await validatePasswordFull(newPassword);
+    if (!passwordValidation.valid) {
       return Response.json(
         {
           error: 'Password does not meet requirements',
-          requirements: complexity.errors,
+          requirements: passwordValidation.errors,
         },
         { status: 400 }
       );
@@ -106,7 +106,7 @@ export async function POST(request: Request): Promise<Response> {
 
     // Get user for logging and email
     const user = await db.authUser.findUnique({
-      where: { id: validation.userId },
+      where: { id: tokenValidation.userId },
       select: {
         id: true,
         email: true,
@@ -121,7 +121,7 @@ export async function POST(request: Request): Promise<Response> {
         ipAddress: ip,
         metadata: {
           reason: 'user_not_found',
-          userId: validation.userId,
+          userId: tokenValidation.userId,
         },
       });
 

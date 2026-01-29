@@ -1,17 +1,68 @@
 /**
  * Middleware
  *
- * Handles authentication for all routes.
+ * Handles authentication and security headers for all routes.
  * Supports both Clerk and custom auth based on AUTH_MODE environment variable.
  *
  * AUTH_MODE values:
  * - 'clerk' (default): Uses Clerk middleware
  * - 'custom': Uses dual-auth middleware (custom priority, Clerk fallback)
+ *
+ * Security Headers (QCTL-QP-001):
+ * - Content-Security-Policy: Restricts content sources to prevent XSS
+ * - X-Frame-Options: Prevents clickjacking
+ * - X-Content-Type-Options: Prevents MIME sniffing
+ * - Referrer-Policy: Controls referrer information
+ * - Permissions-Policy: Restricts browser features
  */
 
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+
+/**
+ * Add security headers to response (QCTL-QP-001)
+ * Following OWASP recommendations for HTTP security headers
+ */
+function addSecurityHeaders(response: NextResponse): NextResponse {
+  // Content Security Policy - restricts content sources
+  // Note: 'unsafe-inline' and 'unsafe-eval' needed for Next.js dev mode
+  // In production, consider using nonce-based CSP
+  const cspValue = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.clerk.io https://*.clerk.accounts.dev",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https: blob:",
+    "connect-src 'self' https://*.clerk.io https://*.clerk.accounts.dev https://api.clerk.io wss://*.clerk.io https://haveibeenpwned.com https://api.pwnedpasswords.com",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+    "base-uri 'self'",
+    "object-src 'none'",
+  ].join('; ');
+
+  response.headers.set('Content-Security-Policy', cspValue);
+
+  // Prevent clickjacking
+  response.headers.set('X-Frame-Options', 'DENY');
+
+  // Prevent MIME type sniffing
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+
+  // Control referrer information
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+  // Restrict browser features
+  response.headers.set(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(), interest-cohort=()'
+  );
+
+  // Prevent XSS attacks (legacy header, but still useful)
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+
+  return response;
+}
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -36,14 +87,16 @@ const isCronRoute = createRouteMatcher(["/api/cron(.*)"]);
 const AUTH_MODE = process.env.AUTH_MODE || 'clerk';
 
 export default async function middleware(req: NextRequest) {
-  // Allow public routes without auth
+  // Allow public routes without auth, but add security headers
   if (isPublicRoute(req)) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    return addSecurityHeaders(response);
   }
 
   // Allow cron routes with secret verification (handled in route)
   if (isCronRoute(req)) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    return addSecurityHeaders(response);
   }
 
   if (AUTH_MODE === 'custom') {
@@ -65,7 +118,8 @@ async function customAuthMiddleware(req: NextRequest): Promise<NextResponse> {
     // Redirect to sign-in
     const signInUrl = new URL('/sign-in', req.url);
     signInUrl.searchParams.set('redirect_url', req.url);
-    return NextResponse.redirect(signInUrl);
+    const redirectResponse = NextResponse.redirect(signInUrl);
+    return addSecurityHeaders(redirectResponse);
   }
 
   const response = NextResponse.next();
@@ -82,7 +136,8 @@ async function customAuthMiddleware(req: NextRequest): Promise<NextResponse> {
     // Admin route check for custom auth
     if (isAdminRoute(req)) {
       if (!['RANZ_ADMIN', 'RANZ_STAFF'].includes(authResult.user.role)) {
-        return NextResponse.redirect(new URL('/dashboard', req.url));
+        const adminRedirect = NextResponse.redirect(new URL('/dashboard', req.url));
+        return addSecurityHeaders(adminRedirect);
       }
     }
   } else if (authResult.source === 'clerk' && authResult.clerkUserId) {
@@ -91,7 +146,7 @@ async function customAuthMiddleware(req: NextRequest): Promise<NextResponse> {
     // Note: Clerk role check happens in clerkMiddleware path
   }
 
-  return response;
+  return addSecurityHeaders(response);
 }
 
 // Wrap clerkMiddleware to maintain existing behavior
@@ -106,11 +161,13 @@ function clerkMiddlewareHandler(req: NextRequest) {
       const userRole = metadata?.role;
 
       if (userRole !== "ranz:admin" && userRole !== "ranz:auditor") {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
+        const adminRedirect = NextResponse.redirect(new URL("/dashboard", request.url));
+        return addSecurityHeaders(adminRedirect);
       }
     }
 
-    return NextResponse.next();
+    const response = NextResponse.next();
+    return addSecurityHeaders(response);
   })(req, {} as any);
 }
 

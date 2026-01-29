@@ -1046,6 +1046,12 @@ enum AuthPermission {
   MOBILE_SYNC
 }
 
+enum AuthMode {
+  CLERK // User authenticates via Clerk
+  CUSTOM // User authenticates via custom auth
+  MIGRATING // User in transition (dual-read active)
+}
+
 // ============================================================================
 // Custom Authentication Models
 // ============================================================================
@@ -1090,6 +1096,13 @@ model AuthUser {
   // Link to existing Clerk data for migration
   clerkUserId String? @unique
 
+  // Migration Control (Phase 6)
+  authMode       AuthMode  @default(CLERK)
+  migratedAt     DateTime? // When user was migrated to custom auth
+  migratedBy     String? // Admin who triggered migration
+  migrationNotes String? // Any issues during migration
+  clerkMetadata  Json? // Clerk user metadata backup for rollback
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1105,6 +1118,7 @@ model AuthUser {
   @@index([status])
   @@index([clerkUserId])
   @@index([ssoId])
+  @@index([authMode])
 }
 
 model AuthCompany {

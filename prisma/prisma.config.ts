@@ -1,11 +1,13 @@
 import path from "node:path";
 import { defineConfig } from "prisma/config";
+import { config } from "dotenv";
+
+// Load .env file from project root
+config({ path: path.join(__dirname, "..", ".env") });
 
 export default defineConfig({
   schema: path.join(__dirname, "schema.prisma"),
   datasource: {
-    async url() {
-      return process.env.DATABASE_URL!;
-    },
+    url: process.env.DATABASE_URL!,
   },
 });
