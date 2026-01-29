@@ -15,7 +15,9 @@ export type LogoutReason =
   | 'user_logout'
   | 'admin_revoke'
   | 'password_change'
-  | 'security_concern';
+  | 'security_concern'
+  | 'account_deactivated'
+  | 'account_suspended';
 
 export type InitiatingApp = 'QUALITY_PROGRAM' | 'ROOFING_REPORT' | 'MOBILE';
 
