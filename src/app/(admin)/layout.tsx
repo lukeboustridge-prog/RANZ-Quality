@@ -6,6 +6,7 @@ import { UserButton } from "@clerk/nextjs";
 import {
   LayoutDashboard,
   Users,
+  UserCog,
   ClipboardCheck,
   BarChart3,
   Settings,
@@ -16,6 +17,7 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Users", href: "/admin/users", icon: UserCog },
   { name: "Members", href: "/admin/members", icon: Users },
   { name: "Audits", href: "/admin/audits", icon: ClipboardCheck },
   { name: "Reports", href: "/admin/reports", icon: BarChart3 },
