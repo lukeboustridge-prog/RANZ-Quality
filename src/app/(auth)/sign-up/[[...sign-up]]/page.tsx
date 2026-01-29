@@ -1,24 +1,24 @@
 import { SignUp } from "@clerk/nextjs";
+import { AuthLayout } from "@/components/auth/auth-layout";
 
 export default function SignUpPage() {
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-slate-900">
-          RANZ Certified Business Portal
-        </h1>
-        <p className="text-slate-600 mt-2">
-          Create an account to get started
-        </p>
-      </div>
+    <AuthLayout
+      title="Get Started"
+      subtitle="Create your RANZ Quality Program account"
+    >
       <SignUp
         appearance={{
           elements: {
-            rootBox: "mx-auto",
-            card: "shadow-lg",
+            formButtonPrimary: "bg-ranz-charcoal hover:bg-ranz-charcoal-dark",
+            card: "shadow-none",
+            headerTitle: "hidden",
+            headerSubtitle: "hidden",
+            socialButtonsBlockButton: "border-gray-200",
+            formFieldInput: "border-gray-200 focus:ring-app-accent focus:border-app-accent",
           },
         }}
       />
-    </div>
+    </AuthLayout>
   );
 }
