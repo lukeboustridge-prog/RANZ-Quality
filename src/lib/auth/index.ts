@@ -80,6 +80,13 @@ export {
   type InitiatingApp,
 } from './cross-app/logout-broadcast';
 
+// Re-export internal API utilities
+export {
+  validateInternalApiKey,
+  type InternalUserResponse,
+  type InternalUsersResponse,
+} from './internal-api';
+
 // Import providers
 import { clerkAuth } from './providers/clerk';
 import { customAuth } from './providers/custom';
