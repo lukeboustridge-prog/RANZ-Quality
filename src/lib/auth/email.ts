@@ -20,6 +20,7 @@ import { Resend } from 'resend';
 import { WelcomeEmail } from '../../../emails/welcome-email';
 import { PasswordResetEmail } from '../../../emails/password-reset-email';
 import { PasswordChangedEmail } from '../../../emails/password-changed-email';
+import { SuspiciousLoginEmail } from '../../../emails/suspicious-login-email';
 
 /** Lazy-initialized Resend client */
 let resendClient: Resend | null = null;
@@ -253,5 +254,67 @@ export async function sendPasswordChangedEmail(
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     };
+  }
+}
+
+/**
+ * Suspicious login email parameters.
+ */
+export interface SuspiciousLoginEmailParams {
+  /** Recipient email address */
+  to: string;
+  /** Device name (e.g., "Chrome on Windows") */
+  deviceName: string;
+  /** Location string (e.g., "Auckland, NZ") */
+  location: string;
+  /** IP address of the login */
+  ipAddress: string;
+  /** Login timestamp */
+  timestamp: Date;
+  /** Reasons why login is suspicious */
+  reasons: string[];
+}
+
+/**
+ * Send suspicious login alert email (SECR-07).
+ *
+ * Notifies user when unusual login activity is detected.
+ * Uses fire-and-forget pattern - failures logged but don't break login flow.
+ *
+ * @param params - Email parameters including device, location, and reasons
+ *
+ * @example
+ * ```typescript
+ * await sendSuspiciousLoginEmail({
+ *   to: 'john@example.com',
+ *   deviceName: 'Chrome on Windows',
+ *   location: 'Auckland, NZ',
+ *   ipAddress: '203.118.150.50',
+ *   timestamp: new Date(),
+ *   reasons: ['New device: Chrome on Windows', 'New location: Auckland, NZ'],
+ * });
+ * ```
+ */
+export async function sendSuspiciousLoginEmail(
+  params: SuspiciousLoginEmailParams
+): Promise<void> {
+  try {
+    const resend = getResendClient();
+
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: params.to,
+      subject: 'Security Alert: New sign-in to your RANZ account',
+      react: SuspiciousLoginEmail({
+        deviceName: params.deviceName,
+        location: params.location,
+        ipAddress: params.ipAddress,
+        timestamp: params.timestamp,
+        reasons: params.reasons,
+      }),
+    });
+  } catch (error) {
+    // Fire and forget - don't break the login flow
+    console.error('Failed to send suspicious login email:', error);
   }
 }
