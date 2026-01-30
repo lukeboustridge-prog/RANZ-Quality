@@ -11,28 +11,17 @@ export const runtime = 'nodejs';
  */
 
 import { db } from '@/lib/db';
-import { getSessionFromRequest, verifyToken } from '@/lib/auth';
+import { authenticateAdminRequest, adminAuthErrorResponse } from '@/lib/auth/admin-api';
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Response> {
   try {
-    // Authenticate admin
-    const sessionToken = getSessionFromRequest(request);
-    if (!sessionToken) {
-      return Response.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionToken);
-    if (!payload) {
-      return Response.json({ error: 'Invalid session' }, { status: 401 });
-    }
-
-    // Check admin role (RANZ_ADMIN or RANZ_STAFF)
-    const allowedRoles = ['RANZ_ADMIN', 'RANZ_STAFF'];
-    if (!allowedRoles.includes(payload.role as string)) {
-      return Response.json({ error: 'Insufficient permissions' }, { status: 403 });
+    // Authenticate admin (works with both Clerk and custom auth)
+    const authResult = await authenticateAdminRequest(request);
+    if (!authResult.success) {
+      return adminAuthErrorResponse(authResult);
     }
 
     const { id: companyId } = await params;

@@ -20,14 +20,13 @@ export const runtime = 'nodejs';
 import { db } from '@/lib/db';
 import Papa from 'papaparse';
 import {
-  getSessionFromRequest,
-  verifyToken,
   generateActivationToken,
   sendWelcomeEmail,
   logAuthEvent,
   AUTH_ACTIONS,
   getIPFromRequest,
 } from '@/lib/auth';
+import { authenticateAdminRequest, adminAuthErrorResponse } from '@/lib/auth/admin-api';
 import { AuthUserType } from '@prisma/client';
 
 /**
@@ -92,28 +91,15 @@ export async function POST(request: Request): Promise<Response> {
   const ip = getIPFromRequest(request);
 
   try {
-    // Authenticate admin
-    const sessionToken = getSessionFromRequest(request);
-    if (!sessionToken) {
-      return Response.json({ error: 'Not authenticated' }, { status: 401 });
+    // Authenticate admin (RANZ_ADMIN only for bulk operations)
+    const authResult = await authenticateAdminRequest(request, ['RANZ_ADMIN']);
+    if (!authResult.success) {
+      return adminAuthErrorResponse(authResult);
     }
 
-    const payload = await verifyToken(sessionToken);
-    if (!payload) {
-      return Response.json({ error: 'Invalid session' }, { status: 401 });
-    }
-
-    // Check admin role (RANZ_ADMIN only for bulk operations)
-    if (payload.role !== 'RANZ_ADMIN') {
-      return Response.json(
-        { error: 'Insufficient permissions. Only RANZ_ADMIN can perform bulk imports.' },
-        { status: 403 }
-      );
-    }
-
-    const actorId = payload.sub as string;
-    const actorEmail = payload.email as string;
-    const actorRole = payload.role as string;
+    const actorId = authResult.user.id;
+    const actorEmail = authResult.user.email;
+    const actorRole = authResult.user.userType;
 
     // Parse multipart form data
     const formData = await request.formData();

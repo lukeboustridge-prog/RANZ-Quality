@@ -14,14 +14,13 @@ export const runtime = 'nodejs';
 
 import { db } from '@/lib/db';
 import {
-  getSessionFromRequest,
-  verifyToken,
   getIPFromRequest,
   logAuthEvent,
   AUTH_ACTIONS,
   revokeAllUserSessions,
   type AuthAction,
 } from '@/lib/auth';
+import { authenticateAdminRequest, adminAuthErrorResponse } from '@/lib/auth/admin-api';
 import { AuthUserStatus, AuthUserType } from '@prisma/client';
 
 /**
@@ -51,47 +50,6 @@ const USER_SELECT = {
   createdBy: true,
 };
 
-/**
- * Authenticate and authorize admin request.
- */
-async function authenticateAdmin(request: Request): Promise<{
-  success: boolean;
-  payload?: { sub: string; email: string; role: string };
-  error?: Response;
-}> {
-  const sessionToken = getSessionFromRequest(request);
-  if (!sessionToken) {
-    return {
-      success: false,
-      error: Response.json({ error: 'Not authenticated' }, { status: 401 }),
-    };
-  }
-
-  const payload = await verifyToken(sessionToken);
-  if (!payload) {
-    return {
-      success: false,
-      error: Response.json({ error: 'Invalid session' }, { status: 401 }),
-    };
-  }
-
-  const allowedRoles = ['RANZ_ADMIN', 'RANZ_STAFF'];
-  if (!allowedRoles.includes(payload.role as string)) {
-    return {
-      success: false,
-      error: Response.json({ error: 'Insufficient permissions' }, { status: 403 }),
-    };
-  }
-
-  return {
-    success: true,
-    payload: {
-      sub: payload.sub as string,
-      email: payload.email as string,
-      role: payload.role as string,
-    },
-  };
-}
 
 /**
  * GET /api/admin/users/[id]
@@ -102,8 +60,11 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Response> {
   try {
-    const auth = await authenticateAdmin(request);
-    if (!auth.success) return auth.error!;
+    // Authenticate admin (works with both Clerk and custom auth)
+    const authResult = await authenticateAdminRequest(request);
+    if (!authResult.success) {
+      return adminAuthErrorResponse(authResult);
+    }
 
     const { id: userId } = await params;
 
@@ -134,8 +95,11 @@ export async function PUT(
   const ip = getIPFromRequest(request);
 
   try {
-    const auth = await authenticateAdmin(request);
-    if (!auth.success) return auth.error!;
+    // Authenticate admin (works with both Clerk and custom auth)
+    const authResult = await authenticateAdminRequest(request);
+    if (!authResult.success) {
+      return adminAuthErrorResponse(authResult);
+    }
 
     const { id: userId } = await params;
 
@@ -239,9 +203,9 @@ export async function PUT(
     // Log audit event with previous and new state
     await logAuthEvent({
       action: AUTH_ACTIONS.USER_UPDATED,
-      actorId: auth.payload!.sub,
-      actorEmail: auth.payload!.email,
-      actorRole: auth.payload!.role,
+      actorId: authResult.user.id,
+      actorEmail: authResult.user.email,
+      actorRole: authResult.user.userType,
       ipAddress: ip,
       resourceType: 'AuthUser',
       resourceId: userId,
@@ -279,8 +243,11 @@ export async function PATCH(
   const ip = getIPFromRequest(request);
 
   try {
-    const auth = await authenticateAdmin(request);
-    if (!auth.success) return auth.error!;
+    // Authenticate admin (works with both Clerk and custom auth)
+    const authResult = await authenticateAdminRequest(request);
+    if (!authResult.success) {
+      return adminAuthErrorResponse(authResult);
+    }
 
     const { id: userId } = await params;
 
@@ -340,7 +307,7 @@ export async function PATCH(
     if (newStatus === 'DEACTIVATED') {
       // Deactivate user
       updateData.deactivatedAt = new Date();
-      updateData.deactivatedBy = auth.payload!.sub;
+      updateData.deactivatedBy = authResult.user.id;
       updateData.deactivationReason = body.reason || null;
       auditAction = AUTH_ACTIONS.USER_DEACTIVATED;
 
@@ -370,9 +337,9 @@ export async function PATCH(
     // Log audit event
     await logAuthEvent({
       action: auditAction,
-      actorId: auth.payload!.sub,
-      actorEmail: auth.payload!.email,
-      actorRole: auth.payload!.role,
+      actorId: authResult.user.id,
+      actorEmail: authResult.user.email,
+      actorRole: authResult.user.userType,
       ipAddress: ip,
       resourceType: 'AuthUser',
       resourceId: userId,
