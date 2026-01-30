@@ -16,7 +16,7 @@
  * - Permissions-Policy: Restricts browser features
  */
 
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -164,10 +164,20 @@ function clerkMiddlewareHandler(req: NextRequest) {
     // Check admin routes for RANZ role
     if (isAdminRoute(request)) {
       const sessionClaims = authResult.sessionClaims;
-      // Check both metadata (from session token template) and publicMetadata (direct from user)
+      // Check metadata from session token template first
       const metadata = sessionClaims?.metadata as { role?: string } | undefined;
-      const publicMetadata = sessionClaims?.publicMetadata as { role?: string } | undefined;
-      const userRole = metadata?.role || publicMetadata?.role;
+      let userRole = metadata?.role;
+
+      // If no role in session claims, fetch user's publicMetadata directly
+      if (!userRole && authResult.userId) {
+        try {
+          const client = await clerkClient();
+          const user = await client.users.getUser(authResult.userId);
+          userRole = (user.publicMetadata as { role?: string })?.role;
+        } catch (e) {
+          console.error('Failed to fetch user metadata:', e);
+        }
+      }
 
       if (userRole !== "ranz:admin" && userRole !== "ranz:auditor") {
         const adminRedirect = NextResponse.redirect(new URL("/dashboard", request.url));
