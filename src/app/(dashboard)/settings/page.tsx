@@ -6,6 +6,7 @@ import { OrganizationProfileForm } from "@/components/settings/organization-prof
 import { NotificationSettings } from "@/components/settings/notification-settings";
 import { StaffInvitationForm } from "@/components/settings/staff-invitation-form";
 import { PendingInvitations } from "@/components/settings/pending-invitations";
+import { StaffList } from "@/components/settings/staff-list";
 
 export default async function SettingsPage() {
   const { userId, orgId } = await auth();
@@ -40,6 +41,33 @@ export default async function SettingsPage() {
       console.warn("Failed to get logo URL:", e);
     }
   }
+
+  // Fetch all members for staff list
+  const allMembers = await db.organizationMember.findMany({
+    where: { organizationId: organization.id },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      role: true,
+      lbpNumber: true,
+      lbpVerified: true,
+      clerkUserId: true,
+    },
+    orderBy: [
+      { role: "asc" },
+      { firstName: "asc" },
+    ],
+  });
+
+  // Sort OWNER first manually
+  const sortedMembers = [...allMembers].sort((a, b) => {
+    const roleOrder = { OWNER: 0, ADMIN: 1, STAFF: 2 };
+    const roleComparison = roleOrder[a.role as keyof typeof roleOrder] - roleOrder[b.role as keyof typeof roleOrder];
+    if (roleComparison !== 0) return roleComparison;
+    return a.firstName.localeCompare(b.firstName);
+  });
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -82,11 +110,20 @@ export default async function SettingsPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-6">
             Staff Management
           </h2>
-          <div className="space-y-6">
+          <div className="space-y-8">
+            {/* Current Staff */}
             <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Current Staff</h3>
+              <StaffList members={sortedMembers} currentUserId={userId} />
+            </div>
+
+            {/* Invite New Staff */}
+            <div className="border-t pt-6">
               <h3 className="text-sm font-medium text-gray-700 mb-3">Invite New Staff</h3>
               <StaffInvitationForm />
             </div>
+
+            {/* Pending Invitations */}
             <div className="border-t pt-6">
               <h3 className="text-sm font-medium text-gray-700 mb-3">Pending Invitations</h3>
               <PendingInvitations />
