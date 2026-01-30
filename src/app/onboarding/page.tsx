@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUser, useOrganizationList } from "@clerk/nextjs";
+import { useUser, useOrganizationList, useAuth } from "@clerk/nextjs";
 import { Building2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 export default function OnboardingPage() {
   const router = useRouter();
   const { user } = useUser();
+  const { getToken } = useAuth();
   const { createOrganization, setActive } = useOrganizationList();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -41,12 +42,19 @@ export default function OnboardingPage() {
       await setActive({ organization: org.id });
 
       // Small delay to ensure Clerk session propagates
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Get fresh auth token after org is active
+      const token = await getToken();
 
       // Create the organization in our database
       const response = await fetch("/api/organizations", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        },
+        credentials: "include",
         body: JSON.stringify({
           clerkOrgId: org.id,
           name: formData.businessName,

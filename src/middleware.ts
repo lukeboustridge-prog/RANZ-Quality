@@ -70,6 +70,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/api/webhooks(.*)",
   "/api/public(.*)",
+  "/api/organizations",         // Org creation (auth checked in route)
   "/verify(.*)",
   "/api/auth/validate-session", // Public for satellite apps
   "/api/auth/login",            // Custom auth login
