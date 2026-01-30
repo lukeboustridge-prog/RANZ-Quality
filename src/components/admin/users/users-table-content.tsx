@@ -11,6 +11,7 @@ import {
   type UserFilters,
   type CompanyOption,
 } from "@/components/admin/users/user-filters";
+import { BatchActions } from "@/components/admin/users/batch-actions";
 
 // UserRow type is imported from user-table.tsx
 
@@ -134,6 +135,21 @@ export default function UsersTableContent() {
     setSelectedIds(selectedRows.map((row) => row.id));
   }, []);
 
+  // Handle batch action result - memoized
+  const handleBatchAction = React.useCallback((result: {
+    success: boolean;
+    action: string;
+    updated: number;
+    failed: number;
+    error?: string;
+  }) => {
+    if (result.success) {
+      setSelectedIds([]);
+      // Trigger refresh
+      setFilters((f) => ({ ...f }));
+    }
+  }, []);
+
   const handleRefresh = () => {
     setLoading(true);
     setError(null);
@@ -189,12 +205,12 @@ export default function UsersTableContent() {
         </span>
       </div>
 
-      {/* Selection count (simple display, no BatchActions) */}
-      {selectedIds.length > 0 && (
-        <div className="p-2 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
-          {selectedIds.length} user(s) selected
-        </div>
-      )}
+      {/* Batch actions toolbar */}
+      <BatchActions
+        selectedIds={selectedIds}
+        onAction={handleBatchAction}
+        onClear={() => setSelectedIds([])}
+      />
 
       {/* DataTable with TanStack Table */}
       <DataTable
