@@ -40,9 +40,10 @@ interface UserFiltersProps {
 
 /**
  * User status options for the filter dropdown.
+ * Using "all" as the value for "All Statuses" to avoid empty string issues with Radix Select.
  */
-const statusOptions: { value: AuthUserStatus | ""; label: string }[] = [
-  { value: "", label: "All Statuses" },
+const statusOptions: { value: string; label: string }[] = [
+  { value: "all", label: "All Statuses" },
   { value: "ACTIVE", label: "Active" },
   { value: "PENDING_ACTIVATION", label: "Pending Activation" },
   { value: "SUSPENDED", label: "Suspended" },
@@ -51,9 +52,10 @@ const statusOptions: { value: AuthUserStatus | ""; label: string }[] = [
 
 /**
  * User type options for the filter dropdown.
+ * Using "all" as the value for "All Types" to avoid empty string issues with Radix Select.
  */
-const userTypeOptions: { value: AuthUserType | ""; label: string }[] = [
-  { value: "", label: "All Types" },
+const userTypeOptions: { value: string; label: string }[] = [
+  { value: "all", label: "All Types" },
   { value: "RANZ_ADMIN", label: "RANZ Admin" },
   { value: "RANZ_STAFF", label: "RANZ Staff" },
   { value: "RANZ_INSPECTOR", label: "RANZ Inspector" },
@@ -135,13 +137,13 @@ export function UserFiltersComponent({
           >
             Status
           </label>
-          <Select value={filters.status} onValueChange={handleStatusChange}>
+          <Select value={filters.status || "all"} onValueChange={handleStatusChange}>
             <SelectTrigger id="status-filter">
               <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
             <SelectContent>
               {statusOptions.map((option) => (
-                <SelectItem key={option.value || "all"} value={option.value || "all"}>
+                <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>
               ))}
@@ -157,13 +159,13 @@ export function UserFiltersComponent({
           >
             User Type
           </label>
-          <Select value={filters.userType} onValueChange={handleTypeChange}>
+          <Select value={filters.userType || "all"} onValueChange={handleTypeChange}>
             <SelectTrigger id="type-filter">
               <SelectValue placeholder="All Types" />
             </SelectTrigger>
             <SelectContent>
               {userTypeOptions.map((option) => (
-                <SelectItem key={option.value || "all"} value={option.value || "all"}>
+                <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>
               ))}
@@ -180,7 +182,7 @@ export function UserFiltersComponent({
             Company
           </label>
           <Select
-            value={filters.companyId}
+            value={filters.companyId || "all"}
             onValueChange={handleCompanyChange}
             disabled={isLoadingCompanies}
           >
