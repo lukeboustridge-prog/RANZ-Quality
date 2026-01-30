@@ -1,6 +1,9 @@
-import { neon } from "@neondatabase/serverless";
+import { Pool, neonConfig } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "@prisma/client";
+
+// Disable WebSocket pooling for Vercel serverless (use HTTP instead)
+neonConfig.poolQueryViaFetch = true;
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -9,9 +12,9 @@ const globalForPrisma = globalThis as unknown as {
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL!;
 
-  // Use Neon serverless HTTP driver (no WebSocket needed)
-  const sql = neon(connectionString);
-  const adapter = new PrismaNeon(sql);
+  // Use Neon Pool with HTTP fetch mode (no WebSocket)
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaNeon(pool);
 
   return new PrismaClient({
     adapter,
