@@ -214,6 +214,8 @@ interface SendResult {
   notificationId: string;
   externalId?: string;
   error?: string;
+  skipped?: boolean;    // NEW: true if notification was skipped due to preferences
+  reason?: string;      // NEW: reason for skip
 }
 
 export async function createNotification(
@@ -231,6 +233,28 @@ export async function createNotification(
     recipient,
     scheduledFor,
   } = params;
+
+  // Check if notification should be sent based on preferences
+  const prefCheck = await shouldSendNotification({
+    organizationId,
+    userId,
+    type,
+    channel,
+    priority,
+  });
+
+  if (!prefCheck.shouldSend) {
+    // Log why notification was skipped (useful for debugging)
+    console.log(`[Notification] Skipped ${type} via ${channel}: ${prefCheck.reason}`);
+
+    // Return a "skipped" result without creating a record
+    return {
+      success: true,
+      notificationId: "", // Empty ID indicates skipped
+      skipped: true,
+      reason: prefCheck.reason,
+    };
+  }
 
   // Create the notification record
   const notification = await db.notification.create({
