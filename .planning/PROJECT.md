@@ -12,10 +12,19 @@ A compliance management portal for RANZ member roofing businesses that transform
 
 If everything else fails, members must be able to prove their certification status to insurers and consumers.
 
+## Current Milestone: v1.1 Settings
+
+**Goal:** Enable members and staff to manage their organization profile, personal settings, notification preferences, and account security.
+
+**Target features:**
+- Organization settings (company profile, notification prefs, staff management)
+- Personal settings (profile, notifications, security)
+- Role-based access (org admins vs staff members)
+
 ## Current State
 
 **Version:** v1.0 MVP (shipped 2026-01-29)
-**Next:** Pilot launch with 10-30 members in Q2 2026
+**Next:** v1.1 Settings, then pilot launch with 10-30 members in Q2 2026
 
 **What's working:**
 - Compliance engine with 4-dimension scoring (Insurance, Personnel, Documents, Audits)
@@ -71,7 +80,21 @@ All v1.0 requirements shipped and verified:
 
 ### Active
 
-(None yet — requirements defined during next milestone planning)
+v1.1 Settings requirements:
+
+- Organization Settings
+  - [ ] ORG-01: Org admin can update company profile (trading name, contact, logo, description)
+  - [ ] ORG-02: Org admin can configure organization notification preferences
+  - [ ] ORG-03: Org admin can invite new staff members
+  - [ ] ORG-04: Org admin can remove staff members
+  - [ ] ORG-05: Org admin can assign/change staff roles
+
+- Personal Settings
+  - [ ] PERS-01: User can update personal profile (name, email, phone, photo)
+  - [ ] PERS-02: User can configure personal notification preferences
+  - [ ] PERS-03: User can change password
+  - [ ] PERS-04: User can enable/disable 2FA
+  - [ ] PERS-05: User can view active sessions and sign out remotely
 
 ### Out of Scope
 
@@ -134,4 +157,4 @@ Deferred to future milestones:
 | Runtime CRON_SECRET validation | Simpler implementation, acceptable for MVP | Revisit |
 
 ---
-*Last updated: 2026-01-29 after v1.0 milestone*
+*Last updated: 2026-01-31 after v1.1 milestone started*
