@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** v1.1 Settings - Phase 10 (Staff Management)
+**Current focus:** v1.1 Settings - Phase 11 (Personal Settings)
 
 ## Current Position
 
-Phase: 10 of 12 (Staff Management)
+Phase: 11 of 12 (Personal Settings)
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-01-31 - Phase 9 (Organization Profile) completed
+Last activity: 2026-01-31 - Phase 10 (Staff Management) completed
 
-Progress: [========░░] 82% (v1.0 complete, Phase 9 of v1.1 done)
+Progress: [=========░] 91% (v1.0 complete, Phases 9-10 of v1.1 done)
 
 ## Performance Metrics
 
@@ -25,15 +25,18 @@ Progress: [========░░] 82% (v1.0 complete, Phase 9 of v1.1 done)
 - Phases: 8
 
 **v1.1 Milestone (current):**
-- Total plans completed: 3
+- Total plans completed: 5
 - Phases: 4 (9-12)
 - Estimated plans: 8
 
-**By Phase (v1.0):**
+**By Phase (v1.1):**
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 01-08 | 29 | 126 min | 4 min |
+| Phase | Plans | Status |
+|-------|-------|--------|
+| 09 | 3 | Complete |
+| 10 | 2 | Complete |
+| 11 | 2 | Not started |
+| 12 | 1 | Not started |
 
 ## Accumulated Context
 
@@ -41,6 +44,13 @@ Progress: [========░░] 82% (v1.0 complete, Phase 9 of v1.1 done)
 
 Decisions logged in PROJECT.md Key Decisions table.
 All v1.0 decisions captured with outcomes.
+
+**Phase 10 (Staff Management):**
+- Use Clerk's built-in invitation system rather than custom email flow
+- Database roles (OWNER/ADMIN/STAFF) remain source of truth, mapped to Clerk roles for invitations only
+- Async clerkClient() pattern required for Clerk SDK v6 compatibility
+- Member removal deletes database record only (Clerk org membership preserved for MVP)
+- OWNER role protected from changes/removal; users cannot modify themselves
 
 ### Pending Todos
 
@@ -59,8 +69,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Phase 9 (Organization Profile) executed
+Stopped at: Phase 10 (Staff Management) completed
 Resume file: None
+Next action: /gsd:plan-phase 11
 
 ---
-*Phase 9 complete - next: /gsd:plan-phase 10*
+*Last updated: 2026-01-31 — Phase 10 complete*
