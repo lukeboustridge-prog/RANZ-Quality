@@ -84,6 +84,8 @@ export function DataTable<TData, TValue>({
   });
 
   // Notify parent of selection changes
+  // Note: table is intentionally excluded from deps as it's recreated every render
+  // We only want to notify when rowSelection actually changes
   React.useEffect(() => {
     if (onSelectionChange) {
       const selectedRows = table
@@ -91,7 +93,8 @@ export function DataTable<TData, TValue>({
         .rows.map((row) => row.original);
       onSelectionChange(selectedRows);
     }
-  }, [rowSelection, onSelectionChange, table]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowSelection]);
 
   // Reset selection when data changes (e.g., after refresh)
   React.useEffect(() => {
