@@ -4,6 +4,11 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  UserFiltersComponent,
+  type UserFilters,
+  type CompanyOption,
+} from "@/components/admin/users/user-filters";
 
 /**
  * User data structure from API.
@@ -21,20 +26,89 @@ interface User {
 }
 
 /**
- * UsersTableContent - Simplified version to debug React error #185.
- * Renders a basic table without TanStack Table or complex components.
+ * Default filter state.
+ */
+const defaultFilters: UserFilters = {
+  search: "",
+  status: "",
+  userType: "",
+  companyId: "",
+};
+
+/**
+ * UsersTableContent - Incrementally restoring features to isolate error #185.
+ * Step 1: Add filters back.
  */
 export default function UsersTableContent() {
   const router = useRouter();
   const [users, setUsers] = React.useState<User[]>([]);
+  const [companies, setCompanies] = React.useState<CompanyOption[]>([]);
+  const [isLoadingCompanies, setIsLoadingCompanies] = React.useState(true);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [filters, setFilters] = React.useState<UserFilters>(defaultFilters);
 
-  // Fetch users on mount
+  // Debounce search
+  const [debouncedSearch, setDebouncedSearch] = React.useState(filters.search);
+  const searchTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  React.useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+    }, 300);
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [filters.search]);
+
+  // Fetch companies for filter dropdown
+  React.useEffect(() => {
+    async function fetchCompanies() {
+      try {
+        const response = await fetch("/api/admin/companies");
+        if (response.ok) {
+          const data = await response.json();
+          setCompanies(data.companies || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch companies:", err);
+      } finally {
+        setIsLoadingCompanies(false);
+      }
+    }
+    fetchCompanies();
+  }, []);
+
+  // Fetch users when filters change
   React.useEffect(() => {
     async function fetchUsers() {
+      setLoading(true);
+      setError(null);
+
+      const params = new URLSearchParams();
+      params.set("page", "1");
+      params.set("limit", "20");
+
+      if (debouncedSearch) {
+        params.set("search", debouncedSearch);
+      }
+      if (filters.status && filters.status !== "all") {
+        params.set("status", filters.status);
+      }
+      if (filters.userType && filters.userType !== "all") {
+        params.set("userType", filters.userType);
+      }
+      if (filters.companyId && filters.companyId !== "all") {
+        params.set("companyId", filters.companyId);
+      }
+
       try {
-        const response = await fetch("/api/admin/users?page=1&limit=20");
+        const response = await fetch(`/api/admin/users?${params}`);
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }
@@ -47,12 +121,24 @@ export default function UsersTableContent() {
       }
     }
     fetchUsers();
-  }, []);
+  }, [debouncedSearch, filters.status, filters.userType, filters.companyId]);
+
+  const handleFiltersChange = (newFilters: UserFilters) => {
+    setFilters(newFilters);
+  };
 
   const handleRefresh = () => {
     setLoading(true);
     setError(null);
-    fetch("/api/admin/users?page=1&limit=20")
+    const params = new URLSearchParams();
+    params.set("page", "1");
+    params.set("limit", "20");
+    if (debouncedSearch) params.set("search", debouncedSearch);
+    if (filters.status && filters.status !== "all") params.set("status", filters.status);
+    if (filters.userType && filters.userType !== "all") params.set("userType", filters.userType);
+    if (filters.companyId && filters.companyId !== "all") params.set("companyId", filters.companyId);
+
+    fetch(`/api/admin/users?${params}`)
       .then((res) => res.json())
       .then((data) => setUsers(data.users || []))
       .catch((err) => setError(err.message))
@@ -78,6 +164,14 @@ export default function UsersTableContent() {
 
   return (
     <div className="space-y-4">
+      {/* Filters */}
+      <UserFiltersComponent
+        filters={filters}
+        onChange={handleFiltersChange}
+        companies={companies}
+        isLoadingCompanies={isLoadingCompanies}
+      />
+
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" onClick={handleRefresh}>
           <RefreshCw className="h-4 w-4 mr-2" />
@@ -88,7 +182,7 @@ export default function UsersTableContent() {
         </span>
       </div>
 
-      {/* Simple table without TanStack Table */}
+      {/* Simple table - keeping HTML table for now */}
       <div className="border rounded-lg overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 border-b">
