@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 11 of 12 (Personal Settings)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-31 - Phase 10 (Staff Management) completed
+Plan: 2 of 2 complete
+Status: Phase complete
+Last activity: 2026-01-31 - Completed 11-02-PLAN.md (Personal Notification Settings)
 
-Progress: [=========░] 91% (v1.0 complete, Phases 9-10 of v1.1 done)
+Progress: [=========░] 95% (v1.0 complete, Phases 9-11 of v1.1 done)
 
 ## Performance Metrics
 
@@ -25,7 +25,7 @@ Progress: [=========░] 91% (v1.0 complete, Phases 9-10 of v1.1 done)
 - Phases: 8
 
 **v1.1 Milestone (current):**
-- Total plans completed: 5
+- Total plans completed: 7
 - Phases: 4 (9-12)
 - Estimated plans: 8
 
@@ -35,7 +35,7 @@ Progress: [=========░] 91% (v1.0 complete, Phases 9-10 of v1.1 done)
 |-------|-------|--------|
 | 09 | 3 | Complete |
 | 10 | 2 | Complete |
-| 11 | 2 | Not started |
+| 11 | 2 | Complete |
 | 12 | 1 | Not started |
 
 ## Accumulated Context
@@ -51,6 +51,12 @@ All v1.0 decisions captured with outcomes.
 - Async clerkClient() pattern required for Clerk SDK v6 compatibility
 - Member removal deletes database record only (Clerk org membership preserved for MVP)
 - OWNER role protected from changes/removal; users cannot modify themselves
+
+**Phase 11 (Personal Settings):**
+- Critical SMS alerts cannot be disabled by users (forced enabled for security)
+- Phone number changes use immediate save (no debounce) for immediate feedback
+- Info banner explains org vs personal preference hierarchy upfront
+- Two-tier notification system complete: org controls what CAN be sent, user controls what they WANT to receive
 
 ### Pending Todos
 
@@ -69,9 +75,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Phase 10 (Staff Management) completed
+Stopped at: Phase 11 (Personal Settings) completed
 Resume file: None
-Next action: /gsd:plan-phase 11
+Next action: /gsd:plan-phase 12
 
 ---
-*Last updated: 2026-01-31 — Phase 10 complete*
+*Last updated: 2026-01-31 — Phase 11 complete*
