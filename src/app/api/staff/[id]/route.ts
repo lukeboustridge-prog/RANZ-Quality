@@ -77,21 +77,40 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { orgId } = await auth();
-    if (!orgId) {
+    const { userId, orgId } = await auth();
+    if (!userId || !orgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
+    const body = await req.json();
 
+    // Check if this is a role-only update (from staff-list) or full update (from user form)
+    const isRoleUpdate = body.role && Object.keys(body).length === 1;
+
+    // Find organization and verify admin role
     const organization = await db.organization.findUnique({
       where: { clerkOrgId: orgId },
+      include: {
+        members: {
+          where: { clerkUserId: userId },
+          select: { role: true },
+        },
+      },
     });
 
     if (!organization) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 }
+      );
+    }
+
+    const currentMember = organization.members[0];
+    if (!currentMember || !["OWNER", "ADMIN"].includes(currentMember.role)) {
+      return NextResponse.json(
+        { error: "Admin access required" },
+        { status: 403 }
       );
     }
 
@@ -106,64 +125,95 @@ export async function PUT(
       return NextResponse.json({ error: "Member not found" }, { status: 404 });
     }
 
-    const body = await req.json();
-    const data = updateMemberSchema.parse(body);
+    if (isRoleUpdate) {
+      // Role-only update from staff-list
+      const roleSchema = z.object({ role: z.enum(["ADMIN", "STAFF"]) });
+      const { role } = roleSchema.parse(body);
 
-    // Check if email already exists for another member
-    const emailConflict = await db.organizationMember.findFirst({
-      where: {
-        organizationId: organization.id,
-        email: data.email,
-        NOT: { id },
-      },
-    });
+      // Validation: Cannot change OWNER's role
+      if (existingMember.role === "OWNER") {
+        return NextResponse.json(
+          { error: "Cannot change owner role" },
+          { status: 403 }
+        );
+      }
 
-    if (emailConflict) {
-      return NextResponse.json(
-        { error: "Another member with this email already exists" },
-        { status: 400 }
+      // Validation: Cannot change own role
+      if (existingMember.clerkUserId === userId) {
+        return NextResponse.json(
+          { error: "Cannot change your own role" },
+          { status: 400 }
+        );
+      }
+
+      // Update role only
+      const member = await db.organizationMember.update({
+        where: { id },
+        data: { role },
+      });
+
+      revalidatePath("/settings");
+      return NextResponse.json(member);
+    } else {
+      // Full member update (existing logic)
+      const data = updateMemberSchema.parse(body);
+
+      // Check if email already exists for another member
+      const emailConflict = await db.organizationMember.findFirst({
+        where: {
+          organizationId: organization.id,
+          email: data.email,
+          NOT: { id },
+        },
+      });
+
+      if (emailConflict) {
+        return NextResponse.json(
+          { error: "Another member with this email already exists" },
+          { status: 400 }
+        );
+      }
+
+      const member = await db.organizationMember.update({
+        where: { id },
+        data: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone || null,
+          role: data.role,
+          lbpNumber: data.lbpNumber || null,
+          lbpClass: data.lbpClass || null,
+        },
+      });
+
+      // Log update to audit trail
+      await logMemberMutation(
+        "UPDATE",
+        id,
+        {
+          firstName: existingMember.firstName,
+          lastName: existingMember.lastName,
+          email: existingMember.email,
+          role: existingMember.role,
+          lbpNumber: existingMember.lbpNumber,
+        },
+        {
+          firstName: member.firstName,
+          lastName: member.lastName,
+          email: member.email,
+          role: member.role,
+          lbpNumber: member.lbpNumber,
+        },
+        { organizationId: organization.id }
       );
+
+      // Update compliance score
+      await updateOrganizationComplianceScore(organization.id);
+      revalidatePath('/dashboard');
+
+      return NextResponse.json(member);
     }
-
-    const member = await db.organizationMember.update({
-      where: { id },
-      data: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phone: data.phone || null,
-        role: data.role,
-        lbpNumber: data.lbpNumber || null,
-        lbpClass: data.lbpClass || null,
-      },
-    });
-
-    // Log update to audit trail
-    await logMemberMutation(
-      "UPDATE",
-      id,
-      {
-        firstName: existingMember.firstName,
-        lastName: existingMember.lastName,
-        email: existingMember.email,
-        role: existingMember.role,
-        lbpNumber: existingMember.lbpNumber,
-      },
-      {
-        firstName: member.firstName,
-        lastName: member.lastName,
-        email: member.email,
-        role: member.role,
-        lbpNumber: member.lbpNumber,
-      },
-      { organizationId: organization.id }
-    );
-
-    // Update compliance score
-    await updateOrganizationComplianceScore(organization.id);
-    revalidatePath('/dashboard');
-
-    return NextResponse.json(member);
   } catch (error) {
     console.error("Failed to update member:", error);
     if (error instanceof z.ZodError) {
@@ -184,21 +234,36 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { orgId } = await auth();
-    if (!orgId) {
+    const { userId, orgId } = await auth();
+    if (!userId || !orgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
 
+    // Find organization and verify admin role
     const organization = await db.organization.findUnique({
       where: { clerkOrgId: orgId },
+      include: {
+        members: {
+          where: { clerkUserId: userId },
+          select: { role: true },
+        },
+      },
     });
 
     if (!organization) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 }
+      );
+    }
+
+    const currentMember = organization.members[0];
+    if (!currentMember || !["OWNER", "ADMIN"].includes(currentMember.role)) {
+      return NextResponse.json(
+        { error: "Admin access required" },
+        { status: 403 }
       );
     }
 
@@ -213,10 +278,18 @@ export async function DELETE(
       return NextResponse.json({ error: "Member not found" }, { status: 404 });
     }
 
-    // Prevent deleting the owner
+    // Validation: Cannot remove OWNER
     if (member.role === "OWNER") {
       return NextResponse.json(
-        { error: "Cannot remove the organization owner" },
+        { error: "Cannot remove organization owner" },
+        { status: 403 }
+      );
+    }
+
+    // Validation: Cannot remove self
+    if (member.clerkUserId === userId) {
+      return NextResponse.json(
+        { error: "Cannot remove yourself" },
         { status: 400 }
       );
     }
@@ -240,8 +313,12 @@ export async function DELETE(
     // Update compliance score
     await updateOrganizationComplianceScore(organization.id);
     revalidatePath('/dashboard');
+    revalidatePath('/settings');
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      message: "Member removed"
+    });
   } catch (error) {
     console.error("Failed to delete member:", error);
     return NextResponse.json(

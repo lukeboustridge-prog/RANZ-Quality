@@ -30,13 +30,20 @@ const createMemberSchema = z.object({
 
 export async function GET() {
   try {
-    const { orgId } = await auth();
-    if (!orgId) {
+    const { userId, orgId } = await auth();
+    if (!userId || !orgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Find organization and verify admin role
     const organization = await db.organization.findUnique({
       where: { clerkOrgId: orgId },
+      include: {
+        members: {
+          where: { clerkUserId: userId },
+          select: { role: true },
+        },
+      },
     });
 
     if (!organization) {
@@ -46,12 +53,46 @@ export async function GET() {
       );
     }
 
-    const members = await db.organizationMember.findMany({
+    const currentMember = organization.members[0];
+    if (!currentMember || !["OWNER", "ADMIN"].includes(currentMember.role)) {
+      return NextResponse.json(
+        { error: "Admin access required" },
+        { status: 403 }
+      );
+    }
+
+    // Query all members with sorting
+    const allMembers = await db.organizationMember.findMany({
       where: { organizationId: organization.id },
-      orderBy: [{ role: "asc" }, { firstName: "asc" }],
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        role: true,
+        lbpNumber: true,
+        lbpVerified: true,
+        clerkUserId: true,
+        createdAt: true,
+      },
+      orderBy: [
+        { role: "asc" },
+        { firstName: "asc" },
+      ],
     });
 
-    return NextResponse.json(members);
+    // Sort OWNER first manually
+    const sortedMembers = [...allMembers].sort((a, b) => {
+      const roleOrder = { OWNER: 0, ADMIN: 1, STAFF: 2 };
+      const roleComparison = roleOrder[a.role as keyof typeof roleOrder] - roleOrder[b.role as keyof typeof roleOrder];
+      if (roleComparison !== 0) return roleComparison;
+      return a.firstName.localeCompare(b.firstName);
+    });
+
+    return NextResponse.json({
+      members: sortedMembers,
+      currentUserId: userId,
+    });
   } catch (error) {
     console.error("Failed to fetch members:", error);
     return NextResponse.json(
