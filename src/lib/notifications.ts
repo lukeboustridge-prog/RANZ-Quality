@@ -7,8 +7,194 @@ import {
   type NotificationChannel,
   type NotificationPriority,
 } from "@/types";
+import type { NotificationPreference, OrganizationNotificationPreference } from "@prisma/client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Map notification types to user preference fields
+const NOTIFICATION_TYPE_TO_EMAIL_PREF: Record<NotificationType, keyof NotificationPreference | null> = {
+  INSURANCE_EXPIRY: "emailInsurance",
+  INSURANCE_EXPIRED: "emailInsurance",
+  LBP_EXPIRY: null,           // Critical - always send
+  LBP_STATUS_CHANGE: null,    // Critical - always send
+  AUDIT_SCHEDULED: "emailAudit",
+  AUDIT_REMINDER: "emailAudit",
+  AUDIT_COMPLETED: "emailAudit",
+  CAPA_DUE: "emailCompliance",
+  CAPA_OVERDUE: "emailCompliance",
+  COMPLIANCE_ALERT: "emailCompliance",
+  DOCUMENT_REVIEW_DUE: "emailCompliance",
+  TESTIMONIAL_REQUEST: "emailNewsletter",
+  TESTIMONIAL_RECEIVED: "emailNewsletter",
+  TIER_CHANGE: null,          // System - always send
+  WELCOME: null,              // System - always send
+  SYSTEM: null,               // System - always send
+};
+
+const NOTIFICATION_TYPE_TO_SMS_PREF: Record<NotificationType, keyof NotificationPreference | null> = {
+  INSURANCE_EXPIRY: "smsInsurance",
+  INSURANCE_EXPIRED: "smsInsurance",
+  LBP_EXPIRY: "smsCritical",     // Maps to critical but forced on
+  LBP_STATUS_CHANGE: "smsCritical", // Maps to critical but forced on
+  AUDIT_SCHEDULED: "smsAudit",
+  AUDIT_REMINDER: "smsAudit",
+  AUDIT_COMPLETED: "smsAudit",
+  CAPA_DUE: "smsCritical",       // Urgent CAPA is critical
+  CAPA_OVERDUE: "smsCritical",   // Overdue CAPA is critical
+  COMPLIANCE_ALERT: "smsCritical", // Compliance alerts are critical
+  DOCUMENT_REVIEW_DUE: null,     // No SMS for document review
+  TESTIMONIAL_REQUEST: null,     // No SMS for testimonials
+  TESTIMONIAL_RECEIVED: null,    // No SMS for testimonials
+  TIER_CHANGE: "smsCritical",    // Tier changes are important
+  WELCOME: null,                 // No SMS for welcome
+  SYSTEM: "smsCritical",         // System alerts are critical
+};
+
+// Map notification types to organization preference fields
+const NOTIFICATION_TYPE_TO_ORG_EMAIL_PREF: Record<NotificationType, keyof OrganizationNotificationPreference | null> = {
+  INSURANCE_EXPIRY: "emailInsuranceAlerts",
+  INSURANCE_EXPIRED: "emailInsuranceAlerts",
+  LBP_EXPIRY: null,              // Critical - always send
+  LBP_STATUS_CHANGE: null,       // Critical - always send
+  AUDIT_SCHEDULED: "emailAuditAlerts",
+  AUDIT_REMINDER: "emailAuditAlerts",
+  AUDIT_COMPLETED: "emailAuditAlerts",
+  CAPA_DUE: "emailComplianceAlerts",
+  CAPA_OVERDUE: "emailComplianceAlerts",
+  COMPLIANCE_ALERT: "emailComplianceAlerts",
+  DOCUMENT_REVIEW_DUE: "emailComplianceAlerts",
+  TESTIMONIAL_REQUEST: "emailSystemAlerts",
+  TESTIMONIAL_RECEIVED: "emailSystemAlerts",
+  TIER_CHANGE: "emailSystemAlerts",
+  WELCOME: "emailSystemAlerts",
+  SYSTEM: "emailSystemAlerts",
+};
+
+const NOTIFICATION_TYPE_TO_ORG_SMS_PREF: Record<NotificationType, keyof OrganizationNotificationPreference | null> = {
+  INSURANCE_EXPIRY: "smsInsuranceAlerts",
+  INSURANCE_EXPIRED: "smsInsuranceAlerts",
+  LBP_EXPIRY: "smsCriticalAlerts",
+  LBP_STATUS_CHANGE: "smsCriticalAlerts",
+  AUDIT_SCHEDULED: "smsAuditAlerts",
+  AUDIT_REMINDER: "smsAuditAlerts",
+  AUDIT_COMPLETED: "smsAuditAlerts",
+  CAPA_DUE: "smsCriticalAlerts",
+  CAPA_OVERDUE: "smsCriticalAlerts",
+  COMPLIANCE_ALERT: "smsCriticalAlerts",
+  DOCUMENT_REVIEW_DUE: null,
+  TESTIMONIAL_REQUEST: null,
+  TESTIMONIAL_RECEIVED: null,
+  TIER_CHANGE: "smsCriticalAlerts",
+  WELCOME: null,
+  SYSTEM: "smsCriticalAlerts",
+};
+
+/**
+ * Check if a notification should be sent based on two-tier preference hierarchy:
+ * 1. Critical notifications (LBP status changes, smsCritical) always send
+ * 2. Organization must have the notification type enabled
+ * 3. User must have opted in (or not opted out)
+ *
+ * Returns: { shouldSend: boolean, reason?: string }
+ */
+async function shouldSendNotification(params: {
+  organizationId?: string;
+  userId?: string;
+  type: NotificationType;
+  channel: NotificationChannel;
+  priority?: NotificationPriority;
+}): Promise<{ shouldSend: boolean; reason?: string }> {
+  const { organizationId, userId, type, channel, priority } = params;
+
+  // IN_APP and PUSH notifications always allowed (no opt-out)
+  if (channel === "IN_APP" || channel === "PUSH") {
+    return { shouldSend: true };
+  }
+
+  // CRITICAL priority notifications always send (security trumps preferences)
+  if (priority === "CRITICAL") {
+    return { shouldSend: true };
+  }
+
+  // Check if this notification type is critical (null mapping = always send)
+  const emailPrefKey = NOTIFICATION_TYPE_TO_EMAIL_PREF[type];
+  const smsPrefKey = NOTIFICATION_TYPE_TO_SMS_PREF[type];
+
+  if (channel === "EMAIL" && emailPrefKey === null) {
+    return { shouldSend: true }; // Critical email, always send
+  }
+  if (channel === "SMS" && smsPrefKey === null) {
+    return { shouldSend: true }; // Critical SMS, always send
+  }
+
+  // SMS critical (smsCritical) is forced on - always send regardless of user preference
+  if (channel === "SMS" && smsPrefKey === "smsCritical") {
+    return { shouldSend: true };
+  }
+
+  // Step 2: Check organization preferences (if organizationId provided)
+  if (organizationId) {
+    const orgPrefs = await db.organizationNotificationPreference.findUnique({
+      where: { organizationId },
+    });
+
+    if (orgPrefs) {
+      // Check master channel enable
+      if (channel === "EMAIL" && !orgPrefs.emailEnabled) {
+        return { shouldSend: false, reason: "Organization has email notifications disabled" };
+      }
+      if (channel === "SMS" && !orgPrefs.smsEnabled) {
+        return { shouldSend: false, reason: "Organization has SMS notifications disabled" };
+      }
+
+      // Check specific notification type for org
+      const orgEmailPrefKey = NOTIFICATION_TYPE_TO_ORG_EMAIL_PREF[type];
+      const orgSmsPrefKey = NOTIFICATION_TYPE_TO_ORG_SMS_PREF[type];
+
+      if (channel === "EMAIL" && orgEmailPrefKey && !orgPrefs[orgEmailPrefKey]) {
+        return { shouldSend: false, reason: `Organization has ${type} email notifications disabled` };
+      }
+      if (channel === "SMS" && orgSmsPrefKey && !orgPrefs[orgSmsPrefKey]) {
+        return { shouldSend: false, reason: `Organization has ${type} SMS notifications disabled` };
+      }
+    }
+    // If no org prefs record, default to allowing (org hasn't configured preferences)
+  }
+
+  // Step 3: Check user preferences (if userId provided)
+  if (userId) {
+    const userPrefs = await db.notificationPreference.findUnique({
+      where: { userId },
+    });
+
+    if (userPrefs) {
+      // Check master channel enable
+      if (channel === "EMAIL" && !userPrefs.emailEnabled) {
+        return { shouldSend: false, reason: "User has email notifications disabled" };
+      }
+      if (channel === "SMS" && !userPrefs.smsEnabled) {
+        return { shouldSend: false, reason: "User has SMS notifications disabled" };
+      }
+
+      // Check specific notification type for user
+      if (channel === "EMAIL" && emailPrefKey) {
+        const prefValue = userPrefs[emailPrefKey as keyof NotificationPreference];
+        if (prefValue === false) {
+          return { shouldSend: false, reason: `User has opted out of ${type} email notifications` };
+        }
+      }
+      if (channel === "SMS" && smsPrefKey && smsPrefKey !== "smsCritical") {
+        const prefValue = userPrefs[smsPrefKey as keyof NotificationPreference];
+        if (prefValue === false) {
+          return { shouldSend: false, reason: `User has opted out of ${type} SMS notifications` };
+        }
+      }
+    }
+    // If no user prefs record, default to allowing (user hasn't configured preferences)
+  }
+
+  return { shouldSend: true };
+}
 
 interface CreateNotificationParams {
   organizationId?: string;
