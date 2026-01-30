@@ -164,8 +164,10 @@ function clerkMiddlewareHandler(req: NextRequest) {
     // Check admin routes for RANZ role
     if (isAdminRoute(request)) {
       const sessionClaims = authResult.sessionClaims;
+      // Check both metadata (from session token template) and publicMetadata (direct from user)
       const metadata = sessionClaims?.metadata as { role?: string } | undefined;
-      const userRole = metadata?.role;
+      const publicMetadata = sessionClaims?.publicMetadata as { role?: string } | undefined;
+      const userRole = metadata?.role || publicMetadata?.role;
 
       if (userRole !== "ranz:admin" && userRole !== "ranz:auditor") {
         const adminRedirect = NextResponse.redirect(new URL("/dashboard", request.url));
