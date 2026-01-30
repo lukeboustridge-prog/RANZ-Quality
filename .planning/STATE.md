@@ -53,6 +53,10 @@ All v1.0 decisions captured with outcomes.
 - OWNER role protected from changes/removal; users cannot modify themselves
 
 **Phase 11 (Personal Settings):**
+- Use Clerk's UserProfile component for personal profile management (battle-tested security)
+- Conditional section rendering based on user role (isAdmin flag)
+- Remove redirect for non-admin users - all users access settings page
+- Single settings page with role-based sections (not separate routes)
 - Critical SMS alerts cannot be disabled by users (forced enabled for security)
 - Phone number changes use immediate save (no debounce) for immediate feedback
 - Info banner explains org vs personal preference hierarchy upfront
