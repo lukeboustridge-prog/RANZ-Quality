@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 11 of 12 (Personal Settings)
-Plan: 2 of 2 complete
-Status: Phase complete
-Last activity: 2026-01-31 - Completed 11-02-PLAN.md (Personal Notification Settings)
+Plan: 2 of 2 complete (plus 1 gap closure)
+Status: Phase complete with gap closure
+Last activity: 2026-01-30 - Completed 11-03-PLAN.md (Notification Preference Enforcement)
 
 Progress: [=========░] 95% (v1.0 complete, Phases 9-11 of v1.1 done)
 
@@ -25,7 +25,7 @@ Progress: [=========░] 95% (v1.0 complete, Phases 9-11 of v1.1 done)
 - Phases: 8
 
 **v1.1 Milestone (current):**
-- Total plans completed: 7
+- Total plans completed: 8 (including gap closures)
 - Phases: 4 (9-12)
 - Estimated plans: 8
 
@@ -35,7 +35,7 @@ Progress: [=========░] 95% (v1.0 complete, Phases 9-11 of v1.1 done)
 |-------|-------|--------|
 | 09 | 3 | Complete |
 | 10 | 2 | Complete |
-| 11 | 2 | Complete |
+| 11 | 2 (+1 gap) | Complete |
 | 12 | 1 | Not started |
 
 ## Accumulated Context
@@ -61,6 +61,10 @@ All v1.0 decisions captured with outcomes.
 - Phone number changes use immediate save (no debounce) for immediate feedback
 - Info banner explains org vs personal preference hierarchy upfront
 - Two-tier notification system complete: org controls what CAN be sent, user controls what they WANT to receive
+- Gap closure: Notification system checks preferences before sending (users/orgs can now actually opt out)
+- Preference enforcement uses two-tier hierarchy: org prefs checked before user prefs
+- Critical notifications (LBP changes, CRITICAL priority, smsCritical) always bypass preferences
+- Skipped notifications return success=true with reason (respecting preferences is not an error)
 
 ### Pending Todos
 
@@ -78,10 +82,10 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-31
-Stopped at: Phase 11 (Personal Settings) completed
+Last session: 2026-01-30
+Stopped at: Phase 11 (Personal Settings) complete with gap closure
 Resume file: None
 Next action: /gsd:plan-phase 12
 
 ---
-*Last updated: 2026-01-31 — Phase 11 complete*
+*Last updated: 2026-01-30 — Phase 11 gap closure complete (11-03: Notification Preference Enforcement)*
