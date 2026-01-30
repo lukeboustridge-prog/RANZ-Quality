@@ -87,12 +87,6 @@ const isCronRoute = createRouteMatcher(["/api/cron(.*)"]);
 const AUTH_MODE = process.env.AUTH_MODE || 'clerk';
 
 export default async function middleware(req: NextRequest) {
-  // Allow public routes without auth, but add security headers
-  if (isPublicRoute(req)) {
-    const response = NextResponse.next();
-    return addSecurityHeaders(response);
-  }
-
   // Allow cron routes with secret verification (handled in route)
   if (isCronRoute(req)) {
     const response = NextResponse.next();
@@ -100,10 +94,15 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (AUTH_MODE === 'custom') {
-    // Custom auth is primary
+    // Custom auth is primary - handle public routes separately
+    if (isPublicRoute(req)) {
+      const response = NextResponse.next();
+      return addSecurityHeaders(response);
+    }
     return customAuthMiddleware(req);
   } else {
-    // Clerk is primary (default)
+    // Clerk is primary (default) - ALWAYS run clerkMiddleware
+    // Clerk handles public routes internally via the route matcher
     return clerkMiddlewareHandler(req);
   }
 }
@@ -152,6 +151,13 @@ async function customAuthMiddleware(req: NextRequest): Promise<NextResponse> {
 // Wrap clerkMiddleware to maintain existing behavior
 function clerkMiddlewareHandler(req: NextRequest) {
   return clerkMiddleware(async (auth, request) => {
+    // Allow public routes without protection
+    if (isPublicRoute(request)) {
+      const response = NextResponse.next();
+      return addSecurityHeaders(response);
+    }
+
+    // Protect all other routes
     const authResult = await auth.protect();
 
     // Check admin routes for RANZ role
