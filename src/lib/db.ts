@@ -1,4 +1,3 @@
-import { neon } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "@prisma/client";
 
@@ -9,9 +8,9 @@ const globalForPrisma = globalThis as unknown as {
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL!;
 
-  // Use neon() HTTP query function for serverless
-  const sql = neon(connectionString);
-  const adapter = new PrismaNeon(sql);
+  // Use PrismaNeon with connection string config
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const adapter = new PrismaNeon({ connectionString } as any);
 
   return new PrismaClient({
     adapter,
