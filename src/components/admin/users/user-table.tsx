@@ -57,7 +57,7 @@ export const userColumns: ColumnDef<UserRow>[] = [
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("email")}</div>
+      <div className="font-medium">{String(row.getValue("email") ?? '')}</div>
     ),
   },
   {
@@ -65,7 +65,7 @@ export const userColumns: ColumnDef<UserRow>[] = [
     header: "Name",
     cell: ({ row }) => (
       <div>
-        {row.original.firstName} {row.original.lastName}
+        {String(row.original.firstName ?? '')} {String(row.original.lastName ?? '')}
       </div>
     ),
   },
@@ -80,8 +80,9 @@ export const userColumns: ColumnDef<UserRow>[] = [
     cell: ({ row }) => <UserStatusBadge status={row.getValue("status")} />,
   },
   {
-    accessorKey: "company",
+    id: "company",
     header: "Company",
+    accessorFn: (row) => row.company?.name ?? null,
     cell: ({ row }) => (
       <span className="text-slate-600">
         {row.original.company?.name || "\u2014"}
@@ -96,11 +97,15 @@ export const userColumns: ColumnDef<UserRow>[] = [
       if (!date) {
         return <span className="text-slate-400">Never</span>;
       }
-      return (
-        <span className="text-slate-600">
-          {format(new Date(date as string), "MMM d, yyyy HH:mm")}
-        </span>
-      );
+      try {
+        return (
+          <span className="text-slate-600">
+            {format(new Date(date as string), "MMM d, yyyy HH:mm")}
+          </span>
+        );
+      } catch {
+        return <span className="text-slate-400">Invalid date</span>;
+      }
     },
   },
 ];

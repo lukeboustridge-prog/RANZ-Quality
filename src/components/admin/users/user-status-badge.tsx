@@ -45,7 +45,17 @@ export function UserStatusBadge({
   showIcon = true,
   className,
 }: UserStatusBadgeProps) {
+  // Defensive check for invalid status
   const config = statusConfig[status];
+
+  if (!config) {
+    return (
+      <Badge variant="outline" className={className}>
+        {String(status || 'Unknown')}
+      </Badge>
+    );
+  }
+
   const Icon = config.icon;
 
   return (

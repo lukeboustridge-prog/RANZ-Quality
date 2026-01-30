@@ -45,7 +45,16 @@ interface UserTypeBadgeProps {
 }
 
 export function UserTypeBadge({ userType, className }: UserTypeBadgeProps) {
+  // Defensive check for invalid userType
   const config = typeConfig[userType];
+
+  if (!config) {
+    return (
+      <Badge className={`bg-gray-400 text-white border-transparent ${className ?? ""}`}>
+        {String(userType || 'Unknown')}
+      </Badge>
+    );
+  }
 
   return (
     <Badge className={`${config.colorClass} ${className ?? ""}`}>
