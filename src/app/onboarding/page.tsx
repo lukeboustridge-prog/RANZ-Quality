@@ -22,11 +22,14 @@ export default function OnboardingPage() {
     phone: "",
   });
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!createOrganization || !setActive) return;
 
     setIsLoading(true);
+    setError(null);
 
     try {
       // Create Clerk organization
@@ -34,11 +37,14 @@ export default function OnboardingPage() {
         name: formData.businessName,
       });
 
-      // Set it as active
+      // Set it as active and wait for session to update
       await setActive({ organization: org.id });
 
+      // Small delay to ensure Clerk session propagates
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       // Create the organization in our database
-      await fetch("/api/organizations", {
+      const response = await fetch("/api/organizations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -51,9 +57,15 @@ export default function OnboardingPage() {
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to create organization: ${response.status}`);
+      }
+
       router.push("/dashboard");
     } catch (error) {
       console.error("Failed to create organization:", error);
+      setError(error instanceof Error ? error.message : "Failed to create organization. Please try again.");
       setIsLoading(false);
     }
   };
@@ -77,6 +89,11 @@ export default function OnboardingPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {error}
+              </div>
+            )}
             <div>
               <Label htmlFor="businessName">Business Name *</Label>
               <Input
