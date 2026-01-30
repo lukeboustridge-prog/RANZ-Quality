@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
@@ -18,7 +19,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE || process.env.AUTH_MODE || 'clerk';
+// Only use NEXT_PUBLIC_ variable for client components to avoid hydration mismatch
+const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE || 'clerk';
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -36,6 +38,12 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [mounted, setMounted] = React.useState(false);
+
+  // Prevent hydration mismatch by waiting for client mount
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -80,19 +88,24 @@ export default function AdminLayout({
               })}
             </nav>
             <div className="h-6 w-px bg-slate-700" />
-            {AUTH_MODE === 'clerk' ? (
-              <UserButton afterSignOutUrl="/" />
+            {/* Only render auth UI after mount to prevent hydration mismatch */}
+            {mounted ? (
+              AUTH_MODE === 'clerk' ? (
+                <UserButton afterSignOutUrl="/" />
+              ) : (
+                <button
+                  onClick={() => {
+                    fetch('/api/auth/logout', { method: 'POST' })
+                      .then(() => window.location.href = '/sign-in');
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-md transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </button>
+              )
             ) : (
-              <button
-                onClick={() => {
-                  fetch('/api/auth/logout', { method: 'POST' })
-                    .then(() => window.location.href = '/sign-in');
-                }}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-md transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign Out
-              </button>
+              <div className="w-8 h-8 rounded-full bg-slate-700 animate-pulse" />
             )}
           </div>
         </div>
