@@ -40,12 +40,16 @@ export const clerkAuth = {
       // Get organization membership for role
       const { orgId, orgRole } = await auth();
 
+      // Check publicMetadata for RANZ admin role (takes priority over org role)
+      const publicMetadataRole = (user.publicMetadata as { role?: string })?.role;
+      const effectiveRole = publicMetadataRole || orgRole || undefined;
+
       return {
         id: user.id,
         email: user.emailAddresses[0]?.emailAddress || '',
         firstName: user.firstName || '',
         lastName: user.lastName || '',
-        userType: mapClerkRole(orgRole || undefined),
+        userType: mapClerkRole(effectiveRole),
         companyId: orgId || undefined,
         status: 'ACTIVE',
         mustChangePassword: false, // Clerk handles password management

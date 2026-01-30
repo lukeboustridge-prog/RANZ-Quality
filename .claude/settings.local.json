@@ -23,7 +23,17 @@
       "WebSearch",
       "Skill(gsd:plan-phase)",
       "Bash(pnpm tsc:*)",
-      "Skill(gsd:audit-milestone)"
+      "Skill(gsd:audit-milestone)",
+      "Bash(npx vercel logs:*)",
+      "Bash(npx vercel:*)",
+      "Bash(curl:*)",
+      "Bash(npm run build:*)",
+      "Bash(node:*)",
+      "Bash(vercel env add:*)",
+      "Bash(echo:*)",
+      "Bash(vercel env ls:*)",
+      "Bash(vercel:*)",
+      "Bash(git restore:*)"
     ]
   }
 }

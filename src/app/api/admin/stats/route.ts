@@ -1,19 +1,13 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { authenticateAdminRequest, adminAuthErrorResponse } from "@/lib/auth/admin-api";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const { userId, sessionClaims } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Verify admin role
-    const metadata = sessionClaims?.metadata as { role?: string } | undefined;
-    const userRole = metadata?.role;
-    if (userRole !== "ranz:admin" && userRole !== "ranz:auditor") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // Authenticate admin (works with both Clerk and custom auth)
+    const authResult = await authenticateAdminRequest(request, ['RANZ_ADMIN', 'RANZ_STAFF', 'RANZ_INSPECTOR']);
+    if (!authResult.success) {
+      return adminAuthErrorResponse(authResult);
     }
 
     const now = new Date();
