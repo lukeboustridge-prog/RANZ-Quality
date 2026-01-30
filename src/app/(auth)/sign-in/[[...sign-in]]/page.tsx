@@ -33,8 +33,9 @@ function CustomLoginForm() {
         return;
       }
 
-      // Redirect to dashboard on success
-      router.push('/dashboard');
+      // Redirect based on user type
+      const isRanzAdmin = ['RANZ_ADMIN', 'RANZ_STAFF', 'RANZ_INSPECTOR'].includes(data.user?.userType);
+      router.push(isRanzAdmin ? '/admin' : '/dashboard');
     } catch (err) {
       setError('An error occurred. Please try again.');
     } finally {
