@@ -36,6 +36,7 @@ export default function UsersTableContent() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [filters, setFilters] = React.useState<UserFilters>(defaultFilters);
+  const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
 
   // Debounce search
   const [debouncedSearch, setDebouncedSearch] = React.useState(filters.search);
@@ -127,6 +128,11 @@ export default function UsersTableContent() {
     []
   );
 
+  // Handle row selection changes
+  const handleSelectionChange = (selectedRows: UserRow[]) => {
+    setSelectedIds(selectedRows.map((row) => row.id));
+  };
+
   const handleRefresh = () => {
     setLoading(true);
     setError(null);
@@ -182,12 +188,20 @@ export default function UsersTableContent() {
         </span>
       </div>
 
+      {/* Selection count (simple display, no BatchActions) */}
+      {selectedIds.length > 0 && (
+        <div className="p-2 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
+          {selectedIds.length} user(s) selected
+        </div>
+      )}
+
       {/* DataTable with TanStack Table */}
       <DataTable
         columns={columnsWithSelect}
         data={users}
         isLoading={loading}
         onRowClick={handleRowClick}
+        onSelectionChange={handleSelectionChange}
         pageSize={20}
       />
     </div>
