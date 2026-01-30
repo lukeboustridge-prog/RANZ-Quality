@@ -64,11 +64,11 @@ Plans:
   3. Org admin can remove a staff member from the organization
   4. Org admin can change a staff member's role (admin vs member)
   5. Staff member sees their role reflected in navigation and permissions
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 10-01: Staff invitation flow via Clerk
-- [ ] 10-02: Staff removal and role management
+- [ ] 10-01-PLAN.md - Staff invitation flow via Clerk (invitation API + UI)
+- [ ] 10-02-PLAN.md - Staff list, role management, and member removal
 
 ### Phase 11: Personal Settings
 **Goal**: Users can manage their own profile information and notification preferences independent of their organization
@@ -110,7 +110,7 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 9. Organization Profile | v1.1 | 3/3 | Complete | 2026-01-31 |
-| 10. Staff Management | v1.1 | 0/2 | Not started | - |
+| 10. Staff Management | v1.1 | 0/2 | Planned | - |
 | 11. Personal Settings | v1.1 | 0/2 | Not started | - |
 | 12. Account Security | v1.1 | 0/1 | Not started | - |
 
@@ -121,4 +121,4 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 
 ---
 *Created: 2026-01-31*
-*Last updated: 2026-01-31 after Phase 9 execution*
+*Last updated: 2026-01-31 after Phase 10 planning*
