@@ -11,8 +11,6 @@ import {
   type UserFilters,
   type CompanyOption,
 } from "@/components/admin/users/user-filters";
-// BatchActions temporarily disabled for debugging
-// import { BatchActions } from "@/components/admin/users/batch-actions";
 
 // UserRow type is imported from user-table.tsx
 
@@ -38,7 +36,6 @@ export default function UsersTableContent() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [filters, setFilters] = React.useState<UserFilters>(defaultFilters);
-  const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
 
   // Debounce search
   const [debouncedSearch, setDebouncedSearch] = React.useState(filters.search);
@@ -130,25 +127,6 @@ export default function UsersTableContent() {
     []
   );
 
-  // Handle row selection changes
-  const handleSelectionChange = (selectedRows: UserRow[]) => {
-    setSelectedIds(selectedRows.map((row) => row.id));
-  };
-
-  // Handle batch action result
-  const handleBatchAction = (result: {
-    success: boolean;
-    action: string;
-    updated: number;
-    failed: number;
-    error?: string;
-  }) => {
-    if (result.success) {
-      setSelectedIds([]);
-      handleRefresh();
-    }
-  };
-
   const handleRefresh = () => {
     setLoading(true);
     setError(null);
@@ -204,20 +182,12 @@ export default function UsersTableContent() {
         </span>
       </div>
 
-      {/* Batch actions toolbar - temporarily disabled for debugging */}
-      {/* <BatchActions
-        selectedIds={selectedIds}
-        onAction={handleBatchAction}
-        onClear={() => setSelectedIds([])}
-      /> */}
-
       {/* DataTable with TanStack Table */}
       <DataTable
         columns={columnsWithSelect}
         data={users}
         isLoading={loading}
         onRowClick={handleRowClick}
-        onSelectionChange={handleSelectionChange}
         pageSize={20}
       />
     </div>
