@@ -11,7 +11,8 @@ import {
   type UserFilters,
   type CompanyOption,
 } from "@/components/admin/users/user-filters";
-import { BatchActions } from "@/components/admin/users/batch-actions";
+// BatchActions temporarily disabled for debugging
+// import { BatchActions } from "@/components/admin/users/batch-actions";
 
 // UserRow type is imported from user-table.tsx
 
@@ -203,12 +204,12 @@ export default function UsersTableContent() {
         </span>
       </div>
 
-      {/* Batch actions toolbar */}
-      <BatchActions
+      {/* Batch actions toolbar - temporarily disabled for debugging */}
+      {/* <BatchActions
         selectedIds={selectedIds}
         onAction={handleBatchAction}
         onClear={() => setSelectedIds([])}
-      />
+      /> */}
 
       {/* DataTable with TanStack Table */}
       <DataTable
