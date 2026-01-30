@@ -4,26 +4,15 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/admin/shared/data-table";
+import { userColumns, selectColumn, type UserRow } from "@/components/admin/users/user-table";
 import {
   UserFiltersComponent,
   type UserFilters,
   type CompanyOption,
 } from "@/components/admin/users/user-filters";
 
-/**
- * User data structure from API.
- */
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  userType: string;
-  status: string;
-  company: { id: string; name: string } | null;
-  lastLoginAt: string | null;
-  createdAt: string;
-}
+// UserRow type is imported from user-table.tsx
 
 /**
  * Default filter state.
@@ -41,7 +30,7 @@ const defaultFilters: UserFilters = {
  */
 export default function UsersTableContent() {
   const router = useRouter();
-  const [users, setUsers] = React.useState<User[]>([]);
+  const [users, setUsers] = React.useState<UserRow[]>([]);
   const [companies, setCompanies] = React.useState<CompanyOption[]>([]);
   const [isLoadingCompanies, setIsLoadingCompanies] = React.useState(true);
   const [loading, setLoading] = React.useState(true);
@@ -127,6 +116,17 @@ export default function UsersTableContent() {
     setFilters(newFilters);
   };
 
+  // Handle row click - navigate to user detail
+  const handleRowClick = (row: { original: UserRow }) => {
+    router.push(`/admin/users/${row.original.id}`);
+  };
+
+  // Build columns with selection
+  const columnsWithSelect = React.useMemo(
+    () => [selectColumn, ...userColumns],
+    []
+  );
+
   const handleRefresh = () => {
     setLoading(true);
     setError(null);
@@ -182,61 +182,14 @@ export default function UsersTableContent() {
         </span>
       </div>
 
-      {/* Simple table - keeping HTML table for now */}
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b">
-            <tr>
-              <th className="px-4 py-3 text-left font-medium text-slate-600">Email</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-600">Name</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-600">Type</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-600">Status</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-600">Company</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
-                  No users found
-                </td>
-              </tr>
-            ) : (
-              users.map((user) => (
-                <tr
-                  key={String(user.id)}
-                  className="border-b hover:bg-slate-50 cursor-pointer"
-                  onClick={() => router.push(`/admin/users/${String(user.id)}`)}
-                >
-                  <td className="px-4 py-3 font-medium">
-                    {String(user.email ?? "")}
-                  </td>
-                  <td className="px-4 py-3">
-                    {String(user.firstName ?? "")} {String(user.lastName ?? "")}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-1 bg-slate-100 rounded text-xs">
-                      {String(user.userType ?? "Unknown")}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      user.status === "ACTIVE"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-slate-100 text-slate-700"
-                    }`}>
-                      {String(user.status ?? "Unknown")}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-slate-600">
-                    {user.company ? String(user.company.name ?? "Unknown") : "—"}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {/* DataTable with TanStack Table */}
+      <DataTable
+        columns={columnsWithSelect}
+        data={users}
+        isLoading={loading}
+        onRowClick={handleRowClick}
+        pageSize={20}
+      />
     </div>
   );
 }
