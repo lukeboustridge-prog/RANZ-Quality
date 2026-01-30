@@ -9,8 +9,8 @@ Requirements for Settings milestone. Enables members and staff to manage their o
 
 ### Organization Settings
 
-- [ ] **ORG-01**: Org admin can update company profile (trading name, contact details, logo, description)
-- [ ] **ORG-02**: Org admin can configure organization notification preferences (which alerts, email vs SMS, frequency)
+- [x] **ORG-01**: Org admin can update company profile (trading name, contact details, logo, description)
+- [x] **ORG-02**: Org admin can configure organization notification preferences (which alerts, email vs SMS, frequency)
 - [ ] **ORG-03**: Org admin can invite new staff members via email invitation
 - [ ] **ORG-04**: Org admin can remove staff members from organization
 - [ ] **ORG-05**: Org admin can assign/change staff roles
@@ -59,8 +59,8 @@ Deferred to later milestones (from PROJECT.md Out of Scope):
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ORG-01 | Phase 9 | Pending |
-| ORG-02 | Phase 9 | Pending |
+| ORG-01 | Phase 9 | Complete |
+| ORG-02 | Phase 9 | Complete |
 | ORG-03 | Phase 10 | Pending |
 | ORG-04 | Phase 10 | Pending |
 | ORG-05 | Phase 10 | Pending |
@@ -77,4 +77,4 @@ Deferred to later milestones (from PROJECT.md Out of Scope):
 
 ---
 *Requirements defined: 2026-01-31*
-*Last updated: 2026-01-31 after initial definition*
+*Last updated: 2026-01-31 after Phase 9 execution*

@@ -30,7 +30,7 @@ v1.0 delivered the core compliance management portal with:
 - Integer phases (9, 10, 11, 12): Planned milestone work
 - Decimal phases (9.1, 9.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 9: Organization Profile** - Company details and notification preferences
+- [x] **Phase 9: Organization Profile** - Company details and notification preferences
 - [ ] **Phase 10: Staff Management** - Invite, remove, and manage staff roles
 - [ ] **Phase 11: Personal Settings** - User profile and notification preferences
 - [ ] **Phase 12: Account Security** - Password, 2FA, and session management via Clerk
@@ -50,9 +50,9 @@ v1.0 delivered the core compliance management portal with:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 09-01-PLAN.md - Schema changes for org profile and notification preferences
-- [ ] 09-02-PLAN.md - Organization profile editing UI and API
-- [ ] 09-03-PLAN.md - Organization notification preferences UI and API
+- [x] 09-01-PLAN.md - Schema changes for org profile and notification preferences
+- [x] 09-02-PLAN.md - Organization profile editing UI and API
+- [x] 09-03-PLAN.md - Organization notification preferences UI and API
 
 ### Phase 10: Staff Management
 **Goal**: Org admins can manage their team by inviting new members, removing departed staff, and assigning appropriate roles
@@ -109,7 +109,7 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. Organization Profile | v1.1 | 0/3 | Planned | - |
+| 9. Organization Profile | v1.1 | 3/3 | Complete | 2026-01-31 |
 | 10. Staff Management | v1.1 | 0/2 | Not started | - |
 | 11. Personal Settings | v1.1 | 0/2 | Not started | - |
 | 12. Account Security | v1.1 | 0/1 | Not started | - |
@@ -121,4 +121,4 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 
 ---
 *Created: 2026-01-31*
-*Last updated: 2026-01-31*
+*Last updated: 2026-01-31 after Phase 9 execution*

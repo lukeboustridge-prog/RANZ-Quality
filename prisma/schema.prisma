@@ -41,6 +41,10 @@ model Organization {
   address String?
   city    String?
 
+  // Profile
+  description String?  // Company description for public verification
+  logoKey     String?  // R2 storage key for company logo
+
   // Relations
   members           OrganizationMember[]
   documents         Document[]
@@ -49,7 +53,8 @@ model Organization {
   capaRecords       CAPARecord[]
   assessments       ComplianceAssessment[]
   projects          Project[]
-  testimonials      Testimonial[]
+  testimonials           Testimonial[]
+  notificationPreference OrganizationNotificationPreference?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -836,6 +841,38 @@ model NotificationPreference {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+// ============================================================================
+// Organization Notification Preferences
+// ============================================================================
+
+model OrganizationNotificationPreference {
+  id             String @id @default(cuid())
+  organizationId String @unique
+
+  // Email routing preferences
+  emailEnabled          Boolean @default(true)
+  emailInsuranceAlerts  Boolean @default(true)
+  emailAuditAlerts      Boolean @default(true)
+  emailComplianceAlerts Boolean @default(true)
+  emailSystemAlerts     Boolean @default(true)
+
+  // SMS routing preferences
+  smsEnabled         Boolean @default(false)
+  smsInsuranceAlerts Boolean @default(true)
+  smsAuditAlerts     Boolean @default(false)
+  smsCriticalAlerts  Boolean @default(true)
+
+  // Override contact for org-level notifications
+  notificationEmail String?  // If different from org.email
+  notificationPhone String?  // For SMS notifications
+
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
 }
 
 // ============================================================================
