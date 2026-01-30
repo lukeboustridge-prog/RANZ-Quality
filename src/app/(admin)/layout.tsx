@@ -14,8 +14,11 @@ import {
   Shield,
   FileText,
   Activity,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE || process.env.AUTH_MODE || 'clerk';
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -77,7 +80,20 @@ export default function AdminLayout({
               })}
             </nav>
             <div className="h-6 w-px bg-slate-700" />
-            <UserButton afterSignOutUrl="/" />
+            {AUTH_MODE === 'clerk' ? (
+              <UserButton afterSignOutUrl="/" />
+            ) : (
+              <button
+                onClick={() => {
+                  fetch('/api/auth/logout', { method: 'POST' })
+                    .then(() => window.location.href = '/sign-in');
+                }}
+                className="flex items-center gap-2 px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-md transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </button>
+            )}
           </div>
         </div>
       </header>
