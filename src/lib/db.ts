@@ -1,3 +1,5 @@
+import { neon } from "@neondatabase/serverless";
+import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
@@ -5,7 +7,14 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
+  const connectionString = process.env.DATABASE_URL!;
+
+  // Use Neon serverless HTTP driver (no WebSocket needed)
+  const sql = neon(connectionString);
+  const adapter = new PrismaNeon(sql);
+
   return new PrismaClient({
+    adapter,
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]
