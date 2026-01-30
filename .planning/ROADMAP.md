@@ -47,11 +47,12 @@ v1.0 delivered the core compliance management portal with:
   3. Org admin can configure which notification types the organization receives
   4. Org admin can choose notification channels (email, SMS, or both) for organization alerts
   5. Non-admin staff cannot access organization settings
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 09-01: Organization profile editing UI and API
-- [ ] 09-02: Organization notification preferences
+- [ ] 09-01-PLAN.md - Schema changes for org profile and notification preferences
+- [ ] 09-02-PLAN.md - Organization profile editing UI and API
+- [ ] 09-03-PLAN.md - Organization notification preferences UI and API
 
 ### Phase 10: Staff Management
 **Goal**: Org admins can manage their team by inviting new members, removing departed staff, and assigning appropriate roles
@@ -108,14 +109,14 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. Organization Profile | v1.1 | 0/2 | Not started | - |
+| 9. Organization Profile | v1.1 | 0/3 | Planned | - |
 | 10. Staff Management | v1.1 | 0/2 | Not started | - |
 | 11. Personal Settings | v1.1 | 0/2 | Not started | - |
 | 12. Account Security | v1.1 | 0/1 | Not started | - |
 
 **Totals:**
 - Phases: 4
-- Plans: 7 (estimated)
+- Plans: 8 (estimated)
 - Requirements covered: 10/10
 
 ---
