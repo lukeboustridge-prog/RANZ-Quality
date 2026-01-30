@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { getSignedDownloadUrl } from "@/lib/r2";
 import { OrganizationProfileForm } from "@/components/settings/organization-profile-form";
 import { NotificationSettings } from "@/components/settings/notification-settings";
+import { StaffInvitationForm } from "@/components/settings/staff-invitation-form";
+import { PendingInvitations } from "@/components/settings/pending-invitations";
 
 export default async function SettingsPage() {
   const { userId, orgId } = await auth();
@@ -74,6 +76,22 @@ export default async function SettingsPage() {
             Notification Preferences
           </h2>
           <NotificationSettings />
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">
+            Staff Management
+          </h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Invite New Staff</h3>
+              <StaffInvitationForm />
+            </div>
+            <div className="border-t pt-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Pending Invitations</h3>
+              <PendingInvitations />
+            </div>
+          </div>
         </div>
       </div>
     </div>
