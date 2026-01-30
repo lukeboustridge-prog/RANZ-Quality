@@ -8,6 +8,7 @@ import { StaffInvitationForm } from "@/components/settings/staff-invitation-form
 import { PendingInvitations } from "@/components/settings/pending-invitations";
 import { StaffList } from "@/components/settings/staff-list";
 import { UserProfileSection } from "@/components/settings/user-profile-section";
+import { PersonalNotificationSettings } from "@/components/settings/personal-notification-settings";
 
 export default async function SettingsPage() {
   const { userId, orgId } = await auth();
@@ -157,6 +158,14 @@ export default async function SettingsPage() {
             Manage your account details, email, and profile photo
           </p>
           <UserProfileSection />
+        </div>
+
+        {/* ALL USERS: Personal Notification Preferences */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">
+            Personal Notification Preferences
+          </h2>
+          <PersonalNotificationSettings />
         </div>
       </div>
     </div>
