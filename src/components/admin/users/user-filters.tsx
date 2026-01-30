@@ -195,7 +195,7 @@ export function UserFiltersComponent({
               <SelectItem value="all">All Companies</SelectItem>
               {companies.map((company) => (
                 <SelectItem key={company.id} value={company.id}>
-                  {company.name}
+                  {String(company.name ?? 'Unknown Company')}
                 </SelectItem>
               ))}
             </SelectContent>
