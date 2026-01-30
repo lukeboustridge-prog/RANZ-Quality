@@ -34,7 +34,8 @@
       "Bash(vercel env ls:*)",
       "Bash(vercel:*)",
       "Bash(git restore:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

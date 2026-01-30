@@ -53,6 +53,7 @@ export function DataTable<TData, TValue>({
   );
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [internalGlobalFilter, setInternalGlobalFilter] = React.useState("");
+  const isInitialMount = React.useRef(true);
 
   // Use external global filter if provided, otherwise use internal state
   const effectiveGlobalFilter = globalFilter ?? internalGlobalFilter;
@@ -84,9 +85,12 @@ export function DataTable<TData, TValue>({
   });
 
   // Notify parent of selection changes
-  // Note: table is intentionally excluded from deps as it's recreated every render
-  // We only want to notify when rowSelection actually changes
+  // Skip initial mount to prevent state updates during render
   React.useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     if (onSelectionChange) {
       const selectedRows = table
         .getSelectedRowModel()
@@ -97,8 +101,13 @@ export function DataTable<TData, TValue>({
   }, [rowSelection]);
 
   // Reset selection when data changes (e.g., after refresh)
+  // Use a ref to track previous data to avoid unnecessary resets
+  const prevDataRef = React.useRef(data);
   React.useEffect(() => {
-    setRowSelection({});
+    if (prevDataRef.current !== data && prevDataRef.current.length > 0) {
+      setRowSelection({});
+    }
+    prevDataRef.current = data;
   }, [data]);
 
   // Loading skeleton

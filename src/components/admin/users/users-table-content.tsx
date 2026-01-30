@@ -113,14 +113,15 @@ export default function UsersTableContent() {
     fetchUsers();
   }, [debouncedSearch, filters.status, filters.userType, filters.companyId]);
 
-  const handleFiltersChange = (newFilters: UserFilters) => {
+  // Memoized to prevent unnecessary child re-renders
+  const handleFiltersChange = React.useCallback((newFilters: UserFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
 
-  // Handle row click - navigate to user detail
-  const handleRowClick = (row: { original: UserRow }) => {
+  // Handle row click - navigate to user detail - memoized
+  const handleRowClick = React.useCallback((row: { original: UserRow }) => {
     router.push(`/admin/users/${row.original.id}`);
-  };
+  }, [router]);
 
   // Build columns with selection
   const columnsWithSelect = React.useMemo(
@@ -128,10 +129,10 @@ export default function UsersTableContent() {
     []
   );
 
-  // Handle row selection changes
-  const handleSelectionChange = (selectedRows: UserRow[]) => {
+  // Handle row selection changes - memoized to prevent unnecessary re-renders
+  const handleSelectionChange = React.useCallback((selectedRows: UserRow[]) => {
     setSelectedIds(selectedRows.map((row) => row.id));
-  };
+  }, []);
 
   const handleRefresh = () => {
     setLoading(true);
