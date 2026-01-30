@@ -79,11 +79,11 @@ Plans:
   2. User can upload/change their profile photo
   3. User can opt in/out of specific notification types
   4. User's notification preferences are respected by the notification system
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 11-01: Personal profile editing via Clerk UserProfile
-- [ ] 11-02: Personal notification preferences
+- [ ] 11-01-PLAN.md - Personal profile editing via Clerk UserProfile and settings page role-based access
+- [ ] 11-02-PLAN.md - Personal notification preferences component and integration
 
 ### Phase 12: Account Security
 **Goal**: Users can manage their account security settings including password, two-factor authentication, and active sessions
