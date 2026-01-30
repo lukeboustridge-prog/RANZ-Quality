@@ -76,7 +76,7 @@ const reportConfigs: ReportConfig[] = [
 
 export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState<ReportType | null>(null);
-  const [tierFilter, setTierFilter] = useState<CertificationTier | "">("");
+  const [tierFilter, setTierFilter] = useState<CertificationTier | "all">("all");
   const [loading, setLoading] = useState(false);
   const [reportData, setReportData] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -91,7 +91,7 @@ export default function ReportsPage() {
         reportType,
         format: "JSON",
       };
-      if (tierFilter) params.tier = tierFilter;
+      if (tierFilter && tierFilter !== "all") params.tier = tierFilter;
 
       const response = await fetch("/api/admin/reports", {
         method: "POST",
@@ -359,12 +359,12 @@ export default function ReportsPage() {
           <p className="text-slate-500">Generate and download compliance reports</p>
         </div>
         <div className="flex items-center gap-4">
-          <Select value={tierFilter} onValueChange={(v) => setTierFilter(v as CertificationTier | "")}>
+          <Select value={tierFilter} onValueChange={(v) => setTierFilter(v as CertificationTier | "all")}>
             <SelectTrigger className="w-40">
               <SelectValue placeholder="All Tiers" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Tiers</SelectItem>
+              <SelectItem value="all">All Tiers</SelectItem>
               <SelectItem value="MASTER_ROOFER">Master Roofer</SelectItem>
               <SelectItem value="CERTIFIED">Certified</SelectItem>
               <SelectItem value="ACCREDITED">Accredited</SelectItem>

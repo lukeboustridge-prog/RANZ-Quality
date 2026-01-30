@@ -157,11 +157,11 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
               <div>
                 <Label htmlFor="lbpClass">LBP Class</Label>
                 <Select
-                  value={formData.lbpClass || ""}
-                  onValueChange={(value: LBPClass | "") =>
+                  value={formData.lbpClass || "none"}
+                  onValueChange={(value: LBPClass | "none") =>
                     setFormData({
                       ...formData,
-                      lbpClass: value === "" ? undefined : value,
+                      lbpClass: value === "none" ? undefined : value,
                     })
                   }
                 >
@@ -169,7 +169,7 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
                     <SelectValue placeholder="Select LBP class" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {LBP_CLASSES.map(([value, label]) => (
                       <SelectItem key={value} value={value}>
                         {label}

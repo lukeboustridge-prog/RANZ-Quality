@@ -59,8 +59,8 @@ const tierColors: Record<CertificationTier, string> = {
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
-  const [tier, setTier] = useState<string>("");
-  const [region, setRegion] = useState<string>("");
+  const [tier, setTier] = useState<string>("all");
+  const [region, setRegion] = useState<string>("all");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -73,8 +73,8 @@ export default function SearchPage() {
     try {
       const params = new URLSearchParams();
       if (query) params.set("q", query);
-      if (tier) params.set("tier", tier);
-      if (region) params.set("region", region);
+      if (tier && tier !== "all") params.set("tier", tier);
+      if (region && region !== "all") params.set("region", region);
       params.set("limit", "10");
       params.set("offset", String((newPage - 1) * 10));
 
@@ -103,12 +103,12 @@ export default function SearchPage() {
 
   const clearFilters = () => {
     setQuery("");
-    setTier("");
-    setRegion("");
+    setTier("all");
+    setRegion("all");
     performSearch(1);
   };
 
-  const hasFilters = query || tier || region;
+  const hasFilters = query || tier !== "all" || region !== "all";
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -182,7 +182,7 @@ export default function SearchPage() {
                         <SelectValue placeholder="All tiers" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All tiers</SelectItem>
+                        <SelectItem value="all">All tiers</SelectItem>
                         <SelectItem value="MASTER_ROOFER">
                           Master Roofer
                         </SelectItem>
@@ -201,7 +201,7 @@ export default function SearchPage() {
                         <SelectValue placeholder="All regions" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All regions</SelectItem>
+                        <SelectItem value="all">All regions</SelectItem>
                         {NZ_REGIONS.map((r) => (
                           <SelectItem key={r} value={r}>
                             {r}

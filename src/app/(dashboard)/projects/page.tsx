@@ -80,7 +80,7 @@ export default function ProjectsPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<ProjectStatus | "">("");
+  const [statusFilter, setStatusFilter] = useState<ProjectStatus | "all">("all");
   const [showNewDialog, setShowNewDialog] = useState(false);
   const [creating, setCreating] = useState(false);
 
@@ -100,7 +100,7 @@ export default function ProjectsPage() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (statusFilter) params.set("status", statusFilter);
+      if (statusFilter && statusFilter !== "all") params.set("status", statusFilter);
       params.set("limit", "20");
 
       const response = await fetch(`/api/projects?${params}`);
@@ -357,14 +357,14 @@ export default function ProjectsPage() {
         </div>
         <Select
           value={statusFilter}
-          onValueChange={(v) => setStatusFilter(v as ProjectStatus | "")}
+          onValueChange={(v) => setStatusFilter(v as ProjectStatus | "all")}
         >
           <SelectTrigger className="w-40">
             <Filter className="h-4 w-4 mr-2" />
             <SelectValue placeholder="All Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Status</SelectItem>
+            <SelectItem value="all">All Status</SelectItem>
             {Object.entries(PROJECT_STATUS_LABELS).map(([key, label]) => (
               <SelectItem key={key} value={key}>
                 {label}
