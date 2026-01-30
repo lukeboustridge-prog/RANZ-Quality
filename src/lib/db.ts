@@ -1,5 +1,9 @@
+import { Pool, neonConfig } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "@prisma/client";
+
+// Use fetch for connection pooling in serverless
+neonConfig.fetchConnectionCache = true;
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -8,8 +12,8 @@ const globalForPrisma = globalThis as unknown as {
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL!;
 
-  // Use Neon adapter with connection string config
-  const adapter = new PrismaNeon({ connectionString });
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaNeon(pool);
 
   return new PrismaClient({
     adapter,
