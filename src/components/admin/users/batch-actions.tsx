@@ -250,7 +250,7 @@ export function BatchActions({ selectedIds, onAction, onClear }: BatchActionsPro
             <div>
               <label className="text-sm font-medium text-slate-700">New Role</label>
               <Select
-                value={newRole}
+                value={newRole || undefined}
                 onValueChange={(value) => setNewRole(value as AuthUserTypeValue)}
               >
                 <SelectTrigger className="mt-1">
