@@ -7,6 +7,7 @@ import { NotificationSettings } from "@/components/settings/notification-setting
 import { StaffInvitationForm } from "@/components/settings/staff-invitation-form";
 import { PendingInvitations } from "@/components/settings/pending-invitations";
 import { StaffList } from "@/components/settings/staff-list";
+import { UserProfileSection } from "@/components/settings/user-profile-section";
 
 export default async function SettingsPage() {
   const { userId, orgId } = await auth();
@@ -27,14 +28,13 @@ export default async function SettingsPage() {
   if (!organization) redirect("/dashboard");
 
   const member = organization.members[0];
-  if (!member || !["OWNER", "ADMIN"].includes(member.role)) {
-    // Non-admin user - redirect to dashboard
-    redirect("/dashboard");
-  }
 
-  // Get signed URL for logo if exists
+  // Determine if user is admin (can see organization settings)
+  const isAdmin = member && ["OWNER", "ADMIN"].includes(member.role);
+
+  // Get signed URL for logo if exists (admin only)
   let logoUrl: string | null = null;
-  if (organization.logoKey) {
+  if (isAdmin && organization.logoKey) {
     try {
       logoUrl = await getSignedDownloadUrl(organization.logoKey);
     } catch (e) {
@@ -42,93 +42,121 @@ export default async function SettingsPage() {
     }
   }
 
-  // Fetch all members for staff list
-  const allMembers = await db.organizationMember.findMany({
-    where: { organizationId: organization.id },
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
-      role: true,
-      lbpNumber: true,
-      lbpVerified: true,
-      clerkUserId: true,
-    },
-    orderBy: [
-      { role: "asc" },
-      { firstName: "asc" },
-    ],
-  });
+  // Fetch all members for staff list (admin only)
+  let sortedMembers: any[] = [];
+  if (isAdmin) {
+    const allMembers = await db.organizationMember.findMany({
+      where: { organizationId: organization.id },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        role: true,
+        lbpNumber: true,
+        lbpVerified: true,
+        clerkUserId: true,
+      },
+      orderBy: [
+        { role: "asc" },
+        { firstName: "asc" },
+      ],
+    });
 
-  // Sort OWNER first manually
-  const sortedMembers = [...allMembers].sort((a, b) => {
-    const roleOrder = { OWNER: 0, ADMIN: 1, STAFF: 2 };
-    const roleComparison = roleOrder[a.role as keyof typeof roleOrder] - roleOrder[b.role as keyof typeof roleOrder];
-    if (roleComparison !== 0) return roleComparison;
-    return a.firstName.localeCompare(b.firstName);
-  });
+    // Sort OWNER first manually
+    sortedMembers = [...allMembers].sort((a, b) => {
+      const roleOrder = { OWNER: 0, ADMIN: 1, STAFF: 2 };
+      const roleComparison = roleOrder[a.role as keyof typeof roleOrder] - roleOrder[b.role as keyof typeof roleOrder];
+      if (roleComparison !== 0) return roleComparison;
+      return a.firstName.localeCompare(b.firstName);
+    });
+  }
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Organization Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {isAdmin ? "Organization Settings" : "Personal Settings"}
+        </h1>
         <p className="text-gray-600 mt-1">
-          Manage your company profile and notification preferences
+          {isAdmin
+            ? "Manage your company profile, team, and notification preferences"
+            : "Manage your personal profile and notification preferences"
+          }
         </p>
       </div>
 
       <div className="space-y-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">
-            Company Profile
-          </h2>
-          <OrganizationProfileForm
-            organization={{
-              id: organization.id,
-              name: organization.name,
-              tradingName: organization.tradingName,
-              email: organization.email,
-              phone: organization.phone,
-              address: organization.address,
-              city: organization.city,
-              description: organization.description,
-              logoKey: organization.logoKey,
-            }}
-            logoUrl={logoUrl}
-          />
-        </div>
+        {/* Admin-only: Company Profile */}
+        {isAdmin && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              Company Profile
+            </h2>
+            <OrganizationProfileForm
+              organization={{
+                id: organization.id,
+                name: organization.name,
+                tradingName: organization.tradingName,
+                email: organization.email,
+                phone: organization.phone,
+                address: organization.address,
+                city: organization.city,
+                description: organization.description,
+                logoKey: organization.logoKey,
+              }}
+              logoUrl={logoUrl}
+            />
+          </div>
+        )}
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">
-            Notification Preferences
-          </h2>
-          <NotificationSettings />
-        </div>
+        {/* Admin-only: Organization Notifications */}
+        {isAdmin && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              Notification Preferences
+            </h2>
+            <NotificationSettings />
+          </div>
+        )}
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">
-            Staff Management
-          </h2>
-          <div className="space-y-8">
-            {/* Current Staff */}
-            <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Current Staff</h3>
-              <StaffList members={sortedMembers} currentUserId={userId} />
-            </div>
+        {/* Admin-only: Staff Management */}
+        {isAdmin && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              Staff Management
+            </h2>
+            <div className="space-y-8">
+              {/* Current Staff */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">Current Staff</h3>
+                <StaffList members={sortedMembers} currentUserId={userId} />
+              </div>
 
-            {/* Invite New Staff */}
-            <div className="border-t pt-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Invite New Staff</h3>
-              <StaffInvitationForm />
-            </div>
+              {/* Invite New Staff */}
+              <div className="border-t pt-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-3">Invite New Staff</h3>
+                <StaffInvitationForm />
+              </div>
 
-            {/* Pending Invitations */}
-            <div className="border-t pt-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Pending Invitations</h3>
-              <PendingInvitations />
+              {/* Pending Invitations */}
+              <div className="border-t pt-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-3">Pending Invitations</h3>
+                <PendingInvitations />
+              </div>
             </div>
           </div>
+        )}
+
+        {/* ALL USERS: Personal Profile */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">
+            Personal Profile
+          </h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Manage your account details, email, and profile photo
+          </p>
+          <UserProfileSection />
         </div>
       </div>
     </div>
