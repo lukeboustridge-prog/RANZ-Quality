@@ -19,9 +19,9 @@ Requirements for Settings milestone. Enables members and staff to manage their o
 
 - [x] **PERS-01**: User can update personal profile (name, email, phone, profile photo)
 - [x] **PERS-02**: User can configure personal notification preferences (opt-in/out, alert types)
-- [ ] **PERS-03**: User can change password
-- [ ] **PERS-04**: User can enable/disable 2FA
-- [ ] **PERS-05**: User can view active sessions and sign out remotely
+- [x] **PERS-03**: User can change password
+- [x] **PERS-04**: User can enable/disable 2FA
+- [x] **PERS-05**: User can view active sessions and sign out remotely
 
 ## Future Requirements
 
@@ -66,9 +66,9 @@ Deferred to later milestones (from PROJECT.md Out of Scope):
 | ORG-05 | Phase 10 | Complete |
 | PERS-01 | Phase 11 | Complete |
 | PERS-02 | Phase 11 | Complete |
-| PERS-03 | Phase 12 | Pending |
-| PERS-04 | Phase 12 | Pending |
-| PERS-05 | Phase 12 | Pending |
+| PERS-03 | Phase 12 | Complete |
+| PERS-04 | Phase 12 | Complete |
+| PERS-05 | Phase 12 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 10 total
@@ -77,4 +77,4 @@ Deferred to later milestones (from PROJECT.md Out of Scope):
 
 ---
 *Requirements defined: 2026-01-31*
-*Last updated: 2026-01-31 after Phase 11 execution*
+*Last updated: 2026-01-31 — v1.1 milestone complete (10/10 requirements satisfied)*

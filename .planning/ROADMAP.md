@@ -3,7 +3,7 @@
 ## Milestones
 
 - [x] **v1.0 MVP** - Phases 1-8 (shipped 2026-01-29)
-- [ ] **v1.1 Settings** - Phases 9-12 (in progress)
+- [x] **v1.1 Settings** - Phases 9-12 (shipped 2026-01-31)
 
 ## Phases
 
@@ -22,7 +22,7 @@ v1.0 delivered the core compliance management portal with:
 
 </details>
 
-### v1.1 Settings (In Progress)
+### v1.1 Settings (SHIPPED 2026-01-31)
 
 **Milestone Goal:** Enable members and staff to manage their organization profile, personal settings, notification preferences, and account security.
 
@@ -33,7 +33,7 @@ v1.0 delivered the core compliance management portal with:
 - [x] **Phase 9: Organization Profile** - Company details and notification preferences
 - [x] **Phase 10: Staff Management** - Invite, remove, and manage staff roles
 - [x] **Phase 11: Personal Settings** - User profile and notification preferences
-- [ ] **Phase 12: Account Security** - Password, 2FA, and session management via Clerk
+- [x] **Phase 12: Account Security** - Password, 2FA, and session management via Clerk
 
 ## Phase Details
 
@@ -99,7 +99,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 12-01-PLAN.md - Security settings section with Clerk UserProfile (password, 2FA, sessions)
+- [x] 12-01-PLAN.md - Security settings section with Clerk UserProfile (password, 2FA, sessions)
 
 **Note:** Phase 12 primarily exposes Clerk's built-in security UI components. Clerk handles password management, 2FA enrollment, and session management natively. The work is integration and UI, not building these features from scratch.
 
@@ -113,7 +113,7 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 | 9. Organization Profile | v1.1 | 3/3 | Complete | 2026-01-31 |
 | 10. Staff Management | v1.1 | 2/2 | Complete | 2026-01-31 |
 | 11. Personal Settings | v1.1 | 3/3 | Complete | 2026-01-31 |
-| 12. Account Security | v1.1 | 0/1 | Planned | - |
+| 12. Account Security | v1.1 | 1/1 | Complete | 2026-01-31 |
 
 **Totals:**
 - Phases: 4
@@ -122,4 +122,4 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 
 ---
 *Created: 2026-01-31*
-*Last updated: 2026-01-31 after Phase 12 planning*
+*Last updated: 2026-01-31 — v1.1 Settings milestone complete*

@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 
 ## Current Position
 
-Phase: 12 of 12 (Account Security)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-31 - Phase 11 (Personal Settings) completed with gap closure
+Phase: 12 of 12 (Account Security) — COMPLETE ✓
+Plan: 1 of 1 complete
+Status: Phase complete, v1.1 milestone complete
+Last activity: 2026-01-31 - Phase 12 (Account Security) completed
 
-Progress: [==========] 97% (v1.0 complete, Phases 9-11 of v1.1 done)
+Progress: [===========] 100% (v1.0 complete, v1.1 milestone complete)
 
 ## Performance Metrics
 
@@ -24,10 +24,10 @@ Progress: [==========] 97% (v1.0 complete, Phases 9-11 of v1.1 done)
 - Total execution time: 126 min
 - Phases: 8
 
-**v1.1 Milestone (current):**
-- Total plans completed: 8 (including gap closures)
+**v1.1 Milestone (complete):**
+- Total plans completed: 9 (including gap closures)
 - Phases: 4 (9-12)
-- Estimated plans: 8
+- Total duration: ~3 min (Phase 12)
 
 **By Phase (v1.1):**
 
@@ -36,7 +36,7 @@ Progress: [==========] 97% (v1.0 complete, Phases 9-11 of v1.1 done)
 | 09 | 3 | Complete |
 | 10 | 2 | Complete |
 | 11 | 2 (+1 gap) | Complete |
-| 12 | 1 | Not started |
+| 12 | 1 | Complete |
 
 ## Accumulated Context
 
@@ -66,6 +66,13 @@ All v1.0 decisions captured with outcomes.
 - Critical notifications (LBP changes, CRITICAL priority, smsCritical) always bypass preferences
 - Skipped notifications return success=true with reason (respecting preferences is not an error)
 
+**Phase 12 (Account Security):**
+- Use Clerk UserProfile for security features (password, 2FA, sessions)
+- Enable hash routing for internal Security/Account navigation
+- Show navbar in UserProfile to allow tab switching
+- Security section visible to all users (not admin-only)
+- All PERS-03, PERS-04, PERS-05 requirements satisfied via Clerk's built-in features
+
 ### Pending Todos
 
 None.
@@ -83,9 +90,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Phase 11 (Personal Settings) complete with gap closure
+Stopped at: Phase 12 (Account Security) complete — v1.1 milestone complete
 Resume file: None
-Next action: /gsd:plan-phase 12
+Next action: Ready for v1.2 milestone or production deployment
 
 ---
-*Last updated: 2026-01-31 — Phase 11 complete with gap closure*
+*Last updated: 2026-01-31 — v1.1 Settings milestone complete (Phases 9-12)*
