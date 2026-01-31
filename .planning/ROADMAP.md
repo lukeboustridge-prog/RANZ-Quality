@@ -96,10 +96,10 @@ Plans:
   3. User can disable two-factor authentication if already enabled
   4. User can view list of active sessions with device/location info
   5. User can sign out of any session remotely
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 12-01: Security settings page with Clerk components
+- [ ] 12-01-PLAN.md - Security settings section with Clerk UserProfile (password, 2FA, sessions)
 
 **Note:** Phase 12 primarily exposes Clerk's built-in security UI components. Clerk handles password management, 2FA enrollment, and session management natively. The work is integration and UI, not building these features from scratch.
 
@@ -113,7 +113,7 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 | 9. Organization Profile | v1.1 | 3/3 | Complete | 2026-01-31 |
 | 10. Staff Management | v1.1 | 2/2 | Complete | 2026-01-31 |
 | 11. Personal Settings | v1.1 | 3/3 | Complete | 2026-01-31 |
-| 12. Account Security | v1.1 | 0/1 | Not started | - |
+| 12. Account Security | v1.1 | 0/1 | Planned | - |
 
 **Totals:**
 - Phases: 4
@@ -122,4 +122,4 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 
 ---
 *Created: 2026-01-31*
-*Last updated: 2026-01-31 after Phase 11 execution*
+*Last updated: 2026-01-31 after Phase 12 planning*
