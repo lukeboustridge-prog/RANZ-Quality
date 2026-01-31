@@ -32,7 +32,7 @@ v1.0 delivered the core compliance management portal with:
 
 - [x] **Phase 9: Organization Profile** - Company details and notification preferences
 - [x] **Phase 10: Staff Management** - Invite, remove, and manage staff roles
-- [ ] **Phase 11: Personal Settings** - User profile and notification preferences
+- [x] **Phase 11: Personal Settings** - User profile and notification preferences
 - [ ] **Phase 12: Account Security** - Password, 2FA, and session management via Clerk
 
 ## Phase Details
@@ -79,11 +79,12 @@ Plans:
   2. User can upload/change their profile photo
   3. User can opt in/out of specific notification types
   4. User's notification preferences are respected by the notification system
-**Plans**: 2 plans
+**Plans**: 3 plans
 
 Plans:
-- [ ] 11-01-PLAN.md - Personal profile editing via Clerk UserProfile and settings page role-based access
-- [ ] 11-02-PLAN.md - Personal notification preferences component and integration
+- [x] 11-01-PLAN.md - Personal profile editing via Clerk UserProfile and settings page role-based access
+- [x] 11-02-PLAN.md - Personal notification preferences component and integration
+- [x] 11-03-PLAN.md - Notification preference enforcement (gap closure)
 
 ### Phase 12: Account Security
 **Goal**: Users can manage their account security settings including password, two-factor authentication, and active sessions
@@ -111,14 +112,14 @@ Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 
 |-------|-----------|----------------|--------|-----------|
 | 9. Organization Profile | v1.1 | 3/3 | Complete | 2026-01-31 |
 | 10. Staff Management | v1.1 | 2/2 | Complete | 2026-01-31 |
-| 11. Personal Settings | v1.1 | 0/2 | Not started | - |
+| 11. Personal Settings | v1.1 | 3/3 | Complete | 2026-01-31 |
 | 12. Account Security | v1.1 | 0/1 | Not started | - |
 
 **Totals:**
 - Phases: 4
-- Plans: 8 (estimated)
+- Plans: 9 (3 + 2 + 3 + 1)
 - Requirements covered: 10/10
 
 ---
 *Created: 2026-01-31*
-*Last updated: 2026-01-31 after Phase 10 execution*
+*Last updated: 2026-01-31 after Phase 11 execution*
