@@ -55,6 +55,7 @@ model Organization {
   projects          Project[]
   testimonials           Testimonial[]
   notificationPreference OrganizationNotificationPreference?
+  approvedSuppliers      ApprovedSupplier[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -648,6 +649,42 @@ enum AuditAction {
   LBP_VERIFY
   AUDIT_START
   AUDIT_COMPLETE
+}
+
+// ============================================================================
+// Approved Supplier Register (ISO Element 9: Purchasing)
+// ============================================================================
+
+enum SupplierStatus {
+  APPROVED
+  CONDITIONAL
+  SUSPENDED
+  REMOVED
+}
+
+model ApprovedSupplier {
+  id              String         @id @default(cuid())
+  organizationId  String
+  name            String
+  contactPerson   String?
+  email           String?
+  phone           String?
+  address         String?
+  categories      String[]       // e.g., ["Long-run steel", "Membranes"]
+  apexCertified   Boolean        @default(false)
+  apexCertId      String?
+  status          SupplierStatus @default(APPROVED)
+  rating          Int?           // 1-5
+  evaluationDate  DateTime?
+  nextReviewDate  DateTime?
+  evaluationNotes String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([organizationId, status])
 }
 
 // ============================================================================

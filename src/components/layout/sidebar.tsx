@@ -12,6 +12,7 @@ import {
   ClipboardCheck,
   AlertTriangle,
   FolderKanban,
+  Package,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Insurance", href: "/insurance", icon: Shield },
   { name: "Staff", href: "/staff", icon: Users },
   { name: "Documents", href: "/documents", icon: FileText },
+  { name: "Suppliers", href: "/suppliers", icon: Package },
   { name: "Projects", href: "/projects", icon: FolderKanban },
   { name: "Audits", href: "/audits", icon: ClipboardCheck },
   { name: "CAPA", href: "/capa", icon: AlertTriangle },

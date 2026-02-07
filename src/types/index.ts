@@ -150,6 +150,16 @@ export type AuditAction =
   | "AUDIT_START"
   | "AUDIT_COMPLETE";
 
+// Supplier Types (ISO Element 9: Purchasing)
+export type SupplierStatus = "APPROVED" | "CONDITIONAL" | "SUSPENDED" | "REMOVED";
+
+export const SUPPLIER_STATUS_LABELS: Record<SupplierStatus, string> = {
+  APPROVED: "Approved",
+  CONDITIONAL: "Conditional",
+  SUSPENDED: "Suspended",
+  REMOVED: "Removed",
+};
+
 // Phase 3 Types
 export type ProjectType =
   | "NEW_BUILD"
