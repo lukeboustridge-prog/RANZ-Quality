@@ -48,6 +48,16 @@ pnpm db:studio       # Prisma Studio
 - Personnel: 15% (LBP verified, owner assigned)
 - Audit: 10% (last rating, open CAPAs)
 
+## End-User Documentation
+User-facing guides in `docs/`:
+- Quick start: `docs/quick-start.md`
+- Member guide: `docs/member-guide.md`
+- Admin guide: `docs/admin-guide.md`
+- FAQ & troubleshooting: `docs/faq.md`
+- SSO satellite setup: `docs/sso-satellite-setup.md`
+
+**Important:** Any changes to UI workflows, form fields, status flows, routes, roles, or user-facing functionality must be accompanied by updates to the relevant `docs/` files. Check which guides are affected and update them to match the new behaviour.
+
 ## Detailed Documentation
 All detailed docs are in `claude_docs/`:
 
