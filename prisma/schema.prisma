@@ -92,7 +92,9 @@ model OrganizationMember {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization    Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  qualifications  Qualification[]
+  trainingRecords TrainingRecord[]
 
   @@unique([organizationId, email])
   @@unique([organizationId, clerkUserId])
@@ -158,9 +160,11 @@ model Document {
   fileHash   String? // SHA-256 integrity
 
   // Workflow
-  reviewDueDate DateTime?
-  approvedBy    String?
-  approvedAt    DateTime?
+  reviewDueDate    DateTime?
+  approvedBy       String?
+  approvedAt       DateTime?
+  reviewAlert30Sent Boolean @default(false)
+  reviewAlert7Sent  Boolean @default(false)
 
   // Soft delete for compliance
   deletedAt DateTime?
@@ -388,6 +392,43 @@ model CAPARecord {
 }
 
 // ============================================================================
+// Qualification & Training Models (ISO Element 6)
+// ============================================================================
+
+model Qualification {
+  id             String            @id @default(cuid())
+  memberId       String
+  type           QualificationType
+  title          String
+  issuingBody    String
+  issueDate      DateTime
+  expiryDate     DateTime?
+  certificateKey String?           // R2 storage key
+  verified       Boolean           @default(false)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  member         OrganizationMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+}
+
+model TrainingRecord {
+  id             String      @id @default(cuid())
+  memberId       String
+  courseName     String
+  provider       String
+  completedAt    DateTime
+  cpdPoints      Int         @default(0)
+  cpdCategory    CPDCategory
+  certificateKey String?     // R2 storage key
+  notes          String?
+  createdAt      DateTime    @default(now())
+  member         OrganizationMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+}
+
+// ============================================================================
 // Audit Log (Immutable Event Sourcing)
 // ============================================================================
 
@@ -456,6 +497,23 @@ enum LBPStatus {
   CANCELLED
   EXPIRED
   NOT_FOUND
+}
+
+enum QualificationType {
+  NZQA
+  MANUFACTURER_CERT
+  SAFETY
+  FIRST_AID
+  SITE_SAFE
+  OTHER
+}
+
+enum CPDCategory {
+  TECHNICAL
+  PEER_REVIEW
+  INDUSTRY_EVENT
+  SELF_STUDY
+  OTHER
 }
 
 enum InsurancePolicyType {

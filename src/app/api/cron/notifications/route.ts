@@ -5,8 +5,11 @@ import {
   retryFailedNotifications,
   notifyInsuranceExpiry,
   notifyCapaOverdue,
+  createNotification,
+  notifyAuditScheduled,
 } from "@/lib/notifications";
 import { verifyCronRequest } from "@/lib/cron-auth";
+import { getOrganizationsNeedingAudit, scheduleAudit } from "@/lib/audit-scheduling";
 
 export async function GET(req: NextRequest) {
   const authError = verifyCronRequest(req);
@@ -18,6 +21,9 @@ export async function GET(req: NextRequest) {
       retriesSent: 0,
       insuranceAlerts: 0,
       capaAlerts: 0,
+      documentReviewAlerts: 0,
+      auditsScheduled: 0,
+      auditReminders: 0,
     };
 
     // 1. Process scheduled notifications
@@ -31,6 +37,15 @@ export async function GET(req: NextRequest) {
 
     // 4. Check for overdue CAPAs
     results.capaAlerts = await checkOverdueCAPAs();
+
+    // 5. Check for document review due dates
+    results.documentReviewAlerts = await checkDocumentReviewDueDates();
+
+    // 6. Auto-schedule audits based on tier frequency
+    results.auditsScheduled = await checkAuditScheduling();
+
+    // 7. Send reminders for upcoming audits
+    results.auditReminders = await checkAuditReminders();
 
     return NextResponse.json({
       success: true,
@@ -154,6 +169,102 @@ async function checkInsuranceExpiries(): Promise<number> {
   return alertsSent;
 }
 
+async function checkDocumentReviewDueDates(): Promise<number> {
+  const now = new Date();
+  let alertsSent = 0;
+
+  // Get APPROVED documents with review due dates approaching (30 days or 7 days) or overdue
+  const documentsNeedingReview = await db.document.findMany({
+    where: {
+      status: "APPROVED",
+      deletedAt: null,
+      reviewDueDate: { not: null },
+      OR: [
+        // 30 days out (±2 day window)
+        {
+          reviewDueDate: {
+            gte: new Date(now.getTime() + 28 * 24 * 60 * 60 * 1000),
+            lte: new Date(now.getTime() + 32 * 24 * 60 * 60 * 1000),
+          },
+          reviewAlert30Sent: false,
+        },
+        // 7 days out (±2 day window)
+        {
+          reviewDueDate: {
+            gte: new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000),
+            lte: new Date(now.getTime() + 9 * 24 * 60 * 60 * 1000),
+          },
+          reviewAlert7Sent: false,
+        },
+        // Overdue (past due, 7-day alert not yet sent)
+        {
+          reviewDueDate: { lt: now },
+          reviewAlert7Sent: false,
+        },
+      ],
+    },
+    include: {
+      organization: {
+        include: {
+          members: {
+            where: { role: "OWNER" },
+            select: { email: true, phone: true, clerkUserId: true },
+          },
+        },
+      },
+    },
+  });
+
+  for (const doc of documentsNeedingReview) {
+    const owner = doc.organization.members[0];
+    if (!owner || !doc.reviewDueDate) continue;
+
+    const daysUntilDue = Math.ceil(
+      (doc.reviewDueDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
+    );
+
+    // Determine which flag to update
+    const updateData: Record<string, boolean> = {};
+    if (daysUntilDue > 9) {
+      updateData.reviewAlert30Sent = true;
+    } else {
+      updateData.reviewAlert7Sent = true;
+    }
+
+    const urgency = daysUntilDue <= 0 ? "overdue" : `due in ${daysUntilDue} days`;
+
+    try {
+      await db.$transaction(async (tx) => {
+        await createNotification({
+          organizationId: doc.organizationId,
+          userId: owner.clerkUserId,
+          type: "DOCUMENT_REVIEW_DUE",
+          channel: "EMAIL",
+          priority: daysUntilDue <= 0 ? "HIGH" : "NORMAL",
+          title: `Document Review ${daysUntilDue <= 0 ? "Overdue" : "Due"} - ${doc.title}`,
+          message: `The document "${doc.title}" is ${urgency} for review. ISO 9000 Element 8 (Document Control) requires periodic review of approved documents. Please review and update as needed.`,
+          actionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/documents`,
+          recipient: owner.email,
+        });
+
+        await tx.document.update({
+          where: { id: doc.id },
+          data: updateData,
+        });
+      });
+
+      alertsSent++;
+    } catch (error) {
+      console.error(
+        `Failed to send document review alert for document ${doc.id}:`,
+        error
+      );
+    }
+  }
+
+  return alertsSent;
+}
+
 async function checkOverdueCAPAs(): Promise<number> {
   const now = new Date();
   let alertsSent = 0;
@@ -202,4 +313,111 @@ async function checkOverdueCAPAs(): Promise<number> {
   }
 
   return alertsSent;
+}
+
+async function checkAuditScheduling(): Promise<number> {
+  let auditsScheduled = 0;
+
+  try {
+    const orgsNeedingAudit = await getOrganizationsNeedingAudit();
+
+    for (const org of orgsNeedingAudit) {
+      try {
+        const audit = await scheduleAudit(org.id);
+
+        // Notify the org owner
+        const owner = org.members[0];
+        if (owner) {
+          await notifyAuditScheduled({
+            organizationId: org.id,
+            businessName: org.name,
+            auditDate: audit.scheduledDate,
+            ownerEmail: owner.email,
+            ownerPhone: owner.phone || undefined,
+          });
+        }
+
+        auditsScheduled++;
+      } catch (error) {
+        console.error(
+          `Failed to schedule audit for organization ${org.id}:`,
+          error
+        );
+      }
+    }
+  } catch (error) {
+    console.error("Failed to check audit scheduling:", error);
+  }
+
+  return auditsScheduled;
+}
+
+async function checkAuditReminders(): Promise<number> {
+  const now = new Date();
+  let remindersSent = 0;
+
+  // Find SCHEDULED audits within 30 days that haven't had a reminder sent
+  // Check for existing AUDIT_REMINDER notifications to avoid duplicates
+  const upcomingAudits = await db.audit.findMany({
+    where: {
+      status: "SCHEDULED",
+      scheduledDate: {
+        gte: now,
+        lte: new Date(now.getTime() + 32 * 24 * 60 * 60 * 1000),
+      },
+    },
+    include: {
+      organization: {
+        include: {
+          members: {
+            where: { role: "OWNER" },
+            select: { email: true, phone: true, clerkUserId: true },
+          },
+        },
+      },
+    },
+  });
+
+  for (const audit of upcomingAudits) {
+    const owner = audit.organization.members[0];
+    if (!owner) continue;
+
+    // Check if we already sent a reminder for this audit
+    const existingReminder = await db.notification.findFirst({
+      where: {
+        organizationId: audit.organizationId,
+        type: "AUDIT_REMINDER",
+        message: { contains: audit.auditNumber },
+      },
+    });
+
+    if (existingReminder) continue;
+
+    const daysUntilAudit = Math.ceil(
+      (audit.scheduledDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
+    );
+
+    try {
+      await createNotification({
+        organizationId: audit.organizationId,
+        userId: owner.clerkUserId,
+        type: "AUDIT_REMINDER",
+        channel: "EMAIL",
+        priority: "NORMAL",
+        title: `Audit Reminder - ${daysUntilAudit} Days Away`,
+        message: `Your audit (${audit.auditNumber}) is scheduled for ${audit.scheduledDate.toLocaleDateString("en-NZ", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}. Please ensure all documentation is current and available for review.`,
+        actionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/audits`,
+        recipient: owner.email,
+      });
+
+      remindersSent++;
+    } catch (error) {
+      console.error(
+        `Failed to send audit reminder for audit ${audit.id}:`,
+        error
+      );
+    }
+  }
+
+  return remindersSent;
 }

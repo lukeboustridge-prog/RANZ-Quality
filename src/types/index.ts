@@ -19,6 +19,21 @@ export type LBPStatus =
   | "EXPIRED"
   | "NOT_FOUND";
 
+export type QualificationType =
+  | "NZQA"
+  | "MANUFACTURER_CERT"
+  | "SAFETY"
+  | "FIRST_AID"
+  | "SITE_SAFE"
+  | "OTHER";
+
+export type CPDCategory =
+  | "TECHNICAL"
+  | "PEER_REVIEW"
+  | "INDUSTRY_EVENT"
+  | "SELF_STUDY"
+  | "OTHER";
+
 export type InsurancePolicyType =
   | "PUBLIC_LIABILITY"
   | "PROFESSIONAL_INDEMNITY"
@@ -246,6 +261,23 @@ export const LBP_STATUS_LABELS: Record<LBPStatus, string> = {
   CANCELLED: "Cancelled",
   EXPIRED: "Expired",
   NOT_FOUND: "Not Found",
+};
+
+export const QUALIFICATION_TYPE_LABELS: Record<QualificationType, string> = {
+  NZQA: "NZQA",
+  MANUFACTURER_CERT: "Manufacturer Certification",
+  SAFETY: "Safety",
+  FIRST_AID: "First Aid",
+  SITE_SAFE: "Site Safe",
+  OTHER: "Other",
+};
+
+export const CPD_CATEGORY_LABELS: Record<CPDCategory, string> = {
+  TECHNICAL: "Technical",
+  PEER_REVIEW: "Peer Review",
+  INDUSTRY_EVENT: "Industry Event",
+  SELF_STUDY: "Self Study",
+  OTHER: "Other",
 };
 
 export const INSURANCE_POLICY_TYPE_LABELS: Record<InsurancePolicyType, string> =

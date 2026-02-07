@@ -28,15 +28,16 @@ const DOCUMENT_TYPES = Object.entries(DOCUMENT_TYPE_LABELS) as [
 
 interface DocumentUploadProps {
   onSuccess?: () => void;
+  defaultElement?: ISOElement;
 }
 
-export function DocumentUpload({ onSuccess }: DocumentUploadProps) {
+export function DocumentUpload({ onSuccess, defaultElement }: DocumentUploadProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     title: "",
-    isoElement: "" as ISOElement | "",
+    isoElement: (defaultElement || "") as ISOElement | "",
     documentType: "OTHER" as DocumentType,
   });
 

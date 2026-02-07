@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, BookOpen } from "lucide-react";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { DocumentList } from "@/components/documents/document-list";
@@ -37,12 +37,20 @@ export default async function DocumentsPage() {
             Manage your quality management system documentation
           </p>
         </div>
-        <Button asChild>
-          <Link href="/documents/upload">
-            <Plus className="h-4 w-4 mr-2" />
-            Upload Document
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/documents/templates">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Template Guide
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/documents/upload">
+              <Plus className="h-4 w-4 mr-2" />
+              Upload Document
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {organization.documents.length === 0 ? (
@@ -56,7 +64,11 @@ export default async function DocumentsPage() {
             </h3>
             <p className="text-slate-600 max-w-sm mb-6">
               Upload your QMS documents to track compliance with the 19 ISO
-              elements.
+              elements. Not sure what to upload?{" "}
+              <Link href="/documents/templates" className="text-blue-600 hover:underline">
+                View the template guide
+              </Link>{" "}
+              to see what&apos;s needed for each element.
             </p>
             <Button asChild>
               <Link href="/documents/upload">

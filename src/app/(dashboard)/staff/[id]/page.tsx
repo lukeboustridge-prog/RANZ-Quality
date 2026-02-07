@@ -3,6 +3,9 @@
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { MemberForm } from "@/components/staff/member-form";
+import { QualificationsList } from "@/components/staff/qualifications-list";
+import { TrainingRecordsList } from "@/components/staff/training-records-list";
+import { CpdProgress } from "@/components/staff/cpd-progress";
 import { Loader2 } from "lucide-react";
 
 interface MemberData {
@@ -93,27 +96,48 @@ export default function EditStaffPage({
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Edit Staff Member</h1>
-        <p className="text-slate-600">Update the details of this team member</p>
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Edit form */}
+      <div>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-slate-900">
+            {member.firstName} {member.lastName}
+          </h1>
+          <p className="text-slate-600">Manage member details, qualifications, and training</p>
+        </div>
+
+        <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">Details</h2>
+          <MemberForm
+            initialData={{
+              id: member.id,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              email: member.email,
+              phone: member.phone || undefined,
+              role: member.role as any,
+              lbpNumber: member.lbpNumber || undefined,
+              lbpClass: member.lbpClass as any,
+            }}
+            onSubmit={handleSubmit}
+            isLoading={isSaving}
+          />
+        </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <MemberForm
-          initialData={{
-            id: member.id,
-            firstName: member.firstName,
-            lastName: member.lastName,
-            email: member.email,
-            phone: member.phone || undefined,
-            role: member.role as any,
-            lbpNumber: member.lbpNumber || undefined,
-            lbpClass: member.lbpClass as any,
-          }}
-          onSubmit={handleSubmit}
-          isLoading={isSaving}
-        />
+      {/* CPD Progress + Qualifications + Training - side by side on large screens */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-1">
+          <CpdProgress memberId={id} />
+        </div>
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <QualificationsList memberId={id} />
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <TrainingRecordsList memberId={id} />
+          </div>
+        </div>
       </div>
     </div>
   );
