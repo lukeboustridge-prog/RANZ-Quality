@@ -3,10 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser, useOrganizationList, useAuth } from "@clerk/nextjs";
-import { Building2, Loader2 } from "lucide-react";
+import { AlertTriangle, Building2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+interface DuplicateOrg {
+  id: string;
+  name: string;
+  tradingName: string | null;
+  nzbn: string | null;
+  email: string | null;
+}
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -15,6 +23,7 @@ export default function OnboardingPage() {
   const { createOrganization, setActive } = useOrganizationList();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
   const [formData, setFormData] = useState({
     businessName: "",
     tradingName: "",
@@ -24,13 +33,56 @@ export default function OnboardingPage() {
   });
 
   const [error, setError] = useState<string | null>(null);
+  const [duplicateWarning, setDuplicateWarning] = useState<DuplicateOrg[] | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!createOrganization || !setActive) return;
 
-    setIsLoading(true);
     setError(null);
+
+    // Skip duplicate check if user already confirmed the warning
+    if (!confirmed) {
+      setIsChecking(true);
+      try {
+        const checkResponse = await fetch("/api/organizations/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.businessName,
+            nzbn: formData.nzbn || undefined,
+          }),
+        });
+
+        if (!checkResponse.ok) {
+          throw new Error("Failed to check for duplicates");
+        }
+
+        const { duplicates, nzbnConflict } = await checkResponse.json();
+
+        if (nzbnConflict) {
+          setError(
+            "A business with this NZBN is already registered. Contact RANZ if you believe this is an error."
+          );
+          setIsChecking(false);
+          return;
+        }
+
+        if (duplicates.length > 0) {
+          setDuplicateWarning(duplicates);
+          setIsChecking(false);
+          return;
+        }
+      } catch {
+        // If the check fails, proceed anyway — the server-side guard will catch NZBN conflicts
+        console.error("Duplicate check failed, proceeding with creation");
+      } finally {
+        setIsChecking(false);
+      }
+    }
+
+    setIsLoading(true);
 
     try {
       // Create Clerk organization
@@ -78,6 +130,15 @@ export default function OnboardingPage() {
     }
   };
 
+  const handleConfirmDuplicate = () => {
+    setConfirmed(true);
+    setDuplicateWarning(null);
+  };
+
+  const handleCancelDuplicate = () => {
+    setDuplicateWarning(null);
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
@@ -102,6 +163,56 @@ export default function OnboardingPage() {
                 {error}
               </div>
             )}
+
+            {duplicateWarning && (
+              <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="flex items-start gap-2 mb-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-amber-800 text-sm">
+                      A business with a similar name already exists
+                    </p>
+                    <p className="text-amber-700 text-sm mt-1">
+                      Is this a different business?
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-3">
+                  {duplicateWarning.map((org) => (
+                    <div
+                      key={org.id}
+                      className="bg-white border border-amber-100 rounded p-2 text-sm"
+                    >
+                      <p className="font-medium text-slate-900">{org.name}</p>
+                      {org.tradingName && (
+                        <p className="text-slate-500">Trading as: {org.tradingName}</p>
+                      )}
+                      {org.email && (
+                        <p className="text-slate-500">{org.email}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCancelDuplicate}
+                  >
+                    Go Back
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleConfirmDuplicate}
+                  >
+                    Yes, this is a different business
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <div>
               <Label htmlFor="businessName">Business Name *</Label>
               <Input
@@ -169,9 +280,14 @@ export default function OnboardingPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={isLoading || !formData.businessName || !formData.email}
+              disabled={isLoading || isChecking || !formData.businessName || !formData.email}
             >
-              {isLoading ? (
+              {isChecking ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Checking...
+                </>
+              ) : isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Creating...

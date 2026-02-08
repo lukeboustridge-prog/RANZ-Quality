@@ -31,6 +31,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(existing);
     }
 
+    // Check for NZBN conflict before creating
+    if (data.nzbn) {
+      const nzbnConflict = await db.organization.findUnique({
+        where: { nzbn: data.nzbn },
+      });
+      if (nzbnConflict) {
+        return NextResponse.json(
+          { error: "A business with this NZBN is already registered" },
+          { status: 409 }
+        );
+      }
+    }
+
     // Create the organization
     const organization = await db.organization.create({
       data: {
