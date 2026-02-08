@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import {
   LayoutDashboard,
   Shield,
@@ -35,6 +36,9 @@ const secondaryNavigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
+  const userRole = (user?.publicMetadata as { role?: string })?.role;
+  const isRanzAdmin = userRole === "ranz:admin" || userRole === "ranz:auditor";
 
   return (
     <aside className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
@@ -108,6 +112,38 @@ export function Sidebar() {
                 })}
               </ul>
             </li>
+            {/* Administration - only for RANZ admins/auditors */}
+            {isRanzAdmin && (
+              <li>
+                <div className="text-xs font-semibold leading-6 text-[var(--ranz-silver)] uppercase tracking-wider">
+                  Administration
+                </div>
+                <ul role="list" className="-mx-2 mt-2 space-y-1">
+                  <li>
+                    <Link
+                      href="/admin"
+                      className={cn(
+                        "group flex gap-x-3 rounded-md p-2.5 text-sm font-medium leading-6 transition-colors",
+                        pathname.startsWith("/admin")
+                          ? "bg-[var(--ranz-charcoal-dark)] text-white border-l-2 border-[var(--ranz-yellow)]"
+                          : "text-[var(--ranz-silver)] hover:bg-[var(--ranz-charcoal-dark)] hover:text-white"
+                      )}
+                    >
+                      <Shield
+                        className={cn(
+                          "h-5 w-5 shrink-0",
+                          pathname.startsWith("/admin")
+                            ? "text-[var(--ranz-yellow)]"
+                            : "text-[var(--ranz-silver)] group-hover:text-white"
+                        )}
+                      />
+                      Admin Portal
+                    </Link>
+                  </li>
+                </ul>
+              </li>
+            )}
+
             <li className="mt-auto">
               <ul role="list" className="-mx-2 space-y-1">
                 {secondaryNavigation.map((item) => {
