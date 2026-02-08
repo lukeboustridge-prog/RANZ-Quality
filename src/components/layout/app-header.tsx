@@ -1,22 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import {
   OrganizationSwitcher,
   UserButton,
 } from "@clerk/nextjs";
-import { Menu, LogOut } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE || 'clerk';
 
 interface AppHeaderProps {
   appName: string;
@@ -25,28 +15,6 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ appName, onMenuClick, showOrgSwitcher = true }: AppHeaderProps) {
-  const router = useRouter();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  // Custom auth logout handler - calls API with scope='all' for cross-app logout
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scope: 'all' }),
-      });
-      // Redirect to sign-in after logout
-      router.push('/sign-in');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      // Still redirect on error - defensive logout
-      router.push('/sign-in');
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
 
   return (
     <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-ranz-charcoal bg-ranz-charcoal-dark px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 ranz-header">
@@ -89,8 +57,8 @@ export function AppHeader({ appName, onMenuClick, showOrgSwitcher = true }: AppH
       <div className="h-6 w-px bg-ranz-charcoal-light/30 hidden sm:block" aria-hidden="true" />
 
       <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-        {/* Organization switcher - only show for Clerk auth */}
-        {AUTH_MODE === 'clerk' && showOrgSwitcher && (
+        {/* Organization switcher */}
+        {showOrgSwitcher && (
           <div className="flex items-center">
             <OrganizationSwitcher
               appearance={{
@@ -108,38 +76,14 @@ export function AppHeader({ appName, onMenuClick, showOrgSwitcher = true }: AppH
 
         {/* Right side */}
         <div className="flex flex-1 items-center justify-end gap-x-4">
-          {AUTH_MODE === 'clerk' ? (
-            // Clerk auth - use UserButton
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "h-9 w-9",
-                },
-              }}
-              afterSignOutUrl="/sign-in"
-            />
-          ) : (
-            // Custom auth - custom user menu with logout
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-ranz-charcoal">
-                  <div className="h-9 w-9 rounded-full bg-app-accent flex items-center justify-center">
-                    <span className="text-white font-medium text-sm">U</span>
-                  </div>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="cursor-pointer"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  {isLoggingOut ? 'Logging out...' : 'Sign out (all devices)'}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "h-9 w-9",
+              },
+            }}
+            afterSignOutUrl="/sign-in"
+          />
         </div>
       </div>
     </header>
