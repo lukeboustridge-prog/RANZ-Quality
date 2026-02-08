@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Award, Loader2, X } from "lucide-react";
+import { Plus, Award, Loader2, X, Pencil, Trash2, Upload, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,6 +31,7 @@ interface Qualification {
   issuingBody: string;
   issueDate: string;
   expiryDate: string | null;
+  certificateKey: string | null;
   verified: boolean;
 }
 
@@ -38,21 +39,27 @@ interface QualificationsListProps {
   memberId: string;
 }
 
+const EMPTY_FORM = {
+  type: "",
+  title: "",
+  issuingBody: "",
+  issueDate: "",
+  expiryDate: "",
+};
+
 export function QualificationsList({ memberId }: QualificationsListProps) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [qualifications, setQualifications] = useState<Qualification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [certificateFile, setCertificateFile] = useState<File | null>(null);
 
-  const [formData, setFormData] = useState({
-    type: "",
-    title: "",
-    issuingBody: "",
-    issueDate: "",
-    expiryDate: "",
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM);
 
   const fetchQualifications = async () => {
     try {
@@ -73,40 +80,90 @@ export function QualificationsList({ memberId }: QualificationsListProps) {
     fetchQualifications();
   }, [memberId]);
 
+  const resetForm = () => {
+    setFormData(EMPTY_FORM);
+    setCertificateFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setShowForm(false);
+    setEditingId(null);
+  };
+
+  const startEdit = (qual: Qualification) => {
+    setFormData({
+      type: qual.type,
+      title: qual.title,
+      issuingBody: qual.issuingBody,
+      issueDate: qual.issueDate.split("T")[0],
+      expiryDate: qual.expiryDate ? qual.expiryDate.split("T")[0] : "",
+    });
+    setCertificateFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setEditingId(qual.id);
+    setShowForm(true);
+    setError(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const res = await fetch(`/api/staff/${memberId}/qualifications`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          expiryDate: formData.expiryDate || null,
-        }),
+      const fd = new FormData();
+      fd.append("type", formData.type);
+      fd.append("title", formData.title);
+      fd.append("issuingBody", formData.issuingBody);
+      fd.append("issueDate", formData.issueDate);
+      if (formData.expiryDate) fd.append("expiryDate", formData.expiryDate);
+      if (certificateFile) fd.append("certificate", certificateFile);
+
+      const url = editingId
+        ? `/api/staff/${memberId}/qualifications/${editingId}`
+        : `/api/staff/${memberId}/qualifications`;
+
+      const res = await fetch(url, {
+        method: editingId ? "PUT" : "POST",
+        body: fd,
       });
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to add qualification");
+        throw new Error(data.error || "Failed to save qualification");
       }
 
-      setFormData({
-        type: "",
-        title: "",
-        issuingBody: "",
-        issueDate: "",
-        expiryDate: "",
-      });
-      setShowForm(false);
+      resetForm();
       await fetchQualifications();
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add qualification");
+      setError(err instanceof Error ? err.message : "Failed to save qualification");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this qualification?")) return;
+
+    setDeletingId(id);
+    setError(null);
+
+    try {
+      const res = await fetch(
+        `/api/staff/${memberId}/qualifications/${id}`,
+        { method: "DELETE" }
+      );
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete qualification");
+      }
+
+      await fetchQualifications();
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete qualification");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -139,7 +196,16 @@ export function QualificationsList({ memberId }: QualificationsListProps) {
         <Button
           size="sm"
           variant={showForm ? "ghost" : "outline"}
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (showForm) {
+              resetForm();
+            } else {
+              setEditingId(null);
+              setFormData(EMPTY_FORM);
+              setCertificateFile(null);
+              setShowForm(true);
+            }
+          }}
         >
           {showForm ? (
             <>
@@ -166,6 +232,9 @@ export function QualificationsList({ memberId }: QualificationsListProps) {
           onSubmit={handleSubmit}
           className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-4"
         >
+          <div className="text-sm font-medium text-slate-700 mb-2">
+            {editingId ? "Edit Qualification" : "New Qualification"}
+          </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="qual-type">Type *</Label>
@@ -243,6 +312,21 @@ export function QualificationsList({ memberId }: QualificationsListProps) {
                 Leave blank if no expiry
               </p>
             </div>
+
+            <div>
+              <Label htmlFor="qual-certificate">Certificate</Label>
+              <Input
+                id="qual-certificate"
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,.webp"
+                onChange={(e) => setCertificateFile(e.target.files?.[0] || null)}
+                className="text-sm"
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                PDF or image, max 50 MB
+              </p>
+            </div>
           </div>
 
           <div className="flex justify-end gap-2">
@@ -250,7 +334,7 @@ export function QualificationsList({ memberId }: QualificationsListProps) {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setShowForm(false)}
+              onClick={resetForm}
               disabled={isSubmitting}
             >
               Cancel
@@ -263,8 +347,10 @@ export function QualificationsList({ memberId }: QualificationsListProps) {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                  Adding...
+                  {editingId ? "Saving..." : "Adding..."}
                 </>
+              ) : editingId ? (
+                "Save Changes"
               ) : (
                 "Add Qualification"
               )}
@@ -314,6 +400,12 @@ export function QualificationsList({ memberId }: QualificationsListProps) {
                       {isExpired(qual.expiryDate) && (
                         <Badge variant="destructive">Expired</Badge>
                       )}
+                      {qual.certificateKey && (
+                        <Badge variant="outline" className="gap-1">
+                          <FileText className="h-3 w-3" />
+                          Certificate
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-sm text-slate-500 mt-0.5">
                       {qual.issuingBody}
@@ -333,6 +425,29 @@ export function QualificationsList({ memberId }: QualificationsListProps) {
                       )}
                     </div>
                   </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => startEdit(qual)}
+                    disabled={!!deletingId}
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={() => handleDelete(qual.id)}
+                    disabled={deletingId === qual.id}
+                  >
+                    {deletingId === qual.id ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
                 </div>
               </div>
             </div>

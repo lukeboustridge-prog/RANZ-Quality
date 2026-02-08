@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { uploadToR2 } from "@/lib/r2";
 import { z } from "zod/v4";
+import { MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB } from "@/types";
 
 const createTrainingSchema = z.object({
   courseName: z.string().min(1),
   provider: z.string().min(1),
   completedAt: z.string().transform((s) => new Date(s)),
-  cpdPoints: z.number().int().min(0).default(0),
+  cpdPoints: z
+    .string()
+    .transform((s) => parseInt(s, 10))
+    .pipe(z.number().int().min(0)),
   cpdCategory: z.enum(["TECHNICAL", "PEER_REVIEW", "INDUSTRY_EVENT", "SELF_STUDY", "OTHER"]),
   notes: z.string().optional(),
 });
@@ -72,7 +77,6 @@ export async function POST(
     }
 
     const { id } = await params;
-    const body = await req.json();
 
     const organization = await db.organization.findUnique({
       where: { clerkOrgId: orgId },
@@ -96,7 +100,33 @@ export async function POST(
       return NextResponse.json({ error: "Member not found" }, { status: 404 });
     }
 
-    const data = createTrainingSchema.parse(body);
+    const formData = await req.formData();
+
+    // Parse text fields
+    const rawData: Record<string, string> = {};
+    for (const [key, value] of formData.entries()) {
+      if (typeof value === "string") {
+        rawData[key] = value;
+      }
+    }
+
+    const data = createTrainingSchema.parse(rawData);
+    const file = formData.get("certificate") as File | null;
+
+    if (file && file.size > MAX_FILE_SIZE_BYTES) {
+      return NextResponse.json(
+        { error: `Certificate file exceeds maximum size of ${MAX_FILE_SIZE_MB}MB` },
+        { status: 413 }
+      );
+    }
+
+    let certificateKey: string | null = null;
+
+    if (file && file.size > 0) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileName = `training/${id}/${Date.now()}-${file.name}`;
+      certificateKey = await uploadToR2(buffer, fileName, file.type);
+    }
 
     const trainingRecord = await db.trainingRecord.create({
       data: {
@@ -106,7 +136,8 @@ export async function POST(
         completedAt: data.completedAt,
         cpdPoints: data.cpdPoints,
         cpdCategory: data.cpdCategory,
-        notes: data.notes,
+        notes: data.notes || null,
+        certificateKey,
       },
     });
 

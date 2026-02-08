@@ -110,6 +110,12 @@ Six qualification types are supported:
 - **Site Safe** — Site Safe NZ certifications
 - **Other** — Any other relevant qualification
 
+You can also upload a certificate file (PDF or image, max 50 MB) when adding or editing a qualification.
+
+### Can I edit or delete qualifications and training records?
+
+Yes. Each qualification and training record card has **edit** (pencil icon) and **delete** (trash icon) buttons. Editing opens the form pre-filled with existing data. Deleting asks for confirmation and permanently removes the record and any attached certificate.
+
 ### What CPD categories are available?
 
 Training records can be classified under five CPD categories:
@@ -134,6 +140,10 @@ Your Personnel dimension (15% of overall compliance) is scored as follows:
 ### What file types can I upload?
 
 Any file type is accepted. Common formats include PDF, Word (.docx), Excel (.xlsx), images (JPEG, PNG), and text files. The maximum file size is **50 MB**.
+
+### Can I download document templates?
+
+Yes. Navigate to **Documents > Templates** (`/documents/templates`) and click **Download Template** on any ISO element. A structured Markdown file downloads with pre-built headings, placeholder sections, and auditor checklist references. Open it in Word, Google Docs, or any text editor, fill in the placeholders, and upload the completed document.
 
 ### What are the 19 ISO elements?
 

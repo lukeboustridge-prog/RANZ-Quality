@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { ArrowLeft, CheckCircle2, Circle, Upload, ChevronDown } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle, Upload, Download, ChevronDown } from "lucide-react";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { getAllTemplateGuides } from "@/lib/iso-templates";
@@ -177,14 +177,25 @@ export default async function TemplateGuidePage() {
                   <p className="text-sm text-blue-800">{template.guidance}</p>
                 </div>
 
-                <Button asChild size="sm">
-                  <Link
-                    href={`/documents/upload?element=${template.element}`}
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload for {template.name}
-                  </Link>
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button asChild size="sm" variant="outline">
+                    <a
+                      href={`/api/documents/templates/${template.element}`}
+                      download
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Template
+                    </a>
+                  </Button>
+                  <Button asChild size="sm">
+                    <Link
+                      href={`/documents/upload?element=${template.element}`}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload for {template.name}
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </details>
           );

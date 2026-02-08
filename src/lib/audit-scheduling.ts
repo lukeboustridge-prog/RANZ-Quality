@@ -133,3 +133,76 @@ export async function scheduleAudit(organizationId: string) {
 
   return audit;
 }
+
+/**
+ * Schedule a follow-up audit after a FAIL or CONDITIONAL_PASS result.
+ * Scheduled 90 days out, scoped to elements with non-conformities from the source audit.
+ */
+export async function scheduleFollowUpAudit(
+  organizationId: string,
+  sourceAuditId: string
+) {
+  // Get the source audit with its checklist to find non-conforming elements
+  const sourceAudit = await db.audit.findUnique({
+    where: { id: sourceAuditId },
+    include: { checklist: true },
+  });
+
+  if (!sourceAudit) return null;
+
+  // Find elements with non-conformities
+  const ncElements = [
+    ...new Set(
+      sourceAudit.checklist
+        .filter(
+          (c) =>
+            c.response === "MINOR_NONCONFORMITY" ||
+            c.response === "MAJOR_NONCONFORMITY"
+        )
+        .map((c) => c.isoElement)
+    ),
+  ];
+
+  // If no non-conforming elements found, fall back to all elements from the source audit
+  const scopeElements =
+    ncElements.length > 0 ? ncElements : sourceAudit.isoElements;
+
+  // Generate audit number
+  const year = new Date().getFullYear();
+  const auditCount = await db.audit.count({
+    where: {
+      organizationId,
+      auditNumber: { startsWith: `AUD-${year}` },
+    },
+  });
+  const auditNumber = `AUD-${year}-${String(auditCount + 1).padStart(3, "0")}`;
+
+  // Find the latest CAPA due date to schedule after corrective actions are due
+  const latestCapa = await db.cAPARecord.findFirst({
+    where: { auditId: sourceAuditId },
+    orderBy: { dueDate: "desc" },
+    select: { dueDate: true },
+  });
+
+  // Schedule 90 days from now, or 90 days after latest CAPA due date, whichever is later
+  const baseDate = latestCapa?.dueDate
+    ? new Date(Math.max(Date.now(), latestCapa.dueDate.getTime()))
+    : new Date();
+  const scheduledDate = new Date(baseDate);
+  scheduledDate.setDate(scheduledDate.getDate() + 90);
+
+  const audit = await db.audit.create({
+    data: {
+      organizationId,
+      auditNumber,
+      auditType: "FOLLOW_UP",
+      status: "SCHEDULED",
+      scheduledDate,
+      isoElements: scopeElements,
+      scope: `Follow-up audit for ${sourceAudit.auditNumber} — ${ncElements.length} element${ncElements.length !== 1 ? "s" : ""} with non-conformities`,
+      followUpAuditId: sourceAuditId,
+    },
+  });
+
+  return audit;
+}

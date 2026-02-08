@@ -219,7 +219,17 @@ On the staff detail page, you can add qualifications for each team member:
 | Issuing Body | Yes | Organization that issued the qualification |
 | Issue Date | Yes | Date the qualification was issued |
 | Expiry Date | No | Date the qualification expires (if applicable) |
-| Certificate | No | Upload the certificate file |
+| Certificate | No | Upload a PDF or image of the certificate (max 50 MB) |
+
+Certificates are stored securely in encrypted cloud storage (Cloudflare R2). A "Certificate" badge appears on qualifications that have an uploaded file.
+
+#### Editing a Qualification
+
+Click the **pencil icon** on any qualification card to edit it. The form pre-fills with the existing data. You can update any field and optionally upload a new certificate (which replaces the existing one).
+
+#### Deleting a Qualification
+
+Click the **trash icon** on any qualification card. You will be asked to confirm before the record is permanently deleted. If a certificate file was attached, it is also removed from storage.
 
 ### Training Records
 
@@ -230,10 +240,18 @@ Track continuing professional development (CPD) for each staff member:
 | Course Name | Yes | Name of the training course |
 | Provider | Yes | Training provider name |
 | Completed At | Yes | Date the training was completed |
-| CPD Points | No | Number of CPD points earned (default: 0) |
+| CPD Points | Yes | Number of CPD points earned |
 | CPD Category | Yes | Technical, Peer Review, Industry Event, Self Study, or Other |
-| Certificate | No | Upload the training certificate |
+| Certificate | No | Upload a PDF or image of the training certificate (max 50 MB) |
 | Notes | No | Additional information |
+
+#### Editing a Training Record
+
+Click the **pencil icon** on any training record card to edit it. You can update any field and optionally upload a new certificate.
+
+#### Deleting a Training Record
+
+Click the **trash icon** on any training record card. Confirm the deletion when prompted. The record and any attached certificate are permanently removed.
 
 ### Personnel Compliance Scoring
 
@@ -298,7 +316,20 @@ The system automatically:
 
 ### Document Templates
 
-Navigate to **Templates** (`/documents/templates`) for pre-built document templates you can download and customize for your business.
+Navigate to **Templates** (`/documents/templates`) for guidance and downloadable starter templates for each of the 19 ISO elements.
+
+Each element card shows:
+- **Example documents** you should upload for that element
+- **What auditors look for** during certification audits
+- **RANZ guidance** on how to approach the element
+
+Click **Download Template** to download a structured Markdown (.md) file for any element. The template includes:
+- Pre-built section headings matching the required document types
+- Placeholder text you replace with your business-specific content
+- Role/responsibility tables, checklists, and sign-off blocks
+- An auditor checklist reference so you can verify your document addresses all audit questions
+
+Markdown files can be opened in Microsoft Word, Google Docs, or any text editor. Fill in the placeholders, save as PDF or Word, and upload using the **Upload** button.
 
 ### Document Types
 
@@ -553,6 +584,25 @@ During an audit, the auditor works through a checklist covering the ISO elements
 | **Pass with Observations** | Conforming with minor observations — 85 points |
 | **Conditional Pass** | Non-conformities found, corrective actions required — 60 points |
 | **Fail** | Significant non-conformities — 30 points |
+
+### Audit Frequency
+
+The time between scheduled audits depends on your certification tier:
+
+| Tier | Audit Frequency |
+|------|----------------|
+| **Accredited** | Every 24 months |
+| **Certified** | Every 12 months |
+| **Master Roofer** | Every 12 months |
+
+When an audit is completed, the system automatically calculates your next audit due date based on your tier.
+
+### Follow-Up Audits
+
+If an audit results in a **Conditional Pass** or **Fail** rating, the system automatically schedules a **Follow-Up** audit:
+- The follow-up is scheduled **90 days** after the latest CAPA due date (giving time for corrective actions)
+- The scope is limited to the specific ISO elements where non-conformities were found
+- The follow-up audit appears in your Audits list with type "Follow-up"
 
 ### Audit Compliance Scoring
 

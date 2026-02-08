@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, BookOpen, Loader2, X } from "lucide-react";
+import { Plus, BookOpen, Loader2, X, Pencil, Trash2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,6 +39,7 @@ interface TrainingRecord {
   completedAt: string;
   cpdPoints: number;
   cpdCategory: string;
+  certificateKey: string | null;
   notes: string | null;
 }
 
@@ -46,22 +47,28 @@ interface TrainingRecordsListProps {
   memberId: string;
 }
 
+const EMPTY_FORM = {
+  courseName: "",
+  provider: "",
+  completedAt: "",
+  cpdPoints: "",
+  cpdCategory: "",
+  notes: "",
+};
+
 export function TrainingRecordsList({ memberId }: TrainingRecordsListProps) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [records, setRecords] = useState<TrainingRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [certificateFile, setCertificateFile] = useState<File | null>(null);
 
-  const [formData, setFormData] = useState({
-    courseName: "",
-    provider: "",
-    completedAt: "",
-    cpdPoints: "",
-    cpdCategory: "",
-    notes: "",
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM);
 
   const fetchRecords = async () => {
     try {
@@ -82,44 +89,96 @@ export function TrainingRecordsList({ memberId }: TrainingRecordsListProps) {
     fetchRecords();
   }, [memberId]);
 
+  const resetForm = () => {
+    setFormData(EMPTY_FORM);
+    setCertificateFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setShowForm(false);
+    setEditingId(null);
+  };
+
+  const startEdit = (record: TrainingRecord) => {
+    setFormData({
+      courseName: record.courseName,
+      provider: record.provider,
+      completedAt: record.completedAt.split("T")[0],
+      cpdPoints: String(record.cpdPoints),
+      cpdCategory: record.cpdCategory,
+      notes: record.notes || "",
+    });
+    setCertificateFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setEditingId(record.id);
+    setShowForm(true);
+    setError(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const res = await fetch(`/api/staff/${memberId}/training`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          cpdPoints: Number(formData.cpdPoints),
-          notes: formData.notes || null,
-        }),
+      const fd = new FormData();
+      fd.append("courseName", formData.courseName);
+      fd.append("provider", formData.provider);
+      fd.append("completedAt", formData.completedAt);
+      fd.append("cpdPoints", formData.cpdPoints);
+      fd.append("cpdCategory", formData.cpdCategory);
+      if (formData.notes) fd.append("notes", formData.notes);
+      if (certificateFile) fd.append("certificate", certificateFile);
+
+      const url = editingId
+        ? `/api/staff/${memberId}/training/${editingId}`
+        : `/api/staff/${memberId}/training`;
+
+      const res = await fetch(url, {
+        method: editingId ? "PUT" : "POST",
+        body: fd,
       });
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to add training record");
+        throw new Error(data.error || "Failed to save training record");
       }
 
-      setFormData({
-        courseName: "",
-        provider: "",
-        completedAt: "",
-        cpdPoints: "",
-        cpdCategory: "",
-        notes: "",
-      });
-      setShowForm(false);
+      resetForm();
       await fetchRecords();
       router.refresh();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to add training record"
+        err instanceof Error ? err.message : "Failed to save training record"
       );
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this training record?")) return;
+
+    setDeletingId(id);
+    setError(null);
+
+    try {
+      const res = await fetch(
+        `/api/staff/${memberId}/training/${id}`,
+        { method: "DELETE" }
+      );
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete training record");
+      }
+
+      await fetchRecords();
+      router.refresh();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to delete training record"
+      );
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -149,7 +208,16 @@ export function TrainingRecordsList({ memberId }: TrainingRecordsListProps) {
         <Button
           size="sm"
           variant={showForm ? "ghost" : "outline"}
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (showForm) {
+              resetForm();
+            } else {
+              setEditingId(null);
+              setFormData(EMPTY_FORM);
+              setCertificateFile(null);
+              setShowForm(true);
+            }
+          }}
         >
           {showForm ? (
             <>
@@ -176,6 +244,9 @@ export function TrainingRecordsList({ memberId }: TrainingRecordsListProps) {
           onSubmit={handleSubmit}
           className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-4"
         >
+          <div className="text-sm font-medium text-slate-700 mb-2">
+            {editingId ? "Edit Training Record" : "New Training Record"}
+          </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="training-course">Course Name *</Label>
@@ -255,6 +326,21 @@ export function TrainingRecordsList({ memberId }: TrainingRecordsListProps) {
               </Select>
             </div>
 
+            <div>
+              <Label htmlFor="training-certificate">Certificate</Label>
+              <Input
+                id="training-certificate"
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,.webp"
+                onChange={(e) => setCertificateFile(e.target.files?.[0] || null)}
+                className="text-sm"
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                PDF or image, max 50 MB
+              </p>
+            </div>
+
             <div className="sm:col-span-2">
               <Label htmlFor="training-notes">Notes</Label>
               <Textarea
@@ -274,7 +360,7 @@ export function TrainingRecordsList({ memberId }: TrainingRecordsListProps) {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setShowForm(false)}
+              onClick={resetForm}
               disabled={isSubmitting}
             >
               Cancel
@@ -287,8 +373,10 @@ export function TrainingRecordsList({ memberId }: TrainingRecordsListProps) {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                  Adding...
+                  {editingId ? "Saving..." : "Adding..."}
                 </>
+              ) : editingId ? (
+                "Save Changes"
               ) : (
                 "Add Training Record"
               )}
@@ -338,6 +426,12 @@ export function TrainingRecordsList({ memberId }: TrainingRecordsListProps) {
                         {CPD_CATEGORY_LABELS[record.cpdCategory] ||
                           record.cpdCategory}
                       </Badge>
+                      {record.certificateKey && (
+                        <Badge variant="outline" className="gap-1">
+                          <FileText className="h-3 w-3" />
+                          Certificate
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-sm text-slate-500 mt-0.5">
                       {record.provider}
@@ -355,6 +449,29 @@ export function TrainingRecordsList({ memberId }: TrainingRecordsListProps) {
                       </p>
                     )}
                   </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => startEdit(record)}
+                    disabled={!!deletingId}
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={() => handleDelete(record.id)}
+                    disabled={deletingId === record.id}
+                  >
+                    {deletingId === record.id ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
                 </div>
               </div>
             </div>

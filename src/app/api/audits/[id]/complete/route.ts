@@ -3,6 +3,10 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { z } from "zod/v4";
 import { updateOrganizationComplianceScore } from "@/lib/compliance-v2";
+import {
+  getAuditFrequencyMonths,
+  scheduleFollowUpAudit,
+} from "@/lib/audit-scheduling";
 
 const completeAuditSchema = z.object({
   rating: z.enum(["PASS", "PASS_WITH_OBSERVATIONS", "CONDITIONAL_PASS", "FAIL"]),
@@ -47,7 +51,7 @@ export async function POST(
         id: auditId,
         organization: { clerkOrgId: orgId },
       },
-      include: { checklist: true },
+      include: { checklist: true, organization: true },
     });
 
     if (!audit) {
@@ -128,6 +132,12 @@ export async function POST(
       }
     }
 
+    // Determine if follow-up is needed based on rating
+    const needsFollowUp =
+      data.followUpRequired ||
+      data.rating === "FAIL" ||
+      data.rating === "CONDITIONAL_PASS";
+
     // Update audit
     const updatedAudit = await db.audit.update({
       where: { id: auditId },
@@ -136,20 +146,38 @@ export async function POST(
         completedAt: new Date(),
         rating: data.rating,
         summary: data.summary,
-        followUpRequired: data.followUpRequired || false,
+        followUpRequired: needsFollowUp,
         followUpDueDate: data.followUpDueDate,
         ...stats,
       },
     });
 
-    // Update organization
+    // Update organization with tier-based next audit date
+    const frequencyMonths = getAuditFrequencyMonths(
+      audit.organization.certificationTier
+    );
+    const nextAuditDue = new Date();
+    nextAuditDue.setMonth(nextAuditDue.getMonth() + frequencyMonths);
+
     await db.organization.update({
       where: { id: audit.organizationId },
       data: {
         lastAuditDate: new Date(),
-        nextAuditDue: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        nextAuditDue,
       },
     });
+
+    // Auto-schedule follow-up audit for FAIL or CONDITIONAL_PASS
+    let followUpAudit = null;
+    if (
+      data.rating === "FAIL" ||
+      data.rating === "CONDITIONAL_PASS"
+    ) {
+      followUpAudit = await scheduleFollowUpAudit(
+        audit.organizationId,
+        auditId
+      );
+    }
 
     // Recalculate compliance score
     await updateOrganizationComplianceScore(audit.organizationId);
@@ -158,6 +186,9 @@ export async function POST(
       audit: updatedAudit,
       statistics: stats,
       createdCAPAs,
+      followUpAudit: followUpAudit
+        ? { id: followUpAudit.id, scheduledDate: followUpAudit.scheduledDate }
+        : null,
     });
   } catch (error) {
     console.error("Failed to complete audit:", error);

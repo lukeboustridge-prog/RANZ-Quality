@@ -18,9 +18,9 @@ The portal has strong implementation of Phases 1-3 core infrastructure. The data
 | Authentication & SSO | 90% | Clerk + custom auth both work, satellite domain not yet connected |
 | Compliance Scoring | 95% | Full 4-dimension engine with tier eligibility |
 | Insurance Management | 90% | CRUD, alerts, gap detection done. COI OCR not built |
-| Personnel Management | 75% | LBP verification done. CPD tracking incomplete |
-| Document Management | 80% | Version control + approval done. No templates, no review reminders |
-| Audit Management | 85% | Full audit lifecycle + checklist. No scheduling automation |
+| Personnel Management | 95% | LBP verification done. CPD tracking complete with edit/delete and certificate upload |
+| Document Management | 90% | Version control + approval done. Downloadable templates added. Review reminders via cron. |
+| Audit Management | 95% | Full audit lifecycle + checklist. Tier-based scheduling + follow-up auto-scheduling done |
 | CAPA System | 90% | Full lifecycle with overdue tracking |
 | Notification System | 90% | Email + SMS + In-App done. Push not implemented |
 | Open Badges | 95% | Credential generation, SVG badges, embed widget all done |
@@ -43,41 +43,33 @@ The portal has the right *structure* (19 elements, compliance assessments, docum
 
 ### Critical ISO Gaps
 
-#### 1. No Document Templates (Elements 1-19)
+#### 1. ~~No Document Templates (Elements 1-19)~~ CLOSED
 **Design said:** "RANZ provides pre-approved templates for each ISO element"
-**Current state:** Members can upload arbitrary files tagged to elements, but there are no starter templates.
-**Impact:** Members don't know *what* to upload. A Quality Policy template, Internal Audit Checklist, Corrective Action Request form etc. would dramatically accelerate adoption.
-**Recommendation:** Create downloadable template library (Word/PDF) for at least the critical elements (1, 2, 4, 5, 8, 15, 18).
+**Resolution:** Downloadable Markdown templates added for all 19 ISO elements. API route generates structured templates on-the-fly from `iso-templates.ts` metadata. Download button added to templates page next to each Upload button. Templates include section headings, placeholder text, responsibility tables, checklists, and auditor checklist references.
 
 #### 2. No Document Review Cycle Enforcement (Element 8)
 **Design said:** "Review due date tracking" with automated reminders
-**Current state:** `reviewDueDate` field exists on Document model but no cron job checks it and no notifications fire when reviews are due.
-**Impact:** Documents go stale without periodic review - a core ISO 9000 requirement.
-**Recommendation:** Add document review reminder to the notification cron job. Generate DOCUMENT_REVIEW_DUE notifications.
+**Current state:** `reviewDueDate` field exists on Document model. Cron job now sends 30/7-day + overdue review reminders.
+**Status:** Already implemented via notification cron job. No further work needed.
 
-#### 3. No CPD/Training Tracking UI (Element 6)
+#### 3. ~~No CPD/Training Tracking UI (Element 6)~~ CLOSED
 **Design said:** Full CPD tracking dashboard with points, cycle progress, category breakdown
-**Current state:** OrganizationMember has `cpdPointsEarned`, `cpdCycleStart`, `cpdCycleEnd` fields but no pages or API routes to manage them. No Qualification or TrainingRecord models.
-**Impact:** Training & Competence (Element 6) cannot be meaningfully assessed.
-**Recommendation:** Add Qualification + TrainingRecord models. Build CPD tracking page under staff management.
+**Resolution:** Qualification + TrainingRecord models exist in schema. Full CRUD API routes (GET/POST/PUT/DELETE) implemented with certificate file upload to R2. UI components updated with edit (pencil icon), delete (trash icon), and certificate upload on both create and edit forms. Certificate badge shown on records with attached files.
 
 #### 4. No Management Review Process (Element 4)
 **Design said:** Process management with structured workflows
 **Current state:** Upload-only. No management review schedule, no review meeting template, no minute recording.
 **Impact:** ISO 9000 requires periodic management review of the QMS.
-**Recommendation:** Could be addressed with a template + document category for management review minutes.
+**Recommendation:** Could be addressed with a template + document category for management review minutes. The new downloadable template for Element 4 (Process Management) provides a starting point.
 
-#### 5. No Audit Scheduling Automation (Element 18)
+#### 5. ~~No Audit Scheduling Automation (Element 18)~~ CLOSED
 **Design said:** Auto-calculate next audit date, auto-assign auditors, send prep checklists 30 days before
-**Current state:** Audits can be created manually with a scheduled date. No automation for scheduling or auditor assignment.
-**Impact:** Audit scheduling is fully manual, which doesn't scale.
-**Recommendation:** Add audit scheduling logic to cron job based on tier and last audit date.
+**Resolution:** Tier-based audit frequency implemented (Accredited=24mo, Certified/Master=12mo). Audit completion endpoint now uses `getAuditFrequencyMonths()` instead of hardcoded 365 days. FAIL and CONDITIONAL_PASS audits auto-schedule a FOLLOW_UP audit 90 days after latest CAPA due date, scoped to elements with non-conformities. Cron job auto-schedules overdue audits with 30-day reminders.
 
 #### 6. No Approved Supplier Register (Element 9)
 **Design said:** APEX Certified Products Database integration
-**Current state:** CertifiedProductUsage model exists for per-project declarations, but no org-level approved supplier list.
-**Impact:** Purchasing control (Element 9) is weak.
-**Recommendation:** Add an approved supplier/product list at org level, possibly seeded from APEX data.
+**Current state:** Full approved supplier register now exists with CRUD, APEX certification tracking, status management, and review scheduling.
+**Status:** Implemented. APEX API integration remains a future item.
 
 ---
 
@@ -85,12 +77,12 @@ The portal has the right *structure* (19 elements, compliance assessments, docum
 
 ### HIGH PRIORITY (MVP completeness)
 
-| Gap | Design Phase | Effort | Notes |
-|-----|-------------|--------|-------|
-| Document review reminders | Phase 1 | Small | Add to existing cron job |
-| ISO element templates | Phase 2 | Medium | 7-10 Word templates + download API |
-| CPD tracking UI + models | Phase 2 | Medium | New models, page, API routes |
-| Audit scheduling automation | Phase 2 | Medium | Cron logic + assignment |
+| Gap | Design Phase | Effort | Status |
+|-----|-------------|--------|--------|
+| Document review reminders | Phase 1 | Small | **DONE** - Cron job sends 30/7-day + overdue alerts |
+| ISO element templates | Phase 2 | Medium | **DONE** - Downloadable Markdown templates for all 19 elements |
+| CPD tracking UI + models | Phase 2 | Medium | **DONE** - Full CRUD with edit/delete + certificate upload |
+| Audit scheduling automation | Phase 2 | Medium | **DONE** - Tier-based frequency + follow-up auto-scheduling |
 | SSO satellite connection | Phase 1 | Small | Config + testing with Roofing Reports |
 
 ### MEDIUM PRIORITY (Core programme)
@@ -156,17 +148,22 @@ model TrainingRecord {
 
 ## Recommended Development Priorities
 
-### Next Sprint: ISO 9000 Foundation Gaps
-1. **Document review reminders** - Wire up `reviewDueDate` to notification cron
-2. **ISO element templates** - Create downloadable templates for critical elements
-3. **CPD models + basic UI** - Add Qualification + TrainingRecord, basic list page
+### ~~Next Sprint: ISO 9000 Foundation Gaps~~ COMPLETED
+1. ~~**Document review reminders**~~ - Done (cron job)
+2. ~~**ISO element templates**~~ - Done (downloadable Markdown for all 19 elements)
+3. ~~**CPD models + basic UI**~~ - Done (full CRUD with edit/delete + certificate upload)
 
-### Following Sprint: Automation & Scale
-4. **Audit scheduling automation** - Cron-based scheduling with tier rules
-5. **Approved supplier register** - Org-level product/supplier management
-6. **SSO satellite connection** - Connect to Roofing Reports app
+### ~~Following Sprint: Automation & Scale~~ MOSTLY COMPLETED
+4. ~~**Audit scheduling automation**~~ - Done (tier-based + follow-up auto-scheduling)
+5. ~~**Approved supplier register**~~ - Done (full CRUD with APEX tracking)
+6. **SSO satellite connection** - Connect to Roofing Reports app (remaining)
+
+### Next Sprint: Remaining Items
+- **SSO satellite connection** - Connect to Roofing Reports app
+- **Background job queue** - Move heavy operations off request cycle
+- **Insurer webhook/feed** - Compliance change event dispatch
 
 ### Future: External Integrations
-7. **Background job queue** - Move heavy operations off request cycle
-8. **Insurer webhook/feed** - Compliance change event dispatch
-9. **Full-text search** - PostgreSQL tsvector across documents + orgs
+- **Full-text search** - PostgreSQL tsvector across documents + orgs
+- **Vertical Horizonz API** - CPD import
+- **APEX Products Database API** - Product search
