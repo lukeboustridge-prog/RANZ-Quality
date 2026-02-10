@@ -72,12 +72,12 @@
 4. System sends renewal reminders at 90, 60, and 30 days before annual anniversary
 5. Public verification page shows RoofWright programme status for enrolled organizations
 
-**Plans:** TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 13-01: TBD
-- [ ] 13-02: TBD
-- [ ] 13-03: TBD
+- [ ] 13-01-PLAN.md — Schema, types, and org application flow (ENRL-01, ENRL-03)
+- [ ] 13-02-PLAN.md — Admin review, approval, and status management (ENRL-02, ENRL-05)
+- [ ] 13-03-PLAN.md — Dashboard badge, public verification, and renewal notifications (ENRL-04, ENRL-06, ENRL-07)
 
 ---
 
@@ -187,4 +187,4 @@ Phases execute in numeric order: 13 → 14 → 15 → 16
 
 ---
 
-*Last updated: 2026-02-10 after v1.2 RoofWright Programme roadmap created*
+*Last updated: 2026-02-10 after Phase 13 Programme Enrolment planned (3 plans, 2 waves)*
