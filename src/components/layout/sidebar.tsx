@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Shield,
   Users,
+  UsersRound,
   FileText,
   Settings,
   ClipboardCheck,
@@ -31,6 +32,7 @@ const navigation = [
   { name: "CAPA", href: "/capa", icon: AlertTriangle },
   { name: "Programme", href: "/programme", icon: Award },
   { name: "Credentials", href: "/credentials", icon: GraduationCap },
+  { name: "Teams", href: "/teams", icon: UsersRound },
 ];
 
 const secondaryNavigation = [
