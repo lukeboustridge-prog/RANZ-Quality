@@ -209,6 +209,16 @@ export const TEAM_ROLE_LABELS: Record<TeamRole, string> = {
   APPRENTICE: "Apprentice",
 };
 
+// Client Checklist Types (Phase 16)
+export type ChecklistItemType = "CHECKBOX" | "TEXT_INPUT" | "PHOTO_REQUIRED" | "SIGNATURE";
+
+export const CHECKLIST_ITEM_TYPE_LABELS: Record<ChecklistItemType, string> = {
+  CHECKBOX: "Checkbox",
+  TEXT_INPUT: "Text Input",
+  PHOTO_REQUIRED: "Photo Required",
+  SIGNATURE: "Signature",
+};
+
 // Phase 3 Types
 export type ProjectType =
   | "NEW_BUILD"

@@ -58,6 +58,8 @@ model Organization {
   approvedSuppliers      ApprovedSupplier[]
   programmeEnrolment     ProgrammeEnrolment?
   teams                  Team[]
+  checklists             ChecklistTemplate[]
+  checklistInstances     ChecklistInstance[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -744,12 +746,13 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  organization Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  photos       ProjectPhoto[]
-  documents    ProjectDocument[]
-  productsUsed CertifiedProductUsage[]
-  testimonial  Testimonial?
-  teams        Team[]
+  organization       Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  photos             ProjectPhoto[]
+  documents          ProjectDocument[]
+  productsUsed       CertifiedProductUsage[]
+  testimonial        Testimonial?
+  teams              Team[]
+  checklistInstances ChecklistInstance[]
 
   @@unique([organizationId, projectNumber])
   @@index([organizationId])
@@ -1040,6 +1043,117 @@ model TeamMember {
   @@unique([teamId, memberId])
   @@index([teamId])
   @@index([memberId])
+}
+
+// ============================================================================
+// Client Process Checklists
+// ============================================================================
+
+enum ChecklistItemType {
+  CHECKBOX
+  TEXT_INPUT
+  PHOTO_REQUIRED
+  SIGNATURE
+}
+
+model ChecklistTemplate {
+  id               String  @id @default(cuid())
+  title            String
+  description      String?
+  isDefault        Boolean @default(false)
+  isMaster         Boolean @default(true)
+  organizationId   String?
+  sourceTemplateId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sections       ChecklistSection[]
+  instances      ChecklistInstance[]
+  organization   Organization?      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sourceTemplate ChecklistTemplate? @relation("ChecklistTemplateClone", fields: [sourceTemplateId], references: [id], onDelete: SetNull)
+  customizations ChecklistTemplate[] @relation("ChecklistTemplateClone")
+
+  @@index([organizationId])
+  @@index([isMaster])
+}
+
+model ChecklistSection {
+  id          String  @id @default(cuid())
+  templateId  String
+  title       String
+  description String?
+  sortOrder   Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  template ChecklistTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  items    ChecklistItem[]
+
+  @@index([templateId])
+}
+
+model ChecklistItem {
+  id          String            @id @default(cuid())
+  sectionId   String
+  title       String
+  description String?
+  itemType    ChecklistItemType @default(CHECKBOX)
+  isRequired  Boolean           @default(true)
+  sortOrder   Int               @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  section     ChecklistSection        @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  completions ChecklistItemCompletion[]
+
+  @@index([sectionId])
+}
+
+model ChecklistInstance {
+  id             String    @id @default(cuid())
+  templateId     String
+  projectId      String
+  organizationId String
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+  createdBy      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  template     ChecklistTemplate        @relation(fields: [templateId], references: [id])
+  project      Project                  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  organization Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  completions  ChecklistItemCompletion[]
+
+  @@unique([templateId, projectId])
+  @@index([organizationId])
+  @@index([projectId])
+}
+
+model ChecklistItemCompletion {
+  id            String    @id @default(cuid())
+  instanceId    String
+  itemId        String
+  completed     Boolean   @default(false)
+  textValue     String?
+  notes         String?
+  photoKey      String?
+  photoFileName String?
+  completedAt   DateTime?
+  completedBy   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  instance ChecklistInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  item     ChecklistItem     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([instanceId, itemId])
+  @@index([instanceId])
 }
 
 // ============================================================================
