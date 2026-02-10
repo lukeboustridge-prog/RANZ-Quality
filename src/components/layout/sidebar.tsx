@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   FolderKanban,
   Package,
+  HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ const navigation = [
 ];
 
 const secondaryNavigation = [
+  { name: "Help", href: "/help", icon: HelpCircle },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 

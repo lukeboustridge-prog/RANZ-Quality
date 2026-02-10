@@ -9,6 +9,8 @@ import {
   Shield,
   Users,
   FileText,
+  HelpCircle,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,8 @@ const navigation = [
   { name: "Insurance", href: "/insurance", icon: Shield },
   { name: "Staff", href: "/staff", icon: Users },
   { name: "Documents", href: "/documents", icon: FileText },
+  { name: "Help", href: "/help", icon: HelpCircle },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Header() {
