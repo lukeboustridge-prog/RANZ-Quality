@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -19,21 +20,36 @@ import {
   Award,
   GraduationCap,
   HelpCircle,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navigation = [
+type NavItem = { name: string; href: string; icon: typeof LayoutDashboard };
+type NavGroup = { name: string; icon: typeof LayoutDashboard; children: NavItem[] };
+type NavEntry = NavItem | NavGroup;
+
+function isNavGroup(entry: NavEntry): entry is NavGroup {
+  return "children" in entry;
+}
+
+const navigation: NavEntry[] = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Insurance", href: "/insurance", icon: Shield },
-  { name: "Staff", href: "/staff", icon: Users },
+  {
+    name: "People",
+    icon: Users,
+    children: [
+      { name: "Staff", href: "/staff", icon: Users },
+      { name: "Teams", href: "/teams", icon: UsersRound },
+      { name: "Credentials", href: "/credentials", icon: GraduationCap },
+    ],
+  },
   { name: "Documents", href: "/documents", icon: FileText },
   { name: "Suppliers", href: "/suppliers", icon: Package },
   { name: "Projects", href: "/projects", icon: FolderKanban },
   { name: "Audits", href: "/audits", icon: ClipboardCheck },
   { name: "CAPA", href: "/capa", icon: AlertTriangle },
   { name: "Programme", href: "/programme", icon: Award },
-  { name: "Credentials", href: "/credentials", icon: GraduationCap },
-  { name: "Teams", href: "/teams", icon: UsersRound },
   { name: "Checklists", href: "/checklists", icon: ClipboardList },
 ];
 
@@ -47,6 +63,27 @@ export function Sidebar() {
   const { user } = useUser();
   const userRole = (user?.publicMetadata as { role?: string })?.role;
   const isRanzAdmin = userRole === "ranz:admin" || userRole === "ranz:auditor";
+
+  // Auto-expand groups when a child route is active
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    for (const entry of navigation) {
+      if (isNavGroup(entry)) {
+        initial[entry.name] = false; // will be overridden by active check below
+      }
+    }
+    return initial;
+  });
+
+  const toggleGroup = (name: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [name]: !prev[name] }));
+  };
+
+  const isRouteActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
+
+  const isGroupActive = (group: NavGroup) =>
+    group.children.some((child) => isRouteActive(child.href));
 
   return (
     <aside className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
@@ -90,14 +127,79 @@ export function Sidebar() {
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" className="-mx-2 space-y-1">
-                {navigation.map((item) => {
-                  const isActive =
-                    pathname === item.href ||
-                    pathname.startsWith(`${item.href}/`);
+                {navigation.map((entry) => {
+                  if (isNavGroup(entry)) {
+                    const groupActive = isGroupActive(entry);
+                    const isExpanded = expandedGroups[entry.name] || groupActive;
+                    return (
+                      <li key={entry.name}>
+                        <button
+                          onClick={() => toggleGroup(entry.name)}
+                          className={cn(
+                            "group flex w-full items-center gap-x-3 rounded-md p-2.5 text-sm font-medium leading-6 transition-all duration-150",
+                            groupActive
+                              ? "bg-[var(--ranz-charcoal-dark)] text-white"
+                              : "text-[var(--ranz-silver)] hover:bg-[var(--ranz-charcoal-dark)] hover:text-white"
+                          )}
+                        >
+                          <entry.icon
+                            className={cn(
+                              "h-5 w-5 shrink-0",
+                              groupActive
+                                ? "text-[var(--ranz-yellow)]"
+                                : "text-[var(--ranz-silver)] group-hover:text-white"
+                            )}
+                          />
+                          {entry.name}
+                          <ChevronRight
+                            className={cn(
+                              "ml-auto h-4 w-4 shrink-0 transition-transform duration-150",
+                              isExpanded ? "rotate-90" : "",
+                              groupActive
+                                ? "text-[var(--ranz-yellow)]"
+                                : "text-[var(--ranz-silver)] group-hover:text-white"
+                            )}
+                          />
+                        </button>
+                        {isExpanded && (
+                          <ul role="list" className="mt-1 space-y-1 pl-4">
+                            {entry.children.map((child) => {
+                              const isActive = isRouteActive(child.href);
+                              return (
+                                <li key={child.name}>
+                                  <Link
+                                    href={child.href}
+                                    className={cn(
+                                      "group flex gap-x-3 rounded-md p-2 text-sm font-medium leading-6 transition-all duration-150",
+                                      isActive
+                                        ? "bg-[var(--ranz-charcoal-dark)] text-white border-l-2 border-[var(--ranz-yellow)]"
+                                        : "text-[var(--ranz-silver)] hover:bg-[var(--ranz-charcoal-dark)] hover:text-white"
+                                    )}
+                                  >
+                                    <child.icon
+                                      className={cn(
+                                        "h-4 w-4 shrink-0",
+                                        isActive
+                                          ? "text-[var(--ranz-yellow)]"
+                                          : "text-[var(--ranz-silver)] group-hover:text-white"
+                                      )}
+                                    />
+                                    {child.name}
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </li>
+                    );
+                  }
+
+                  const isActive = isRouteActive(entry.href);
                   return (
-                    <li key={item.name}>
+                    <li key={entry.name}>
                       <Link
-                        href={item.href}
+                        href={entry.href}
                         className={cn(
                           "group flex gap-x-3 rounded-md p-2.5 text-sm font-medium leading-6 transition-all duration-150",
                           isActive
@@ -105,7 +207,7 @@ export function Sidebar() {
                             : "text-[var(--ranz-silver)] hover:bg-[var(--ranz-charcoal-dark)] hover:text-white"
                         )}
                       >
-                        <item.icon
+                        <entry.icon
                           className={cn(
                             "h-5 w-5 shrink-0",
                             isActive
@@ -113,7 +215,7 @@ export function Sidebar() {
                               : "text-[var(--ranz-silver)] group-hover:text-white"
                           )}
                         />
-                        {item.name}
+                        {entry.name}
                       </Link>
                     </li>
                   );
