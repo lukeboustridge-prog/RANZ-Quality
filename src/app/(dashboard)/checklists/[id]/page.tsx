@@ -15,6 +15,7 @@ import {
   ClipboardList,
   Upload,
   ImageIcon,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -511,7 +512,30 @@ export default function ChecklistDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Generate Procedure Document - only when completed */}
+        {instance.completedAt && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              window.open(`/api/checklists/${id}/pdf`, "_blank")
+            }
+            className="shrink-0"
+          >
+            <FileText className="h-4 w-4 mr-1.5" />
+            Generate Procedure Document
+          </Button>
+        )}
       </div>
+
+      {/* ISO Element 12 note */}
+      {instance.completedAt && (
+        <p className="text-xs text-slate-400">
+          The procedure document is linked to ISO Element 12 (Process Control)
+          and can be uploaded to your Documents section.
+        </p>
+      )}
 
       {/* Progress Bar */}
       <Card>
