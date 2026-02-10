@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   FolderKanban,
   Package,
+  Award,
   HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ const navigation = [
   { name: "Projects", href: "/projects", icon: FolderKanban },
   { name: "Audits", href: "/audits", icon: ClipboardCheck },
   { name: "CAPA", href: "/capa", icon: AlertTriangle },
+  { name: "Programme", href: "/programme", icon: Award },
 ];
 
 const secondaryNavigation = [
