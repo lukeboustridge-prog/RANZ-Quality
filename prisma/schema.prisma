@@ -56,6 +56,7 @@ model Organization {
   testimonials           Testimonial[]
   notificationPreference OrganizationNotificationPreference?
   approvedSuppliers      ApprovedSupplier[]
+  programmeEnrolment     ProgrammeEnrolment?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -649,6 +650,11 @@ enum AuditAction {
   LBP_VERIFY
   AUDIT_START
   AUDIT_COMPLETE
+  ENROL_APPLY
+  ENROL_APPROVE
+  ENROL_REJECT
+  ENROL_SUSPEND
+  ENROL_REINSTATE
 }
 
 // ============================================================================
@@ -865,6 +871,58 @@ model Testimonial {
 }
 
 // ============================================================================
+// Phase 13: Programme Enrolment
+// ============================================================================
+
+enum ProgrammeEnrolmentStatus {
+  PENDING
+  ACTIVE
+  RENEWAL_DUE
+  SUSPENDED
+  WITHDRAWN
+}
+
+model ProgrammeEnrolment {
+  id             String @id @default(cuid())
+  organizationId String @unique // One enrolment per org
+
+  // Status tracking
+  status ProgrammeEnrolmentStatus @default(PENDING)
+
+  // Application
+  appliedAt    DateTime  @default(now())
+  appliedBy    String    // Clerk user ID of applicant
+
+  // Review
+  reviewedAt   DateTime?
+  reviewedBy   String?   // Clerk user ID of RANZ admin
+  reviewNotes  String?   // Admin notes on decision
+
+  // Active period (annual)
+  activeSince     DateTime? // When first approved (or reactivated)
+  anniversaryDate DateTime? // Annual renewal date (set to activeSince + 1 year)
+
+  // Renewal tracking
+  renewalAlert90Sent Boolean @default(false)
+  renewalAlert60Sent Boolean @default(false)
+  renewalAlert30Sent Boolean @default(false)
+
+  // Suspension
+  suspendedAt     DateTime?
+  suspendedBy     String?
+  suspendedReason String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([anniversaryDate])
+}
+
+// ============================================================================
 // Phase 3: Notification System
 // ============================================================================
 
@@ -1070,6 +1128,8 @@ enum NotificationType {
   TIER_CHANGE
   WELCOME
   SYSTEM
+  PROGRAMME_RENEWAL
+  PROGRAMME_STATUS_CHANGE
 }
 
 enum NotificationChannel {

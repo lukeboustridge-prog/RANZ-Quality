@@ -29,6 +29,8 @@ const NOTIFICATION_TYPE_TO_EMAIL_PREF: Record<NotificationType, keyof Notificati
   TIER_CHANGE: null,          // System - always send
   WELCOME: null,              // System - always send
   SYSTEM: null,               // System - always send
+  PROGRAMME_RENEWAL: "emailCompliance",
+  PROGRAMME_STATUS_CHANGE: null, // Always send
 };
 
 const NOTIFICATION_TYPE_TO_SMS_PREF: Record<NotificationType, keyof NotificationPreference | null> = {
@@ -48,6 +50,8 @@ const NOTIFICATION_TYPE_TO_SMS_PREF: Record<NotificationType, keyof Notification
   TIER_CHANGE: "smsCritical",    // Tier changes are important
   WELCOME: null,                 // No SMS for welcome
   SYSTEM: "smsCritical",         // System alerts are critical
+  PROGRAMME_RENEWAL: "smsCritical",
+  PROGRAMME_STATUS_CHANGE: "smsCritical",
 };
 
 // Map notification types to organization preference fields
@@ -68,6 +72,8 @@ const NOTIFICATION_TYPE_TO_ORG_EMAIL_PREF: Record<NotificationType, keyof Organi
   TIER_CHANGE: "emailSystemAlerts",
   WELCOME: "emailSystemAlerts",
   SYSTEM: "emailSystemAlerts",
+  PROGRAMME_RENEWAL: "emailComplianceAlerts",
+  PROGRAMME_STATUS_CHANGE: "emailSystemAlerts",
 };
 
 const NOTIFICATION_TYPE_TO_ORG_SMS_PREF: Record<NotificationType, keyof OrganizationNotificationPreference | null> = {
@@ -87,6 +93,8 @@ const NOTIFICATION_TYPE_TO_ORG_SMS_PREF: Record<NotificationType, keyof Organiza
   TIER_CHANGE: "smsCriticalAlerts",
   WELCOME: null,
   SYSTEM: "smsCriticalAlerts",
+  PROGRAMME_RENEWAL: "smsInsuranceAlerts",
+  PROGRAMME_STATUS_CHANGE: "smsCriticalAlerts",
 };
 
 /**

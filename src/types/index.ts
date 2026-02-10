@@ -148,7 +148,12 @@ export type AuditAction =
   | "EXPORT"
   | "LBP_VERIFY"
   | "AUDIT_START"
-  | "AUDIT_COMPLETE";
+  | "AUDIT_COMPLETE"
+  | "ENROL_APPLY"
+  | "ENROL_APPROVE"
+  | "ENROL_REJECT"
+  | "ENROL_SUSPEND"
+  | "ENROL_REINSTATE";
 
 // Supplier Types (ISO Element 9: Purchasing)
 export type SupplierStatus = "APPROVED" | "CONDITIONAL" | "SUSPENDED" | "REMOVED";
@@ -158,6 +163,22 @@ export const SUPPLIER_STATUS_LABELS: Record<SupplierStatus, string> = {
   CONDITIONAL: "Conditional",
   SUSPENDED: "Suspended",
   REMOVED: "Removed",
+};
+
+// Programme Enrolment Types (Phase 13)
+export type ProgrammeEnrolmentStatus =
+  | "PENDING"
+  | "ACTIVE"
+  | "RENEWAL_DUE"
+  | "SUSPENDED"
+  | "WITHDRAWN";
+
+export const PROGRAMME_ENROLMENT_STATUS_LABELS: Record<ProgrammeEnrolmentStatus, string> = {
+  PENDING: "Pending Review",
+  ACTIVE: "Active",
+  RENEWAL_DUE: "Renewal Due",
+  SUSPENDED: "Suspended",
+  WITHDRAWN: "Withdrawn",
 };
 
 // Phase 3 Types
@@ -214,7 +235,9 @@ export type NotificationType =
   | "TESTIMONIAL_RECEIVED"
   | "TIER_CHANGE"
   | "WELCOME"
-  | "SYSTEM";
+  | "SYSTEM"
+  | "PROGRAMME_RENEWAL"
+  | "PROGRAMME_STATUS_CHANGE";
 
 export type NotificationChannel = "EMAIL" | "SMS" | "IN_APP" | "PUSH";
 
@@ -548,6 +571,8 @@ export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
   TIER_CHANGE: "Certification Tier Changed",
   WELCOME: "Welcome",
   SYSTEM: "System Notification",
+  PROGRAMME_RENEWAL: "Programme Renewal Reminder",
+  PROGRAMME_STATUS_CHANGE: "Programme Status Changed",
 };
 
 export const NOTIFICATION_CHANNEL_LABELS: Record<NotificationChannel, string> =
