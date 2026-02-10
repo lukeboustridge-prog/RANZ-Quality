@@ -91,7 +91,7 @@ export function Sidebar() {
                       <Link
                         href={item.href}
                         className={cn(
-                          "group flex gap-x-3 rounded-md p-2.5 text-sm font-medium leading-6 transition-colors",
+                          "group flex gap-x-3 rounded-md p-2.5 text-sm font-medium leading-6 transition-all duration-150",
                           isActive
                             ? "bg-[var(--ranz-charcoal-dark)] text-white border-l-2 border-[var(--ranz-yellow)]"
                             : "text-[var(--ranz-silver)] hover:bg-[var(--ranz-charcoal-dark)] hover:text-white"
@@ -123,7 +123,7 @@ export function Sidebar() {
                     <Link
                       href="/admin"
                       className={cn(
-                        "group flex gap-x-3 rounded-md p-2.5 text-sm font-medium leading-6 transition-colors",
+                        "group flex gap-x-3 rounded-md p-2.5 text-sm font-medium leading-6 transition-all duration-150",
                         pathname.startsWith("/admin")
                           ? "bg-[var(--ranz-charcoal-dark)] text-white border-l-2 border-[var(--ranz-yellow)]"
                           : "text-[var(--ranz-silver)] hover:bg-[var(--ranz-charcoal-dark)] hover:text-white"
@@ -153,7 +153,7 @@ export function Sidebar() {
                       <Link
                         href={item.href}
                         className={cn(
-                          "group flex gap-x-3 rounded-md p-2.5 text-sm font-medium leading-6 transition-colors",
+                          "group flex gap-x-3 rounded-md p-2.5 text-sm font-medium leading-6 transition-all duration-150",
                           isActive
                             ? "bg-[var(--ranz-charcoal-dark)] text-white border-l-2 border-[var(--ranz-yellow)]"
                             : "text-[var(--ranz-silver)] hover:bg-[var(--ranz-charcoal-dark)] hover:text-white"

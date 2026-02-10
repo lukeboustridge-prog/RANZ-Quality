@@ -80,11 +80,13 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <StatsCards stats={stats} />
+      <div className="motion-safe:animate-[fadeIn_0.4s_ease-out]">
+        <StatsCards stats={stats} />
+      </div>
 
       <DimensionIndicators breakdown={complianceResult.breakdown} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 motion-safe:animate-[fadeIn_0.5s_ease-out_0.1s_both]">
         <ComplianceScore
           score={complianceResult.overallScore}
           tier={organization.certificationTier}
