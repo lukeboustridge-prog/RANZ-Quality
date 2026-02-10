@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-10)
 ## Current Position
 
 Phase: 16 of 16 (Client Checklists) - IN PROGRESS
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-02-10 — Completed 16-01-PLAN.md (Checklist Schema, Admin CRUD, Default Seed)
+Last activity: 2026-02-10 — Completed 16-02-PLAN.md (Org Template Cloning & Instance Creation)
 
-Progress: [█████████░] 98% (49/50 total plans across all milestones)
+Progress: [██████████] 100% (50/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -32,7 +32,7 @@ Progress: [█████████░] 98% (49/50 total plans across all mil
 - Total plans: 11 (estimated)
 - Plans completed: 11
 - Phases: 4
-- Status: Phase 16 Plan 01 complete, Plans 02-03 remaining
+- Status: Phase 16 Plan 02 complete, Plan 03 remaining
 
 ## Accumulated Context
 
@@ -103,6 +103,12 @@ Phase 16 Plan 01 decisions:
 - Expand/collapse template cards with inline section and item management
 - ClipboardList icon for Checklists nav, placed after Micro-credentials in admin nav
 
+Phase 16 Plan 02 decisions:
+- Clone guard: one clone per master template per org (409 on duplicate)
+- Pre-create ChecklistItemCompletion records for all items on instance creation
+- Auto-complete instance when all required items done, auto-uncomplete when item unchecked
+- Org templates preferred over master for starting checklists, fallback to master if no org template
+
 ### Pending Todos
 
 None.
@@ -122,9 +128,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 16-01-PLAN.md (Checklist Schema, Admin CRUD, Default Seed)
+Stopped at: Completed 16-02-PLAN.md (Org Template Cloning & Instance Creation)
 Resume file: None
-Next action: Execute 16-02-PLAN.md (Org Template Cloning & Instance Creation)
+Next action: Execute 16-03-PLAN.md (Photo Evidence & PDF Generation)
 
 ---
-*Last updated: 2026-02-10 — Phase 16 Plan 01 complete*
+*Last updated: 2026-02-10 — Phase 16 Plan 02 complete*
