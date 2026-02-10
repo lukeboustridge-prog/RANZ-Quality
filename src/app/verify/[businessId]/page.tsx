@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { db } from "@/lib/db";
 import {
+  Award,
   CheckCircle,
   Shield,
   Users,
@@ -55,6 +56,9 @@ export default async function VerifyPage({ params }: PageProps) {
         take: 1,
         select: { completedAt: true, rating: true },
       },
+      programmeEnrolment: {
+        select: { status: true, activeSince: true, anniversaryDate: true },
+      },
     },
   });
 
@@ -102,6 +106,45 @@ export default async function VerifyPage({ params }: PageProps) {
             </div>
           </div>
         </div>
+
+        {/* RoofWright Programme */}
+        {organization.programmeEnrolment &&
+          (organization.programmeEnrolment.status === "ACTIVE" ||
+            organization.programmeEnrolment.status === "RENEWAL_DUE") && (
+            <Card className="mb-6 border-green-200 bg-green-50">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-4">
+                  <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <Award className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-lg font-semibold text-green-900">
+                        RoofWright Quality Programme
+                      </h2>
+                      <Badge className="bg-green-100 text-green-800">
+                        Active Member
+                      </Badge>
+                    </div>
+                    {organization.programmeEnrolment.activeSince && (
+                      <p className="text-sm text-green-700 mt-1">
+                        Member since{" "}
+                        {format(
+                          new Date(organization.programmeEnrolment.activeSince),
+                          "MMMM yyyy"
+                        )}
+                      </p>
+                    )}
+                    <p className="text-sm text-green-700 mt-2">
+                      This business participates in the RANZ RoofWright Quality
+                      Programme, demonstrating commitment to advanced roofing
+                      standards and ongoing professional development.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
         {/* Business Info */}
         <Card className="mb-6">
