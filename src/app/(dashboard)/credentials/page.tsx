@@ -1,15 +1,25 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   MICRO_CREDENTIAL_STATUS_LABELS,
   ORG_MEMBER_ROLE_LABELS,
 } from "@/types";
 import type { MicroCredentialStatus, OrgMemberRole } from "@/types";
-import { GraduationCap, Users, Award, BookOpen } from "lucide-react";
+import {
+  GraduationCap,
+  Users,
+  Award,
+  BookOpen,
+  Upload,
+  CheckCircle,
+  Loader2,
+  RefreshCw,
+} from "lucide-react";
 
 const STATUS_COLORS: Record<MicroCredentialStatus, string> = {
   NOT_STARTED: "bg-slate-100 text-slate-700",
@@ -19,7 +29,33 @@ const STATUS_COLORS: Record<MicroCredentialStatus, string> = {
   EXPIRED: "bg-red-100 text-red-700",
 };
 
-function formatDate(date: Date | null): string {
+interface CredentialDefinition {
+  id: string;
+  title: string;
+  level: number;
+  skillStandard: string | null;
+  issuingBody: string;
+}
+
+interface StaffCredential {
+  id: string;
+  status: string;
+  awardedAt: string | null;
+  expiryDate: string | null;
+  certificateKey: string | null;
+  certificateFileName: string | null;
+  definition: CredentialDefinition;
+}
+
+interface Member {
+  id: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  microCredentials: StaffCredential[];
+}
+
+function formatDate(date: string | null): string {
   if (!date) return "";
   return new Date(date).toLocaleDateString("en-NZ", {
     day: "numeric",
@@ -28,35 +64,134 @@ function formatDate(date: Date | null): string {
   });
 }
 
-export default async function CredentialsPage() {
-  const { orgId } = await auth();
+export default function CredentialsPage() {
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const targetCredentialIdRef = useRef<string | null>(null);
 
-  if (!orgId) {
-    redirect("/onboarding");
+  async function fetchCredentials() {
+    try {
+      const response = await fetch("/api/credentials");
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = "/onboarding";
+          return;
+        }
+        throw new Error("Failed to fetch credentials");
+      }
+      const data = await response.json();
+      setMembers(data.members);
+    } catch (err) {
+      console.error("Failed to fetch credentials:", err);
+      setError("Failed to load credentials data.");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  const organization = await db.organization.findUnique({
-    where: { clerkOrgId: orgId },
-    include: {
-      members: {
-        include: {
-          microCredentials: {
-            include: {
-              definition: true,
-            },
-            orderBy: { definition: { title: "asc" } },
-          },
-        },
-        orderBy: [{ role: "asc" }, { firstName: "asc" }],
-      },
-    },
-  });
+  useEffect(() => {
+    fetchCredentials();
+  }, []);
 
-  if (!organization) {
-    redirect("/onboarding");
+  function handleUploadClick(credentialId: string) {
+    targetCredentialIdRef.current = credentialId;
+    fileInputRef.current?.click();
   }
 
-  const { members } = organization;
+  async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    const credentialId = targetCredentialIdRef.current;
+
+    // Reset input so same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
+    if (!file || !credentialId) return;
+
+    setUploadingId(credentialId);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(
+        `/api/credentials/${credentialId}/evidence`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || "Upload failed");
+        return;
+      }
+
+      // Refresh data to show updated certificate info
+      await fetchCredentials();
+    } catch (err) {
+      console.error("Upload failed:", err);
+      setError("Failed to upload certificate. Please try again.");
+    } finally {
+      setUploadingId(null);
+    }
+  }
+
+  async function handleViewCertificate(credentialId: string) {
+    setDownloadingId(credentialId);
+    try {
+      const response = await fetch(
+        `/api/credentials/${credentialId}/evidence`
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || "Failed to get certificate");
+        return;
+      }
+
+      const data = await response.json();
+      window.open(data.url, "_blank");
+    } catch (err) {
+      console.error("Failed to get certificate:", err);
+      setError("Failed to retrieve certificate. Please try again.");
+    } finally {
+      setDownloadingId(null);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <GraduationCap className="h-6 w-6 text-[var(--ranz-charcoal)]" />
+            Staff Credentials
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            View your team&apos;s micro-credential status
+          </p>
+        </div>
+        <div className="animate-pulse space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-24 bg-slate-200 rounded-lg" />
+            ))}
+          </div>
+          {[1, 2].map((i) => (
+            <div key={i} className="h-32 bg-slate-200 rounded-lg" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   // Calculate aggregate stats
   const allCredentials = members.flatMap((m) => m.microCredentials);
@@ -130,6 +265,15 @@ export default async function CredentialsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Hidden file input for uploads */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        accept=".pdf,.jpg,.jpeg,.png,.webp"
+        onChange={handleFileSelected}
+      />
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
@@ -140,6 +284,19 @@ export default async function CredentialsPage() {
           View your team&apos;s micro-credential status
         </p>
       </div>
+
+      {/* Error banner */}
+      {error && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="text-red-600 hover:text-red-800 text-xs font-medium"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -228,56 +385,124 @@ export default async function CredentialsPage() {
                   </p>
                 ) : (
                   <div className="space-y-3">
-                    {member.microCredentials.map((cred) => (
-                      <div
-                        key={cred.id}
-                        className="flex items-center justify-between py-2 px-3 rounded-lg bg-slate-50"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div>
-                            <p className="text-sm font-medium text-slate-900">
-                              {cred.definition.title}
-                            </p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <Badge
-                                variant="outline"
-                                className="text-xs bg-white"
-                              >
-                                Level {cred.definition.level}
-                              </Badge>
-                              <span className="text-xs text-slate-400">
-                                {cred.definition.issuingBody}
-                              </span>
+                    {member.microCredentials.map((cred) => {
+                      const isAwarded = cred.status === "AWARDED";
+                      const hasCertificate = !!cred.certificateKey;
+                      const isUploading = uploadingId === cred.id;
+                      const isDownloading = downloadingId === cred.id;
+
+                      return (
+                        <div
+                          key={cred.id}
+                          className="flex items-center justify-between py-2 px-3 rounded-lg bg-slate-50"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div>
+                              <p className="text-sm font-medium text-slate-900">
+                                {cred.definition.title}
+                              </p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs bg-white"
+                                >
+                                  Level {cred.definition.level}
+                                </Badge>
+                                <span className="text-xs text-slate-400">
+                                  {cred.definition.issuingBody}
+                                </span>
+                              </div>
                             </div>
                           </div>
+                          <div className="flex items-center gap-3">
+                            {/* Evidence upload/download for AWARDED credentials */}
+                            {isAwarded && (
+                              <>
+                                {hasCertificate ? (
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={() =>
+                                        handleViewCertificate(cred.id)
+                                      }
+                                      disabled={isDownloading}
+                                      className="flex items-center gap-1 text-xs text-green-700 hover:text-green-900 hover:underline"
+                                      title="View Certificate"
+                                    >
+                                      {isDownloading ? (
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                      ) : (
+                                        <CheckCircle className="h-3.5 w-3.5" />
+                                      )}
+                                      <span className="max-w-[120px] truncate">
+                                        {cred.certificateFileName}
+                                      </span>
+                                    </button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="h-7 px-2 text-xs text-slate-500"
+                                      onClick={() =>
+                                        handleUploadClick(cred.id)
+                                      }
+                                      disabled={isUploading}
+                                    >
+                                      {isUploading ? (
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                      ) : (
+                                        <RefreshCw className="h-3.5 w-3.5" />
+                                      )}
+                                      <span className="ml-1">Replace</span>
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-7 text-xs"
+                                    onClick={() =>
+                                      handleUploadClick(cred.id)
+                                    }
+                                    disabled={isUploading}
+                                  >
+                                    {isUploading ? (
+                                      <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+                                    ) : (
+                                      <Upload className="h-3.5 w-3.5 mr-1" />
+                                    )}
+                                    Upload Certificate
+                                  </Button>
+                                )}
+                              </>
+                            )}
+
+                            {/* Date info */}
+                            {cred.status === "AWARDED" && cred.awardedAt && (
+                              <span className="text-xs text-slate-400">
+                                Awarded {formatDate(cred.awardedAt)}
+                              </span>
+                            )}
+                            {cred.status === "AWARDED" && cred.expiryDate && (
+                              <span className="text-xs text-slate-400">
+                                Expires {formatDate(cred.expiryDate)}
+                              </span>
+                            )}
+                            <Badge
+                              className={
+                                STATUS_COLORS[
+                                  cred.status as MicroCredentialStatus
+                                ]
+                              }
+                            >
+                              {
+                                MICRO_CREDENTIAL_STATUS_LABELS[
+                                  cred.status as MicroCredentialStatus
+                                ]
+                              }
+                            </Badge>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          {cred.status === "AWARDED" && cred.awardedAt && (
-                            <span className="text-xs text-slate-400">
-                              Awarded {formatDate(cred.awardedAt)}
-                            </span>
-                          )}
-                          {cred.status === "AWARDED" && cred.expiryDate && (
-                            <span className="text-xs text-slate-400">
-                              Expires {formatDate(cred.expiryDate)}
-                            </span>
-                          )}
-                          <Badge
-                            className={
-                              STATUS_COLORS[
-                                cred.status as MicroCredentialStatus
-                              ]
-                            }
-                          >
-                            {
-                              MICRO_CREDENTIAL_STATUS_LABELS[
-                                cred.status as MicroCredentialStatus
-                              ]
-                            }
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>
