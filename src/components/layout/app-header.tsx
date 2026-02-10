@@ -65,7 +65,7 @@ export function AppHeader({ appName, onMenuClick, showOrgSwitcher = true }: AppH
                 elements: {
                   rootBox: "flex items-center",
                   organizationSwitcherTrigger:
-                    "flex items-center gap-2 rounded-lg border border-ranz-charcoal-light/30 px-3 py-2 text-sm text-white hover:bg-ranz-charcoal",
+                    "flex items-center gap-2 rounded-lg border border-white/40 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20",
                 },
               }}
               afterCreateOrganizationUrl="/onboarding"
