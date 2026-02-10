@@ -122,11 +122,12 @@ Plans:
 4. Org admin can link teams to projects from the existing Project Evidence system
 5. Dashboard shows team composition summary with qualified-to-apprentice ratio indicators
 
-**Plans:** TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 15-01: TBD
-- [ ] 15-02: TBD
+- [ ] 15-01-PLAN.md — Schema, types, teams CRUD API, list page, and sidebar nav (TEAM-01)
+- [ ] 15-02-PLAN.md — Team detail with member assignment, warnings, and project linking (TEAM-02, TEAM-03, TEAM-04, TEAM-05)
+- [ ] 15-03-PLAN.md — Dashboard team composition summary with ratio indicators (TEAM-06)
 
 ---
 
@@ -178,14 +179,14 @@ Phases execute in numeric order: 13 -> 14 -> 15 -> 16
 | 12. Account Security | v1.1 | 1/1 | Complete | 2026-01-31 |
 | 13. Programme Enrolment | v1.2 | 0/4 | Not started | - |
 | 14. Micro-Credentials | v1.2 | 0/3 | Not started | - |
-| 15. Team Composition | v1.2 | 0/2 | Not started | - |
+| 15. Team Composition | v1.2 | 0/3 | Not started | - |
 | 16. Client Checklists | v1.2 | 0/3 | Not started | - |
 
 **Totals:**
 - v1.0: 8 phases, 29 plans
 - v1.1: 4 phases, 9 plans
-- v1.2: 4 phases, 12 plans (estimated)
+- v1.2: 4 phases, 13 plans (estimated)
 
 ---
 
-*Last updated: 2026-02-10 after Phase 14 planned (3 plans, 3 waves)*
+*Last updated: 2026-02-10 after Phase 15 planned (3 plans, 2 waves)*
