@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** v1.2 RoofWright Programme - Phase 14 in progress (Micro-credentials)
+**Current focus:** v1.2 RoofWright Programme - Phase 15 in progress (Team Composition)
 
 ## Current Position
 
-Phase: 14 of 16 (Micro-credentials) - IN PROGRESS
-Plan: 3 of 4 complete
+Phase: 15 of 16 (Team Composition) - IN PROGRESS
+Plan: 1 of 3 complete
 Status: In progress
-Last activity: 2026-02-10 — Completed 14-03-PLAN.md (Evidence Upload & Certificate Management)
+Last activity: 2026-02-10 — Completed 15-01-PLAN.md (Team Foundation)
 
-Progress: [█████████░] 90% (45/50 total plans across all milestones)
+Progress: [█████████░] 92% (46/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -30,9 +30,9 @@ Progress: [█████████░] 90% (45/50 total plans across all mil
 
 **v1.2 Milestone (in progress):**
 - Total plans: 11 (estimated)
-- Plans completed: 7
+- Plans completed: 8
 - Phases: 4
-- Status: Phase 14 Plan 03 complete
+- Status: Phase 15 Plan 01 complete
 
 ## Accumulated Context
 
@@ -82,6 +82,11 @@ Phase 14 Plan 03 decisions:
 - Coverage report: overall = orgs with awarded / total orgs, per-org = staff with awarded / total staff
 - Tab toggle on admin page rather than separate route for coverage report
 
+Phase 15 Plan 01 decisions:
+- UsersRound icon for Teams sidebar (Users already used for Staff)
+- 409 status for duplicate team name with friendly error message
+- Team cards link to /teams/{id} for detail page (Plan 02)
+
 ### Pending Todos
 
 None.
@@ -101,9 +106,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 14-03-PLAN.md
+Stopped at: Completed 15-01-PLAN.md
 Resume file: None
-Next action: Execute 14-04-PLAN.md (Open Badges Integration)
+Next action: Execute 15-02-PLAN.md (Team Detail & Member Assignment)
 
 ---
-*Last updated: 2026-02-10 — Phase 14 Plan 03 complete*
+*Last updated: 2026-02-10 — Phase 15 Plan 01 complete*
