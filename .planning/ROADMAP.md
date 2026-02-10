@@ -92,18 +92,18 @@ Plans:
 
 **Success Criteria** (what must be TRUE):
 1. RANZ admin can create and edit micro-credential definitions (title, level, skill standard reference)
-2. RANZ admin can assign micro-credentials to staff members with status tracking (Not Started → In Training → Assessment Pending → Awarded → Expired)
+2. RANZ admin can assign micro-credentials to staff members with status tracking (Not Started -> In Training -> Assessment Pending -> Awarded -> Expired)
 3. Org admin can view all their staff members' micro-credential status in a single view
 4. Staff members can upload certificate evidence against awarded credentials
 5. System sends expiry notifications at 90, 60, and 30 days before credentials expire
 6. Portal ships with three default RANZ micro-credential definitions pre-populated
 
-**Plans:** TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 14-01: TBD
-- [ ] 14-02: TBD
-- [ ] 14-03: TBD
+- [ ] 14-01-PLAN.md — Schema, types, admin credential definitions CRUD, and seed defaults (MCRED-01, MCRED-07)
+- [ ] 14-02-PLAN.md — Admin staff assignment, status management, and org credentials view (MCRED-02, MCRED-03)
+- [ ] 14-03-PLAN.md — Certificate evidence upload, expiry notifications, and coverage report (MCRED-04, MCRED-05, MCRED-06)
 
 ---
 
@@ -140,7 +140,7 @@ Plans:
 
 **Success Criteria** (what must be TRUE):
 1. RANZ admin can create and edit checklist templates with sections and items
-2. Portal ships with a default RoofWright client process checklist (Initial Contact → Quoting → Site Setup → Execution → Completion) pre-populated
+2. Portal ships with a default RoofWright client process checklist (Initial Contact -> Quoting -> Site Setup -> Execution -> Completion) pre-populated
 3. Org admin can customize their company's checklist template (add/remove/reorder items)
 4. Staff can create checklist instances for projects and mark items complete as work progresses
 5. Staff can attach photo evidence to individual checklist items
@@ -159,7 +159,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 13 → 14 → 15 → 16
+Phases execute in numeric order: 13 -> 14 -> 15 -> 16
 (Decimal phases like 13.1 would execute between their surrounding integers)
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -182,10 +182,10 @@ Phases execute in numeric order: 13 → 14 → 15 → 16
 | 16. Client Checklists | v1.2 | 0/3 | Not started | - |
 
 **Totals:**
-- v1.0: 8 phases, 29 plans ✅
-- v1.1: 4 phases, 9 plans ✅
-- v1.2: 4 phases, 12 plans (estimated) 🚧
+- v1.0: 8 phases, 29 plans
+- v1.1: 4 phases, 9 plans
+- v1.2: 4 phases, 12 plans (estimated)
 
 ---
 
-*Last updated: 2026-02-10 after Phase 13 plans revised (4 plans, 3 waves)*
+*Last updated: 2026-02-10 after Phase 14 planned (3 plans, 3 waves)*
