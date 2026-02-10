@@ -26,6 +26,7 @@ export async function GET(request: Request) {
       upcomingAudits,
       recentAudits,
       unverifiedLBP,
+      programmeByStatus,
     ] = await Promise.all([
       // Total organizations
       db.organization.count(),
@@ -86,6 +87,12 @@ export async function GET(request: Request) {
           lbpVerified: false,
         },
       }),
+
+      // Programme enrolment counts by status
+      db.programmeEnrolment.groupBy({
+        by: ["status"],
+        _count: true,
+      }),
     ]);
 
     // Process tier counts
@@ -104,6 +111,14 @@ export async function GET(request: Request) {
       if (capa.status === "OVERDUE") {
         capaCounts.overdue = capa._count;
       }
+    }
+
+    // Process programme enrolment counts
+    const programmeCounts: Record<string, number> = {};
+    let programmeTotal = 0;
+    for (const entry of programmeByStatus) {
+      programmeCounts[entry.status] = entry._count;
+      programmeTotal += entry._count;
     }
 
     // Compliance distribution counts
@@ -147,6 +162,13 @@ export async function GET(request: Request) {
       },
       personnel: {
         unverifiedLBP: unverifiedLBP,
+      },
+      programme: {
+        total: programmeTotal,
+        pending: programmeCounts.PENDING || 0,
+        active: programmeCounts.ACTIVE || 0,
+        renewalDue: programmeCounts.RENEWAL_DUE || 0,
+        suspended: programmeCounts.SUSPENDED || 0,
       },
       generatedAt: now.toISOString(),
     });

@@ -16,6 +16,7 @@ import {
   FileText,
   Activity,
   LogOut,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Users", href: "/admin/users", icon: UserCog },
   { name: "Members", href: "/admin/members", icon: Users },
+  { name: "Programme", href: "/admin/programme", icon: Award },
   { name: "Audits", href: "/admin/audits", icon: ClipboardCheck },
   { name: "Reports", href: "/admin/reports", icon: BarChart3 },
   { name: "Audit Logs", href: "/admin/audit-logs", icon: FileText },

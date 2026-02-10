@@ -11,6 +11,7 @@ import {
   Calendar,
   AlertCircle,
   CheckCircle,
+  Award,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,13 @@ interface Stats {
   };
   personnel: {
     unverifiedLBP: number;
+  };
+  programme?: {
+    total: number;
+    pending: number;
+    active: number;
+    renewalDue: number;
+    suspended: number;
   };
 }
 
@@ -321,6 +329,61 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Programme Enrolment Stats */}
+      {stats.programme && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-blue-600" />
+              RoofWright Programme
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="text-center p-3 bg-slate-50 rounded-lg">
+                <p className="text-2xl font-bold text-slate-900">
+                  {stats.programme.total}
+                </p>
+                <p className="text-xs text-slate-500 mt-1">Total</p>
+              </div>
+              <div className="text-center p-3 bg-yellow-50 rounded-lg">
+                <p className="text-2xl font-bold text-yellow-700">
+                  {stats.programme.pending}
+                </p>
+                <p className="text-xs text-yellow-600 mt-1">Pending</p>
+              </div>
+              <div className="text-center p-3 bg-green-50 rounded-lg">
+                <p className="text-2xl font-bold text-green-700">
+                  {stats.programme.active}
+                </p>
+                <p className="text-xs text-green-600 mt-1">Active</p>
+              </div>
+              <div className="text-center p-3 bg-amber-50 rounded-lg">
+                <p className="text-2xl font-bold text-amber-700">
+                  {stats.programme.renewalDue}
+                </p>
+                <p className="text-xs text-amber-600 mt-1">Renewal Due</p>
+              </div>
+              <div className="text-center p-3 bg-red-50 rounded-lg">
+                <p className="text-2xl font-bold text-red-700">
+                  {stats.programme.suspended}
+                </p>
+                <p className="text-xs text-red-600 mt-1">Suspended</p>
+              </div>
+            </div>
+            {stats.programme.pending > 0 && (
+              <div className="mt-4">
+                <Link href="/admin/programme?status=PENDING">
+                  <Button variant="outline" className="w-full">
+                    Review {stats.programme.pending} Pending Application{stats.programme.pending !== 1 ? "s" : ""}
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Tier Distribution */}
       <Card>
