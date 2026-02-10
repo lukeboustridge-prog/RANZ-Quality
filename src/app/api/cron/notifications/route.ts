@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
       programmeRenewals: 0,
       auditsScheduled: 0,
       auditReminders: 0,
+      credentialExpiries: 0,
     };
 
     // 1. Process scheduled notifications
@@ -50,6 +51,9 @@ export async function GET(req: NextRequest) {
 
     // 8. Send reminders for upcoming audits
     results.auditReminders = await checkAuditReminders();
+
+    // 9. Check for credential expiries
+    results.credentialExpiries = await checkCredentialExpiries();
 
     return NextResponse.json({
       success: true,
@@ -513,4 +517,94 @@ async function checkAuditReminders(): Promise<number> {
   }
 
   return remindersSent;
+}
+
+async function checkCredentialExpiries(): Promise<number> {
+  const now = new Date();
+  const in90Days = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+  let alertsSent = 0;
+
+  // Get AWARDED credentials with expiry dates within 90 days
+  const expiringCredentials = await db.staffMicroCredential.findMany({
+    where: {
+      status: "AWARDED",
+      expiryDate: { lte: in90Days, gt: now },
+    },
+    include: {
+      definition: true,
+      member: {
+        include: {
+          organization: {
+            select: { id: true, name: true, email: true },
+          },
+        },
+      },
+    },
+  });
+
+  for (const credential of expiringCredentials) {
+    if (!credential.expiryDate) continue;
+
+    const daysUntilExpiry = Math.ceil(
+      (credential.expiryDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
+    );
+
+    // Determine which alerts to send (cumulative thresholds)
+    const alertsToSend: { days: number; flag: "expiryAlert90Sent" | "expiryAlert60Sent" | "expiryAlert30Sent" }[] = [];
+
+    if (daysUntilExpiry <= 90 && !credential.expiryAlert90Sent) {
+      alertsToSend.push({ days: 90, flag: "expiryAlert90Sent" });
+    }
+    if (daysUntilExpiry <= 60 && !credential.expiryAlert60Sent) {
+      alertsToSend.push({ days: 60, flag: "expiryAlert60Sent" });
+    }
+    if (daysUntilExpiry <= 30 && !credential.expiryAlert30Sent) {
+      alertsToSend.push({ days: 30, flag: "expiryAlert30Sent" });
+    }
+
+    if (alertsToSend.length === 0) continue;
+
+    const staffName = `${credential.member.firstName} ${credential.member.lastName}`;
+    const formattedDate = credential.expiryDate.toLocaleDateString("en-NZ", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    try {
+      await db.$transaction(async (tx) => {
+        for (const alert of alertsToSend) {
+          await createNotification({
+            organizationId: credential.member.organizationId,
+            type: "CREDENTIAL_EXPIRY",
+            channel: "EMAIL",
+            priority: daysUntilExpiry <= 30 ? "HIGH" : "NORMAL",
+            title: `Micro-Credential Expiring - ${credential.definition.title}`,
+            message: `${staffName}'s "${credential.definition.title}" credential expires in ${daysUntilExpiry} days (on ${formattedDate}). Please arrange re-assessment or renewal.`,
+            actionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/credentials`,
+            recipient: credential.member.organization.email ?? undefined,
+          });
+          alertsSent++;
+        }
+
+        // Set all triggered flags
+        const updateData: Record<string, boolean> = {};
+        for (const alert of alertsToSend) {
+          updateData[alert.flag] = true;
+        }
+
+        await tx.staffMicroCredential.update({
+          where: { id: credential.id },
+          data: updateData,
+        });
+      });
+    } catch (error) {
+      console.error(
+        `Failed to send credential expiry alert for credential ${credential.id}:`,
+        error
+      );
+    }
+  }
+
+  return alertsSent;
 }
