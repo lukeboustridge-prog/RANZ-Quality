@@ -153,7 +153,10 @@ export type AuditAction =
   | "ENROL_APPROVE"
   | "ENROL_REJECT"
   | "ENROL_SUSPEND"
-  | "ENROL_REINSTATE";
+  | "ENROL_REINSTATE"
+  | "MCRED_ASSIGN"
+  | "MCRED_AWARD"
+  | "MCRED_EXPIRE";
 
 // Supplier Types (ISO Element 9: Purchasing)
 export type SupplierStatus = "APPROVED" | "CONDITIONAL" | "SUSPENDED" | "REMOVED";
@@ -179,6 +182,22 @@ export const PROGRAMME_ENROLMENT_STATUS_LABELS: Record<ProgrammeEnrolmentStatus,
   RENEWAL_DUE: "Renewal Due",
   SUSPENDED: "Suspended",
   WITHDRAWN: "Withdrawn",
+};
+
+// Micro-Credential Types (Phase 14)
+export type MicroCredentialStatus =
+  | "NOT_STARTED"
+  | "IN_TRAINING"
+  | "ASSESSMENT_PENDING"
+  | "AWARDED"
+  | "EXPIRED";
+
+export const MICRO_CREDENTIAL_STATUS_LABELS: Record<MicroCredentialStatus, string> = {
+  NOT_STARTED: "Not Started",
+  IN_TRAINING: "In Training",
+  ASSESSMENT_PENDING: "Assessment Pending",
+  AWARDED: "Awarded",
+  EXPIRED: "Expired",
 };
 
 // Phase 3 Types
@@ -237,7 +256,9 @@ export type NotificationType =
   | "WELCOME"
   | "SYSTEM"
   | "PROGRAMME_RENEWAL"
-  | "PROGRAMME_STATUS_CHANGE";
+  | "PROGRAMME_STATUS_CHANGE"
+  | "CREDENTIAL_EXPIRY"
+  | "CREDENTIAL_STATUS_CHANGE";
 
 export type NotificationChannel = "EMAIL" | "SMS" | "IN_APP" | "PUSH";
 
@@ -573,6 +594,8 @@ export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
   SYSTEM: "System Notification",
   PROGRAMME_RENEWAL: "Programme Renewal Reminder",
   PROGRAMME_STATUS_CHANGE: "Programme Status Changed",
+  CREDENTIAL_EXPIRY: "Credential Expiry Warning",
+  CREDENTIAL_STATUS_CHANGE: "Credential Status Changed",
 };
 
 export const NOTIFICATION_CHANNEL_LABELS: Record<NotificationChannel, string> =

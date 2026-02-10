@@ -94,9 +94,10 @@ model OrganizationMember {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  organization    Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  qualifications  Qualification[]
-  trainingRecords TrainingRecord[]
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  qualifications   Qualification[]
+  trainingRecords  TrainingRecord[]
+  microCredentials StaffMicroCredential[]
 
   @@unique([organizationId, email])
   @@unique([organizationId, clerkUserId])
@@ -655,6 +656,9 @@ enum AuditAction {
   ENROL_REJECT
   ENROL_SUSPEND
   ENROL_REINSTATE
+  MCRED_ASSIGN
+  MCRED_AWARD
+  MCRED_EXPIRE
 }
 
 // ============================================================================
@@ -882,6 +886,14 @@ enum ProgrammeEnrolmentStatus {
   WITHDRAWN
 }
 
+enum MicroCredentialStatus {
+  NOT_STARTED
+  IN_TRAINING
+  ASSESSMENT_PENDING
+  AWARDED
+  EXPIRED
+}
+
 model ProgrammeEnrolment {
   id             String @id @default(cuid())
   organizationId String @unique // One enrolment per org
@@ -920,6 +932,66 @@ model ProgrammeEnrolment {
 
   @@index([status])
   @@index([anniversaryDate])
+}
+
+// ============================================================================
+// Phase 14: Micro-Credentials
+// ============================================================================
+
+model MicroCredentialDefinition {
+  id               String @id @default(cuid())
+  title            String  // e.g., "Reclad/Reroofing Level 5"
+  level            Int     // NQF level (e.g., 4, 5)
+  skillStandard    String? // Skill standard reference (e.g., "NZQA Unit Standard 12345")
+  issuingBody      String  // e.g., "RANZ", "NZQA"
+  requirements     String? // Description of requirements to achieve
+  isDefault        Boolean @default(false) // True for the 3 pre-seeded RANZ credentials
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  staffCredentials StaffMicroCredential[]
+
+  @@index([title])
+}
+
+model StaffMicroCredential {
+  id             String @id @default(cuid())
+  definitionId   String
+  memberId       String  // OrganizationMember ID
+
+  status         MicroCredentialStatus @default(NOT_STARTED)
+
+  // Award tracking
+  awardedAt      DateTime?
+  awardedBy      String?   // Clerk user ID of RANZ admin who awarded
+
+  // Expiry
+  expiryDate     DateTime?
+  expiryAlert90Sent Boolean @default(false)
+  expiryAlert60Sent Boolean @default(false)
+  expiryAlert30Sent Boolean @default(false)
+
+  // Certificate evidence (R2)
+  certificateKey String?  // R2 storage key for uploaded certificate
+  certificateFileName String?
+  certificateUploadedAt DateTime?
+  certificateUploadedBy String? // Clerk user ID
+
+  // Notes
+  notes          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  definition MicroCredentialDefinition @relation(fields: [definitionId], references: [id], onDelete: Cascade)
+  member     OrganizationMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([definitionId, memberId])  // One credential per staff per definition
+  @@index([memberId])
+  @@index([definitionId])
+  @@index([status])
+  @@index([expiryDate])
 }
 
 // ============================================================================
@@ -1130,6 +1202,8 @@ enum NotificationType {
   SYSTEM
   PROGRAMME_RENEWAL
   PROGRAMME_STATUS_CHANGE
+  CREDENTIAL_EXPIRY
+  CREDENTIAL_STATUS_CHANGE
 }
 
 enum NotificationChannel {

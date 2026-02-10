@@ -31,6 +31,8 @@ const NOTIFICATION_TYPE_TO_EMAIL_PREF: Record<NotificationType, keyof Notificati
   SYSTEM: null,               // System - always send
   PROGRAMME_RENEWAL: "emailCompliance",
   PROGRAMME_STATUS_CHANGE: null, // Always send
+  CREDENTIAL_EXPIRY: "emailCompliance",
+  CREDENTIAL_STATUS_CHANGE: null, // Always send
 };
 
 const NOTIFICATION_TYPE_TO_SMS_PREF: Record<NotificationType, keyof NotificationPreference | null> = {
@@ -52,6 +54,8 @@ const NOTIFICATION_TYPE_TO_SMS_PREF: Record<NotificationType, keyof Notification
   SYSTEM: "smsCritical",         // System alerts are critical
   PROGRAMME_RENEWAL: "smsCritical",
   PROGRAMME_STATUS_CHANGE: "smsCritical",
+  CREDENTIAL_EXPIRY: "smsCritical",
+  CREDENTIAL_STATUS_CHANGE: "smsCritical",
 };
 
 // Map notification types to organization preference fields
@@ -74,6 +78,8 @@ const NOTIFICATION_TYPE_TO_ORG_EMAIL_PREF: Record<NotificationType, keyof Organi
   SYSTEM: "emailSystemAlerts",
   PROGRAMME_RENEWAL: "emailComplianceAlerts",
   PROGRAMME_STATUS_CHANGE: "emailSystemAlerts",
+  CREDENTIAL_EXPIRY: "emailComplianceAlerts",
+  CREDENTIAL_STATUS_CHANGE: "emailSystemAlerts",
 };
 
 const NOTIFICATION_TYPE_TO_ORG_SMS_PREF: Record<NotificationType, keyof OrganizationNotificationPreference | null> = {
@@ -95,6 +101,8 @@ const NOTIFICATION_TYPE_TO_ORG_SMS_PREF: Record<NotificationType, keyof Organiza
   SYSTEM: "smsCriticalAlerts",
   PROGRAMME_RENEWAL: "smsInsuranceAlerts",
   PROGRAMME_STATUS_CHANGE: "smsCriticalAlerts",
+  CREDENTIAL_EXPIRY: "smsInsuranceAlerts",
+  CREDENTIAL_STATUS_CHANGE: "smsCriticalAlerts",
 };
 
 /**
