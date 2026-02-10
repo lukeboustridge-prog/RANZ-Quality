@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** v1.2 RoofWright Programme - Phase 15 complete, Phase 16 next (Client Checklists)
+**Current focus:** v1.2 RoofWright Programme - Phase 16 in progress (Client Checklists)
 
 ## Current Position
 
-Phase: 15 of 16 (Team Composition) - COMPLETE
-Plan: 3 of 3 complete
-Status: Phase complete
-Last activity: 2026-02-10 — Completed 15-02-PLAN.md (Team Detail & Member Assignment)
+Phase: 16 of 16 (Client Checklists) - IN PROGRESS
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-02-10 — Completed 16-01-PLAN.md (Checklist Schema, Admin CRUD, Default Seed)
 
-Progress: [█████████░] 96% (48/50 total plans across all milestones)
+Progress: [█████████░] 98% (49/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -30,9 +30,9 @@ Progress: [█████████░] 96% (48/50 total plans across all mil
 
 **v1.2 Milestone (in progress):**
 - Total plans: 11 (estimated)
-- Plans completed: 10
+- Plans completed: 11
 - Phases: 4
-- Status: Phase 15 complete, Phase 16 remaining
+- Status: Phase 16 Plan 01 complete, Plans 02-03 remaining
 
 ## Accumulated Context
 
@@ -98,6 +98,11 @@ Phase 15 Plan 03 decisions:
 - Max 5 teams shown with "View all" link for larger orgs
 - Q:A ratio indicator with green/amber/red color coding
 
+Phase 16 Plan 01 decisions:
+- Auto-seed default RoofWright checklist on first admin GET request (same pattern as micro-credentials)
+- Expand/collapse template cards with inline section and item management
+- ClipboardList icon for Checklists nav, placed after Micro-credentials in admin nav
+
 ### Pending Todos
 
 None.
@@ -117,9 +122,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 15-02-PLAN.md (Phase 15 complete)
+Stopped at: Completed 16-01-PLAN.md (Checklist Schema, Admin CRUD, Default Seed)
 Resume file: None
-Next action: Execute Phase 16 (Client Checklists)
+Next action: Execute 16-02-PLAN.md (Org Template Cloning & Instance Creation)
 
 ---
-*Last updated: 2026-02-10 — Phase 15 complete*
+*Last updated: 2026-02-10 — Phase 16 Plan 01 complete*
