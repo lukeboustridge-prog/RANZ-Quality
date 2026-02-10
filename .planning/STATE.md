@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-31)
+See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** v1.1 Settings - Phase 12 (Account Security)
+**Current focus:** v1.2 RoofWright Programme - Defining requirements
 
 ## Current Position
 
-Phase: 12 of 12 (Account Security) — COMPLETE ✓
-Plan: 1 of 1 complete
-Status: Phase complete, v1.1 milestone complete
-Last activity: 2026-01-31 - Phase 12 (Account Security) completed
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-10 — Milestone v1.2 RoofWright Programme started
 
-Progress: [===========] 100% (v1.0 complete, v1.1 milestone complete)
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -24,54 +24,16 @@ Progress: [===========] 100% (v1.0 complete, v1.1 milestone complete)
 - Total execution time: 126 min
 - Phases: 8
 
-**v1.1 Milestone (complete):**
+**v1.1 Milestone (completed):**
 - Total plans completed: 9 (including gap closures)
 - Phases: 4 (9-12)
-- Total duration: ~3 min (Phase 12)
-
-**By Phase (v1.1):**
-
-| Phase | Plans | Status |
-|-------|-------|--------|
-| 09 | 3 | Complete |
-| 10 | 2 | Complete |
-| 11 | 2 (+1 gap) | Complete |
-| 12 | 1 | Complete |
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions logged in PROJECT.md Key Decisions table.
-All v1.0 decisions captured with outcomes.
-
-**Phase 10 (Staff Management):**
-- Use Clerk's built-in invitation system rather than custom email flow
-- Database roles (OWNER/ADMIN/STAFF) remain source of truth, mapped to Clerk roles for invitations only
-- Async clerkClient() pattern required for Clerk SDK v6 compatibility
-- Member removal deletes database record only (Clerk org membership preserved for MVP)
-- OWNER role protected from changes/removal; users cannot modify themselves
-
-**Phase 11 (Personal Settings):**
-- Use Clerk's UserProfile component for personal profile management (battle-tested security)
-- Conditional section rendering based on user role (isAdmin flag)
-- Remove redirect for non-admin users - all users access settings page
-- Single settings page with role-based sections (not separate routes)
-- Critical SMS alerts cannot be disabled by users (forced enabled for security)
-- Phone number changes use immediate save (no debounce) for immediate feedback
-- Info banner explains org vs personal preference hierarchy upfront
-- Two-tier notification system complete: org controls what CAN be sent, user controls what they WANT to receive
-- Gap closure: Notification system checks preferences before sending (users/orgs can now actually opt out)
-- Preference enforcement uses two-tier hierarchy: org prefs checked before user prefs
-- Critical notifications (LBP changes, CRITICAL priority, smsCritical) always bypass preferences
-- Skipped notifications return success=true with reason (respecting preferences is not an error)
-
-**Phase 12 (Account Security):**
-- Use Clerk UserProfile for security features (password, 2FA, sessions)
-- Enable hash routing for internal Security/Account navigation
-- Show navbar in UserProfile to allow tab switching
-- Security section visible to all users (not admin-only)
-- All PERS-03, PERS-04, PERS-05 requirements satisfied via Clerk's built-in features
+All v1.0 and v1.1 decisions captured with outcomes.
 
 ### Pending Todos
 
@@ -86,13 +48,14 @@ None.
 - Clerk JWT template configuration (manual Dashboard step)
 - DNS CNAME for production SSO
 - Roofing Reports satellite app configuration
+- RoofWright micro-credential definitions need alignment with training provider (can build catalogue structure first)
 
 ## Session Continuity
 
-Last session: 2026-01-31
-Stopped at: Phase 12 (Account Security) complete — v1.1 milestone complete
+Last session: 2026-02-10
+Stopped at: Milestone v1.2 started, defining requirements
 Resume file: None
-Next action: Ready for v1.2 milestone or production deployment
+Next action: Define requirements, create roadmap
 
 ---
-*Last updated: 2026-01-31 — v1.1 Settings milestone complete (Phases 9-12)*
+*Last updated: 2026-02-10 — v1.2 RoofWright Programme milestone started*

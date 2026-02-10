@@ -12,19 +12,20 @@ A compliance management portal for RANZ member roofing businesses that transform
 
 If everything else fails, members must be able to prove their certification status to insurers and consumers.
 
-## Current Milestone: v1.1 Settings
+## Current Milestone: v1.2 RoofWright Programme
 
-**Goal:** Enable members and staff to manage their organization profile, personal settings, notification preferences, and account security.
+**Goal:** Implement the RoofWright Quality Programme features from the director's proposal — micro-credential management, team composition tracking, structured client process checklists, and formal programme enrolment with annual renewal.
 
 **Target features:**
-- Organization settings (company profile, notification prefs, staff management)
-- Personal settings (profile, notifications, security)
-- Role-based access (org admins vs staff members)
+- Micro-credential catalogue and tracking (RANZ-defined Level 5 reroofing/maintenance credentials)
+- Team composition tracking with qualified-to-apprentice ratio warnings
+- Company-level client process procedure + per-project interactive checklists
+- Programme enrolment workflow with acceptance, status tracking, and annual renewal
 
 ## Current State
 
-**Version:** v1.0 MVP (shipped 2026-01-29)
-**Next:** v1.1 Settings, then pilot launch with 10-30 members in Q2 2026
+**Version:** v1.1 Settings (shipped 2026-01-31)
+**Next:** v1.2 RoofWright Programme, then pilot launch with 10-30 members in Q2 2026
 
 **What's working:**
 - Compliance engine with 4-dimension scoring (Insurance, Personnel, Documents, Audits)
@@ -78,23 +79,13 @@ All v1.0 requirements shipped and verified:
   - SSO-02: Satellite domain config documented — v1.0
   - SSO-03: JWT claims sharing — v1.0
 
+- Settings (10) — v1.1
+  - ORG-01 through ORG-05: Organization settings — v1.1
+  - PERS-01 through PERS-05: Personal settings — v1.1
+
 ### Active
 
-v1.1 Settings requirements:
-
-- Organization Settings
-  - [ ] ORG-01: Org admin can update company profile (trading name, contact, logo, description)
-  - [ ] ORG-02: Org admin can configure organization notification preferences
-  - [ ] ORG-03: Org admin can invite new staff members
-  - [ ] ORG-04: Org admin can remove staff members
-  - [ ] ORG-05: Org admin can assign/change staff roles
-
-- Personal Settings
-  - [ ] PERS-01: User can update personal profile (name, email, phone, photo)
-  - [ ] PERS-02: User can configure personal notification preferences
-  - [ ] PERS-03: User can change password
-  - [ ] PERS-04: User can enable/disable 2FA
-  - [ ] PERS-05: User can view active sessions and sign out remotely
+v1.2 RoofWright Programme requirements (to be defined in REQUIREMENTS.md)
 
 ### Out of Scope
 
@@ -157,4 +148,4 @@ Deferred to future milestones:
 | Runtime CRON_SECRET validation | Simpler implementation, acceptable for MVP | Revisit |
 
 ---
-*Last updated: 2026-01-31 after v1.1 milestone started*
+*Last updated: 2026-02-10 after v1.2 RoofWright Programme milestone started*
