@@ -1,80 +1,94 @@
 # Requirements: RANZ Certified Business Programme Portal
 
-**Defined:** 2026-01-31
+**Defined:** 2026-02-10
 **Core Value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
 
-## v1.1 Requirements
+## v1.2 Requirements
 
-Requirements for Settings milestone. Enables members and staff to manage their organization and personal settings.
+Requirements for the RoofWright Programme milestone. Each maps to roadmap phases.
 
-### Organization Settings
+### Micro-Credentials
 
-- [x] **ORG-01**: Org admin can update company profile (trading name, contact details, logo, description)
-- [x] **ORG-02**: Org admin can configure organization notification preferences (which alerts, email vs SMS, frequency)
-- [x] **ORG-03**: Org admin can invite new staff members via email invitation
-- [x] **ORG-04**: Org admin can remove staff members from organization
-- [x] **ORG-05**: Org admin can assign/change staff roles
+- [ ] **MCRED-01**: RANZ admin can create/edit/delete micro-credential definitions (title, level, skill standard reference, issuing body, requirements description)
+- [ ] **MCRED-02**: RANZ admin can assign a micro-credential to a staff member with status (Not Started / In Training / Assessment Pending / Awarded / Expired)
+- [ ] **MCRED-03**: Org admin can view micro-credential status for all staff in their organisation
+- [ ] **MCRED-04**: Staff member can upload certificate evidence against an awarded micro-credential
+- [ ] **MCRED-05**: System tracks expiry dates and sends notifications when credentials are expiring (90/60/30 days)
+- [ ] **MCRED-06**: RANZ admin can view a report of micro-credential coverage across all member organisations
+- [ ] **MCRED-07**: System ships with three default RANZ micro-credential definitions (Reclad/Reroofing L5, Repairs/Maintenance L5, Compliance Practices L4)
 
-### Personal Settings
+### Team Composition
 
-- [x] **PERS-01**: User can update personal profile (name, email, phone, profile photo)
-- [x] **PERS-02**: User can configure personal notification preferences (opt-in/out, alert types)
-- [x] **PERS-03**: User can change password
-- [x] **PERS-04**: User can enable/disable 2FA
-- [x] **PERS-05**: User can view active sessions and sign out remotely
+- [ ] **TEAM-01**: Org admin can create and name roofing teams within their organisation
+- [ ] **TEAM-02**: Org admin can assign staff members to teams with a role (Qualified Roofer / Advancing Roofer / Apprentice)
+- [ ] **TEAM-03**: System displays a warning when a team has no Qualified Roofer assigned
+- [ ] **TEAM-04**: System displays a warning when a team lead lacks a supervision/mentoring qualification
+- [ ] **TEAM-05**: Org admin can link a team to a project (from existing Project Evidence system)
+- [ ] **TEAM-06**: Dashboard shows team composition summary with ratio indicators
+
+### Client Process Checklist
+
+- [ ] **CHKL-01**: RANZ admin can create/edit checklist templates with sections and items
+- [ ] **CHKL-02**: System ships with a default RoofWright client process checklist (Initial Contact, Quoting, Site Setup, Execution, Completion) pre-populated from the proposal
+- [ ] **CHKL-03**: Org admin can customise their company's checklist template (add/remove/reorder items)
+- [ ] **CHKL-04**: Staff can create a checklist instance for a project and complete items as work progresses
+- [ ] **CHKL-05**: Staff can attach photo evidence to individual checklist items
+- [ ] **CHKL-06**: Dashboard shows checklist completion percentage per project
+- [ ] **CHKL-07**: Completed checklists generate a company procedure document (linked to ISO Element 12 — Process Control)
+
+### Programme Enrolment
+
+- [ ] **ENRL-01**: Org admin can apply to enrol their organisation in the RoofWright programme
+- [ ] **ENRL-02**: RANZ admin can review and approve/reject enrolment applications
+- [ ] **ENRL-03**: Enrolled organisations have status tracking (Pending / Active / Renewal Due / Suspended / Withdrawn)
+- [ ] **ENRL-04**: System sends renewal notifications 90/60/30 days before annual anniversary
+- [ ] **ENRL-05**: RANZ admin can suspend or reinstate an organisation's programme status
+- [ ] **ENRL-06**: Dashboard displays RoofWright programme status prominently (badge/indicator)
+- [ ] **ENRL-07**: Public verification page shows RoofWright programme status for enrolled organisations
 
 ## Future Requirements
 
-Deferred to later milestones (from PROJECT.md Out of Scope):
+Deferred to future milestones:
 
-### Public Verification
-- **PUB-01**: "Check a Roofer" public search UI
-- **PUB-02**: Embeddable badge widget
-- **PUB-03**: Rate limiting on public APIs
+### External Integrations
+- **VHINT-01**: Auto-import CPD records from Vertical Horizonz API
+- **APEX-01**: Search APEX certified products database from within portal
+- **INSUR-01**: Insurance COI OCR extraction for auto-population
 
-### Integrations
-- **INT-01**: APEX certified products integration
-- **INT-02**: CPD auto-tracking from Vertical Horizonz
-- **INT-03**: Insurance COI OCR extraction
-- **INT-04**: Builder/council API access
+### Public Features
+- **PUB-01**: "Check a Roofer" public search UI with RoofWright filter
+- **PUB-02**: Embeddable RoofWright badge widget for member websites
 
 ### Mobile
-- **MOB-01**: Mobile app
-- **MOB-02**: Offline-first photo capture
-- **MOB-03**: Consumer mobile app
-
-### Other
-- **OTHER-01**: Testimonial collection and verification
+- **MOB-01**: Mobile-optimised checklist completion for on-site use
+- **MOB-02**: Offline-first photo capture with GPS tagging
 
 ## Out of Scope
 
+Explicitly excluded from v1.2. Documented to prevent scope creep.
+
 | Feature | Reason |
 |---------|--------|
-| Billing/payments settings | No payment processing in v1 |
-| Theme/appearance customization | Not priority for pilot |
-| API key management | No external API access in v1 |
-| Data export/download | Covered by admin CSV export |
+| NZQA framework integration | Micro-credential definitions managed internally; NZQA alignment is training provider's responsibility |
+| Automated assessment/grading | Assessment happens externally; portal tracks outcomes only |
+| Compliance score impact | RoofWright status is display-only, does not affect existing 4-dimension scoring |
+| Training delivery/LMS | Portal tracks credentials, not course content delivery |
+| Financial/billing for programme | Enrolment is administrative, not a payment gateway |
+| Team scheduling/rostering | Teams are for composition tracking, not workforce management |
 
 ## Traceability
 
+Which phases cover which requirements. Updated during roadmap creation.
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ORG-01 | Phase 9 | Complete |
-| ORG-02 | Phase 9 | Complete |
-| ORG-03 | Phase 10 | Complete |
-| ORG-04 | Phase 10 | Complete |
-| ORG-05 | Phase 10 | Complete |
-| PERS-01 | Phase 11 | Complete |
-| PERS-02 | Phase 11 | Complete |
-| PERS-03 | Phase 12 | Complete |
-| PERS-04 | Phase 12 | Complete |
-| PERS-05 | Phase 12 | Complete |
+| (populated by roadmapper) | | |
 
 **Coverage:**
-- v1.1 requirements: 10 total
-- Mapped to phases: 10
-- Unmapped: 0 ✓
+- v1.2 requirements: 25 total
+- Mapped to phases: 0
+- Unmapped: 25
 
 ---
-*Requirements defined: 2026-01-31*
-*Last updated: 2026-01-31 — v1.1 milestone complete (10/10 requirements satisfied)*
+*Requirements defined: 2026-02-10*
+*Last updated: 2026-02-10 after initial definition*
