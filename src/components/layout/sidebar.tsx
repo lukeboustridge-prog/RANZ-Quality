@@ -12,6 +12,7 @@ import {
   FileText,
   Settings,
   ClipboardCheck,
+  ClipboardList,
   AlertTriangle,
   FolderKanban,
   Package,
@@ -33,6 +34,7 @@ const navigation = [
   { name: "Programme", href: "/programme", icon: Award },
   { name: "Credentials", href: "/credentials", icon: GraduationCap },
   { name: "Teams", href: "/teams", icon: UsersRound },
+  { name: "Checklists", href: "/checklists", icon: ClipboardList },
 ];
 
 const secondaryNavigation = [
