@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-10)
 ## Current Position
 
 Phase: 13 of 16 (Programme Enrolment)
-Plan: 1 of 4 complete
+Plan: 2 of 4 complete
 Status: In progress
-Last activity: 2026-02-10 — Completed 13-01-PLAN.md (Schema, Types, Application Flow)
+Last activity: 2026-02-10 — Completed 13-03-PLAN.md (Dashboard Badge & Public Verification)
 
-Progress: [████████░░] 78% (39/50 total plans across all milestones)
+Progress: [████████░░] 80% (40/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -30,9 +30,9 @@ Progress: [████████░░] 78% (39/50 total plans across all mil
 
 **v1.2 Milestone (in progress):**
 - Total plans: 11 (estimated)
-- Plans completed: 1
+- Plans completed: 2
 - Phases: 4
-- Status: Phase 13 Plan 01 complete
+- Status: Phase 13 Plans 01, 03 complete
 
 ## Accumulated Context
 
@@ -50,6 +50,11 @@ Phase 13 Plan 01 decisions:
 - Programme nav placed after CAPA in sidebar (last in primary nav before secondary)
 - Re-application deletes WITHDRAWN record then creates new one (unique constraint)
 - Notification mappings added in Task 1 to satisfy typecheck (plan had them in Task 2)
+
+Phase 13 Plan 03 decisions:
+- Programme badge placed before StatsCards at dashboard top for maximum visibility
+- Public verification shows programme for ACTIVE and RENEWAL_DUE only (internal states hidden)
+- Used statusConfig object pattern for clean per-status UI configuration
 
 ### Pending Todos
 
@@ -70,9 +75,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 13-01-PLAN.md
+Stopped at: Completed 13-03-PLAN.md
 Resume file: None
-Next action: Execute 13-02-PLAN.md (Admin Review)
+Next action: Execute 13-04-PLAN.md (Notifications & Renewal)
 
 ---
-*Last updated: 2026-02-10 — Phase 13 Plan 01 complete*
+*Last updated: 2026-02-10 — Phase 13 Plan 03 complete*
