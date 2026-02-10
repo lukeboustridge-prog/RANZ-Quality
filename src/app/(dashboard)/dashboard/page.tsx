@@ -9,6 +9,7 @@ import { ExpiringItems } from "@/components/dashboard/expiring-items";
 import { StatsCards, getDefaultStats } from "@/components/dashboard/stats-cards";
 import { DimensionIndicators } from "@/components/dashboard/dimension-indicators";
 import { ProgrammeBadge } from "@/components/dashboard/programme-badge";
+import { TeamSummary } from "@/components/dashboard/team-summary";
 
 export default async function DashboardPage() {
   const { orgId } = await auth();
@@ -34,6 +35,36 @@ export default async function DashboardPage() {
   if (!organization) {
     redirect("/onboarding");
   }
+
+  // Fetch team composition data
+  const teams = await db.team.findMany({
+    where: { organizationId: organization.id },
+    include: {
+      members: {
+        select: { role: true, isLead: true },
+      },
+      project: {
+        select: { id: true },
+      },
+    },
+    orderBy: { name: "asc" },
+  });
+
+  const teamSummaryData = {
+    totalTeams: teams.length,
+    totalMembers: teams.reduce((sum, t) => sum + t.members.length, 0),
+    teams: teams.map((t) => ({
+      id: t.id,
+      name: t.name,
+      memberCount: t.members.length,
+      qualifiedCount: t.members.filter((m) => m.role === "QUALIFIED_ROOFER").length,
+      advancingCount: t.members.filter((m) => m.role === "ADVANCING_ROOFER").length,
+      apprenticeCount: t.members.filter((m) => m.role === "APPRENTICE").length,
+      hasQualifiedRoofer: t.members.some((m) => m.role === "QUALIFIED_ROOFER"),
+      hasDesignatedLead: t.members.some((m) => m.isLead),
+      projectLinked: !!t.project,
+    })),
+  };
 
   // Calculate compliance with full breakdown
   const complianceResult = await calculateComplianceScore(organization.id);
@@ -101,6 +132,8 @@ export default async function DashboardPage() {
       </div>
 
       <ActionItems items={actionItems} />
+
+      <TeamSummary data={teamSummaryData.totalTeams > 0 ? teamSummaryData : null} />
     </div>
   );
 }
