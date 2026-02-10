@@ -72,12 +72,13 @@
 4. System sends renewal reminders at 90, 60, and 30 days before annual anniversary
 5. Public verification page shows RoofWright programme status for enrolled organizations
 
-**Plans:** 3 plans
+**Plans:** 4 plans
 
 Plans:
 - [ ] 13-01-PLAN.md — Schema, types, and org application flow (ENRL-01, ENRL-03)
 - [ ] 13-02-PLAN.md — Admin review, approval, and status management (ENRL-02, ENRL-05)
-- [ ] 13-03-PLAN.md — Dashboard badge, public verification, and renewal notifications (ENRL-04, ENRL-06, ENRL-07)
+- [ ] 13-03-PLAN.md — Dashboard badge and public verification (ENRL-04, ENRL-06)
+- [ ] 13-04-PLAN.md — Renewal notification cron and documentation (ENRL-07)
 
 ---
 
@@ -175,7 +176,7 @@ Phases execute in numeric order: 13 → 14 → 15 → 16
 | 10. Staff Management | v1.1 | 2/2 | Complete | 2026-01-31 |
 | 11. Personal Settings | v1.1 | 3/3 | Complete | 2026-01-31 |
 | 12. Account Security | v1.1 | 1/1 | Complete | 2026-01-31 |
-| 13. Programme Enrolment | v1.2 | 0/3 | Not started | - |
+| 13. Programme Enrolment | v1.2 | 0/4 | Not started | - |
 | 14. Micro-Credentials | v1.2 | 0/3 | Not started | - |
 | 15. Team Composition | v1.2 | 0/2 | Not started | - |
 | 16. Client Checklists | v1.2 | 0/3 | Not started | - |
@@ -183,8 +184,8 @@ Phases execute in numeric order: 13 → 14 → 15 → 16
 **Totals:**
 - v1.0: 8 phases, 29 plans ✅
 - v1.1: 4 phases, 9 plans ✅
-- v1.2: 4 phases, 11 plans (estimated) 🚧
+- v1.2: 4 phases, 12 plans (estimated) 🚧
 
 ---
 
-*Last updated: 2026-02-10 after Phase 13 Programme Enrolment planned (3 plans, 2 waves)*
+*Last updated: 2026-02-10 after Phase 13 plans revised (4 plans, 3 waves)*
