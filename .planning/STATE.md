@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** v1.2 RoofWright Programme - Phase 13 complete, ready for Phase 14
+**Current focus:** v1.2 RoofWright Programme - Phase 14 in progress (Micro-credentials)
 
 ## Current Position
 
-Phase: 13 of 16 (Programme Enrolment) - COMPLETE
-Plan: 4 of 4 complete
-Status: Phase complete
-Last activity: 2026-02-10 — Completed 13-04-PLAN.md (Notifications & Documentation)
+Phase: 14 of 16 (Micro-credentials) - IN PROGRESS
+Plan: 1 of 4 complete
+Status: In progress
+Last activity: 2026-02-10 — Completed 14-01-PLAN.md (Schema & Admin Definitions)
 
-Progress: [████████░░] 84% (42/50 total plans across all milestones)
+Progress: [████████░░] 86% (43/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -30,9 +30,9 @@ Progress: [████████░░] 84% (42/50 total plans across all mil
 
 **v1.2 Milestone (in progress):**
 - Total plans: 11 (estimated)
-- Plans completed: 4
+- Plans completed: 5
 - Phases: 4
-- Status: Phase 13 complete (all 4 plans)
+- Status: Phase 14 Plan 01 complete
 
 ## Accumulated Context
 
@@ -63,6 +63,12 @@ Phase 13 Plan 03 decisions:
 Phase 13 Plan 04 decisions:
 - Cumulative threshold checks (<=90, <=60, <=30) for renewal alerts instead of narrow day windows
 
+Phase 14 Plan 01 decisions:
+- Auto-seed default credentials on first GET request rather than migration script
+- Inline form toggle for create/edit rather than window.prompt (more fields)
+- Default definitions protected from deletion via isDefault flag and API-level guard
+- StaffMicroCredential uses @@unique([definitionId, memberId]) for one-per-staff
+
 ### Pending Todos
 
 None.
@@ -77,14 +83,14 @@ None.
 - Clerk JWT template configuration (manual Dashboard step)
 - DNS CNAME for production SSO
 - Roofing Reports satellite app configuration
-- RoofWright micro-credential definitions need alignment with training provider (can build catalogue structure first)
+- RoofWright micro-credential definitions need alignment with training provider (catalogue structure built, ready for content)
 
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 13-04-PLAN.md (Phase 13 complete)
+Stopped at: Completed 14-01-PLAN.md
 Resume file: None
-Next action: Begin Phase 14 (Micro-credentials)
+Next action: Execute 14-02-PLAN.md (Staff Assignment & Status Tracking)
 
 ---
-*Last updated: 2026-02-10 — Phase 13 Plan 04 complete*
+*Last updated: 2026-02-10 — Phase 14 Plan 01 complete*
