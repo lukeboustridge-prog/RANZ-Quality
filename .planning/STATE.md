@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** v1.2 RoofWright Programme - Phase 15 in progress (Team Composition)
+**Current focus:** v1.2 RoofWright Programme - Phase 15 complete, Phase 16 next (Client Checklists)
 
 ## Current Position
 
-Phase: 15 of 16 (Team Composition) - IN PROGRESS
-Plan: 2 of 3 complete (01, 03 done; 02 remaining)
-Status: In progress
-Last activity: 2026-02-10 — Completed 15-03-PLAN.md (Dashboard Team Summary)
+Phase: 15 of 16 (Team Composition) - COMPLETE
+Plan: 3 of 3 complete
+Status: Phase complete
+Last activity: 2026-02-10 — Completed 15-02-PLAN.md (Team Detail & Member Assignment)
 
-Progress: [█████████░] 94% (47/50 total plans across all milestones)
+Progress: [█████████░] 96% (48/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -30,9 +30,9 @@ Progress: [█████████░] 94% (47/50 total plans across all mil
 
 **v1.2 Milestone (in progress):**
 - Total plans: 11 (estimated)
-- Plans completed: 9
+- Plans completed: 10
 - Phases: 4
-- Status: Phase 15 Plans 01 and 03 complete
+- Status: Phase 15 complete, Phase 16 remaining
 
 ## Accumulated Context
 
@@ -87,6 +87,11 @@ Phase 15 Plan 01 decisions:
 - 409 status for duplicate team name with friendly error message
 - Team cards link to /teams/{id} for detail page (Plan 02)
 
+Phase 15 Plan 02 decisions:
+- Warnings computed server-side in GET handler, not client-side
+- Inline role editing via select dropdown on member row (no modal)
+- Project linking via PATCH on team route with projectId field
+
 Phase 15 Plan 03 decisions:
 - TeamSummary placed after ActionItems at dashboard bottom (supplementary info)
 - Pass null when org has no teams to render nothing (no empty state clutter)
@@ -112,9 +117,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 15-03-PLAN.md
+Stopped at: Completed 15-02-PLAN.md (Phase 15 complete)
 Resume file: None
-Next action: Execute 15-02-PLAN.md (Team Detail & Member Assignment)
+Next action: Execute Phase 16 (Client Checklists)
 
 ---
-*Last updated: 2026-02-10 — Phase 15 Plan 03 complete*
+*Last updated: 2026-02-10 — Phase 15 complete*
