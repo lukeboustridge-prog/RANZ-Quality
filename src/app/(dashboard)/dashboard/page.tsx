@@ -8,6 +8,7 @@ import { ActionItems } from "@/components/dashboard/action-items";
 import { ExpiringItems } from "@/components/dashboard/expiring-items";
 import { StatsCards, getDefaultStats } from "@/components/dashboard/stats-cards";
 import { DimensionIndicators } from "@/components/dashboard/dimension-indicators";
+import { ProgrammeBadge } from "@/components/dashboard/programme-badge";
 
 export default async function DashboardPage() {
   const { orgId } = await auth();
@@ -24,6 +25,9 @@ export default async function DashboardPage() {
       },
       members: true,
       documents: true,
+      programmeEnrolment: {
+        select: { status: true, activeSince: true, anniversaryDate: true },
+      },
     },
   });
 
@@ -79,6 +83,8 @@ export default async function DashboardPage() {
           Welcome back to {organization.name}
         </p>
       </div>
+
+      <ProgrammeBadge enrolment={organization.programmeEnrolment} />
 
       <div className="motion-safe:animate-[fadeIn_0.4s_ease-out]">
         <StatsCards stats={stats} />
