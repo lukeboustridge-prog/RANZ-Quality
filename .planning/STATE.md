@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** v1.2 RoofWright Programme - Phase 13 in progress
+**Current focus:** v1.2 RoofWright Programme - Phase 13 complete, ready for Phase 14
 
 ## Current Position
 
-Phase: 13 of 16 (Programme Enrolment)
-Plan: 3 of 4 complete
-Status: In progress
-Last activity: 2026-02-10 — Completed 13-02-PLAN.md (Admin Review)
+Phase: 13 of 16 (Programme Enrolment) - COMPLETE
+Plan: 4 of 4 complete
+Status: Phase complete
+Last activity: 2026-02-10 — Completed 13-04-PLAN.md (Notifications & Documentation)
 
-Progress: [████████░░] 82% (41/50 total plans across all milestones)
+Progress: [████████░░] 84% (42/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -30,9 +30,9 @@ Progress: [████████░░] 82% (41/50 total plans across all mil
 
 **v1.2 Milestone (in progress):**
 - Total plans: 11 (estimated)
-- Plans completed: 3
+- Plans completed: 4
 - Phases: 4
-- Status: Phase 13 Plans 01, 02, 03 complete
+- Status: Phase 13 complete (all 4 plans)
 
 ## Accumulated Context
 
@@ -60,6 +60,9 @@ Phase 13 Plan 03 decisions:
 - Public verification shows programme for ACTIVE and RENEWAL_DUE only (internal states hidden)
 - Used statusConfig object pattern for clean per-status UI configuration
 
+Phase 13 Plan 04 decisions:
+- Cumulative threshold checks (<=90, <=60, <=30) for renewal alerts instead of narrow day windows
+
 ### Pending Todos
 
 None.
@@ -79,9 +82,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 13-02-PLAN.md
+Stopped at: Completed 13-04-PLAN.md (Phase 13 complete)
 Resume file: None
-Next action: Execute 13-04-PLAN.md (Notifications & Renewal)
+Next action: Begin Phase 14 (Micro-credentials)
 
 ---
-*Last updated: 2026-02-10 — Phase 13 Plan 02 complete*
+*Last updated: 2026-02-10 — Phase 13 Plan 04 complete*
