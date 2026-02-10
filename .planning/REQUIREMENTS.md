@@ -82,13 +82,45 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated by roadmapper) | | |
+| ENRL-01 | Phase 13 | Pending |
+| ENRL-02 | Phase 13 | Pending |
+| ENRL-03 | Phase 13 | Pending |
+| ENRL-04 | Phase 13 | Pending |
+| ENRL-05 | Phase 13 | Pending |
+| ENRL-06 | Phase 13 | Pending |
+| ENRL-07 | Phase 13 | Pending |
+| MCRED-01 | Phase 14 | Pending |
+| MCRED-02 | Phase 14 | Pending |
+| MCRED-03 | Phase 14 | Pending |
+| MCRED-04 | Phase 14 | Pending |
+| MCRED-05 | Phase 14 | Pending |
+| MCRED-06 | Phase 14 | Pending |
+| MCRED-07 | Phase 14 | Pending |
+| TEAM-01 | Phase 15 | Pending |
+| TEAM-02 | Phase 15 | Pending |
+| TEAM-03 | Phase 15 | Pending |
+| TEAM-04 | Phase 15 | Pending |
+| TEAM-05 | Phase 15 | Pending |
+| TEAM-06 | Phase 15 | Pending |
+| CHKL-01 | Phase 16 | Pending |
+| CHKL-02 | Phase 16 | Pending |
+| CHKL-03 | Phase 16 | Pending |
+| CHKL-04 | Phase 16 | Pending |
+| CHKL-05 | Phase 16 | Pending |
+| CHKL-06 | Phase 16 | Pending |
+| CHKL-07 | Phase 16 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 25 total
-- Mapped to phases: 0
-- Unmapped: 25
+- Mapped to phases: 25 (100%)
+- Unmapped: 0
+
+**Phase breakdown:**
+- Phase 13 (Programme Enrolment): 7 requirements
+- Phase 14 (Micro-Credentials): 7 requirements
+- Phase 15 (Team Composition): 6 requirements
+- Phase 16 (Client Checklists): 7 requirements
 
 ---
 *Requirements defined: 2026-02-10*
-*Last updated: 2026-02-10 after initial definition*
+*Last updated: 2026-02-10 after v1.2 roadmap created with 100% requirement coverage*

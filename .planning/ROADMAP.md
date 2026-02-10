@@ -2,124 +2,189 @@
 
 ## Milestones
 
-- [x] **v1.0 MVP** - Phases 1-8 (shipped 2026-01-29)
-- [x] **v1.1 Settings** - Phases 9-12 (shipped 2026-01-31)
+- ✅ **v1.0 MVP** - Phases 1-8 (shipped 2026-01-29)
+- ✅ **v1.1 Settings** - Phases 9-12 (shipped 2026-01-31)
+- 🚧 **v1.2 RoofWright Programme** - Phases 13-16 (in progress)
 
 ## Phases
 
 <details>
-<summary>v1.0 MVP (Phases 1-8) - SHIPPED 2026-01-29</summary>
+<summary>✅ v1.0 MVP (Phases 1-8) - SHIPPED 2026-01-29</summary>
 
-v1.0 delivered the core compliance management portal with:
-- Compliance engine with 4-dimension scoring
-- Real-time dashboard updates
-- Security foundations (cron auth, audit trail, file validation)
-- Notifications via email and SMS
-- Admin reporting (PDF reports, CSV export)
-- SSO integration for Roofing Reports satellite domain
+**Delivered:** Complete compliance management portal ready for Q2 2026 pilot launch.
 
-29 plans completed across 8 phases in 126 minutes total execution time.
+**Key accomplishments:**
+- Consolidated compliance engine with canonical scoring (compliance-v2.ts)
+- Real-time dashboard updates with dimension-specific indicators
+- Security foundations with cron endpoint authentication, audit trail with SHA-256 hash chain
+- Public verification API using NZBN/trading name
+- SMS notifications via Twilio with exponential backoff retry
+- Triple-channel notification targeting (org email, member email, member SMS)
+- Admin reporting with PDF generation and CSV export
+- SSO integration with Clerk metadata sync for satellite domain
+
+**Stats:** 8 phases, 29 plans, 126 min total execution time
 
 </details>
 
-### v1.1 Settings (SHIPPED 2026-01-31)
+<details>
+<summary>✅ v1.1 Settings (Phases 9-12) - SHIPPED 2026-01-31</summary>
 
-**Milestone Goal:** Enable members and staff to manage their organization profile, personal settings, notification preferences, and account security.
+**Delivered:** Organization and personal settings management.
+
+**Key accomplishments:**
+- Organization profile and notification preferences (ORG-01, ORG-02)
+- Staff invitation and role management (ORG-03, ORG-04, ORG-05)
+- Personal profile and notification preferences (PERS-01, PERS-02)
+- Account security via Clerk (password, 2FA, sessions) (PERS-03, PERS-04, PERS-05)
+
+**Stats:** 4 phases, 9 plans
+
+</details>
+
+### 🚧 v1.2 RoofWright Programme (In Progress)
+
+**Milestone Goal:** Implement RoofWright Quality Programme features — micro-credential management, team composition tracking, structured client process checklists, and formal programme enrolment with annual renewal.
 
 **Phase Numbering:**
-- Integer phases (9, 10, 11, 12): Planned milestone work
-- Decimal phases (9.1, 9.2): Urgent insertions (marked with INSERTED)
+- Integer phases (13, 14, 15, 16): Planned milestone work
+- Decimal phases (13.1, 13.2): Urgent insertions (if needed)
 
-- [x] **Phase 9: Organization Profile** - Company details and notification preferences
-- [x] **Phase 10: Staff Management** - Invite, remove, and manage staff roles
-- [x] **Phase 11: Personal Settings** - User profile and notification preferences
-- [x] **Phase 12: Account Security** - Password, 2FA, and session management via Clerk
+- [ ] **Phase 13: Programme Enrolment** - Application, approval, status tracking, and renewal
+- [ ] **Phase 14: Micro-Credential Management** - Credential definitions, tracking, and expiry
+- [ ] **Phase 15: Team Composition Tracking** - Team creation, staff assignment, and warnings
+- [ ] **Phase 16: Client Process Checklists** - Template creation, project instances, and procedure docs
 
 ## Phase Details
 
-### Phase 9: Organization Profile
-**Goal**: Org admins can maintain their company's public-facing profile and control how the organization receives notifications
-**Depends on**: v1.0 MVP (Phase 8)
-**Requirements**: ORG-01, ORG-02
+### Phase 13: Programme Enrolment
+
+**Goal:** Organizations can enroll in the RoofWright programme and RANZ can manage their status.
+
+**Depends on:** Nothing (foundation for milestone)
+
+**Requirements:** ENRL-01, ENRL-02, ENRL-03, ENRL-04, ENRL-05, ENRL-06, ENRL-07
+
 **Success Criteria** (what must be TRUE):
-  1. Org admin can update trading name, contact details, description from settings page
-  2. Org admin can upload/change company logo (displayed on profile and reports)
-  3. Org admin can configure which notification types the organization receives
-  4. Org admin can choose notification channels (email, SMS, or both) for organization alerts
-  5. Non-admin staff cannot access organization settings
-**Plans**: 3 plans
+1. Org admin can submit an enrolment application for their organization
+2. RANZ admin can review pending applications and approve or reject them
+3. Enrolled organizations display their programme status on the dashboard with a visual badge/indicator
+4. System sends renewal reminders at 90, 60, and 30 days before annual anniversary
+5. Public verification page shows RoofWright programme status for enrolled organizations
+
+**Plans:** TBD
 
 Plans:
-- [x] 09-01-PLAN.md - Schema changes for org profile and notification preferences
-- [x] 09-02-PLAN.md - Organization profile editing UI and API
-- [x] 09-03-PLAN.md - Organization notification preferences UI and API
+- [ ] 13-01: TBD
+- [ ] 13-02: TBD
+- [ ] 13-03: TBD
 
-### Phase 10: Staff Management
-**Goal**: Org admins can manage their team by inviting new members, removing departed staff, and assigning appropriate roles
-**Depends on**: Phase 9
-**Requirements**: ORG-03, ORG-04, ORG-05
+---
+
+### Phase 14: Micro-Credential Management
+
+**Goal:** RANZ can define and track micro-credentials, and organizations can manage their staff credentials.
+
+**Depends on:** Phase 13
+
+**Requirements:** MCRED-01, MCRED-02, MCRED-03, MCRED-04, MCRED-05, MCRED-06, MCRED-07
+
 **Success Criteria** (what must be TRUE):
-  1. Org admin can send email invitation to new staff member
-  2. Invited user receives email and can join the organization
-  3. Org admin can remove a staff member from the organization
-  4. Org admin can change a staff member's role (admin vs member)
-  5. Staff member sees their role reflected in navigation and permissions
-**Plans**: 2 plans
+1. RANZ admin can create and edit micro-credential definitions (title, level, skill standard reference)
+2. RANZ admin can assign micro-credentials to staff members with status tracking (Not Started → In Training → Assessment Pending → Awarded → Expired)
+3. Org admin can view all their staff members' micro-credential status in a single view
+4. Staff members can upload certificate evidence against awarded credentials
+5. System sends expiry notifications at 90, 60, and 30 days before credentials expire
+6. Portal ships with three default RANZ micro-credential definitions pre-populated
+
+**Plans:** TBD
 
 Plans:
-- [x] 10-01-PLAN.md - Staff invitation flow via Clerk (invitation API + UI)
-- [x] 10-02-PLAN.md - Staff list, role management, and member removal
+- [ ] 14-01: TBD
+- [ ] 14-02: TBD
+- [ ] 14-03: TBD
 
-### Phase 11: Personal Settings
-**Goal**: Users can manage their own profile information and notification preferences independent of their organization
-**Depends on**: Phase 10
-**Requirements**: PERS-01, PERS-02
+---
+
+### Phase 15: Team Composition Tracking
+
+**Goal:** Organizations can create teams, assign staff with roles, and see composition warnings.
+
+**Depends on:** Phase 14
+
+**Requirements:** TEAM-01, TEAM-02, TEAM-03, TEAM-04, TEAM-05, TEAM-06
+
 **Success Criteria** (what must be TRUE):
-  1. User can update their name, email, and phone number
-  2. User can upload/change their profile photo
-  3. User can opt in/out of specific notification types
-  4. User's notification preferences are respected by the notification system
-**Plans**: 3 plans
+1. Org admin can create named roofing teams and assign staff members with roles (Qualified Roofer / Advancing Roofer / Apprentice)
+2. System displays warnings when a team has no Qualified Roofer assigned
+3. System displays warnings when a team lead lacks a supervision/mentoring qualification
+4. Org admin can link teams to projects from the existing Project Evidence system
+5. Dashboard shows team composition summary with qualified-to-apprentice ratio indicators
+
+**Plans:** TBD
 
 Plans:
-- [x] 11-01-PLAN.md - Personal profile editing via Clerk UserProfile and settings page role-based access
-- [x] 11-02-PLAN.md - Personal notification preferences component and integration
-- [x] 11-03-PLAN.md - Notification preference enforcement (gap closure)
+- [ ] 15-01: TBD
+- [ ] 15-02: TBD
 
-### Phase 12: Account Security
-**Goal**: Users can manage their account security settings including password, two-factor authentication, and active sessions
-**Depends on**: Phase 11
-**Requirements**: PERS-03, PERS-04, PERS-05
+---
+
+### Phase 16: Client Process Checklists
+
+**Goal:** Organizations can use structured checklists for client process tracking and generate procedure documents.
+
+**Depends on:** Phase 15
+
+**Requirements:** CHKL-01, CHKL-02, CHKL-03, CHKL-04, CHKL-05, CHKL-06, CHKL-07
+
 **Success Criteria** (what must be TRUE):
-  1. User can change their password from security settings
-  2. User can enable two-factor authentication (TOTP or SMS)
-  3. User can disable two-factor authentication if already enabled
-  4. User can view list of active sessions with device/location info
-  5. User can sign out of any session remotely
-**Plans**: 1 plan
+1. RANZ admin can create and edit checklist templates with sections and items
+2. Portal ships with a default RoofWright client process checklist (Initial Contact → Quoting → Site Setup → Execution → Completion) pre-populated
+3. Org admin can customize their company's checklist template (add/remove/reorder items)
+4. Staff can create checklist instances for projects and mark items complete as work progresses
+5. Staff can attach photo evidence to individual checklist items
+6. Dashboard shows checklist completion percentage for each project
+7. Completed checklists generate a company procedure document linked to ISO Element 12 (Process Control)
+
+**Plans:** TBD
 
 Plans:
-- [x] 12-01-PLAN.md - Security settings section with Clerk UserProfile (password, 2FA, sessions)
+- [ ] 16-01: TBD
+- [ ] 16-02: TBD
+- [ ] 16-03: TBD
 
-**Note:** Phase 12 primarily exposes Clerk's built-in security UI components. Clerk handles password management, 2FA enrollment, and session management natively. The work is integration and UI, not building these features from scratch.
+---
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 9 -> 9.1 (if any) -> 10 -> 10.1 (if any) -> 11 -> 12
+Phases execute in numeric order: 13 → 14 → 15 → 16
+(Decimal phases like 13.1 would execute between their surrounding integers)
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
+| 1. Foundation | v1.0 | 3/3 | Complete | 2026-01-29 |
+| 2. Compliance Engine | v1.0 | 4/4 | Complete | 2026-01-29 |
+| 3. Security & Cron | v1.0 | 3/3 | Complete | 2026-01-29 |
+| 4. Public Verification | v1.0 | 4/4 | Complete | 2026-01-29 |
+| 5. Notifications | v1.0 | 5/5 | Complete | 2026-01-29 |
+| 6. Admin Reporting | v1.0 | 4/4 | Complete | 2026-01-29 |
+| 7. SSO Integration | v1.0 | 3/3 | Complete | 2026-01-29 |
+| 8. Dashboard Polish | v1.0 | 3/3 | Complete | 2026-01-29 |
 | 9. Organization Profile | v1.1 | 3/3 | Complete | 2026-01-31 |
 | 10. Staff Management | v1.1 | 2/2 | Complete | 2026-01-31 |
 | 11. Personal Settings | v1.1 | 3/3 | Complete | 2026-01-31 |
 | 12. Account Security | v1.1 | 1/1 | Complete | 2026-01-31 |
+| 13. Programme Enrolment | v1.2 | 0/3 | Not started | - |
+| 14. Micro-Credentials | v1.2 | 0/3 | Not started | - |
+| 15. Team Composition | v1.2 | 0/2 | Not started | - |
+| 16. Client Checklists | v1.2 | 0/3 | Not started | - |
 
 **Totals:**
-- Phases: 4
-- Plans: 9 (3 + 2 + 3 + 1)
-- Requirements covered: 10/10
+- v1.0: 8 phases, 29 plans ✅
+- v1.1: 4 phases, 9 plans ✅
+- v1.2: 4 phases, 11 plans (estimated) 🚧
 
 ---
-*Created: 2026-01-31*
-*Last updated: 2026-01-31 — v1.1 Settings milestone complete*
+
+*Last updated: 2026-02-10 after v1.2 RoofWright Programme roadmap created*
