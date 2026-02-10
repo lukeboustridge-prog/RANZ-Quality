@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** v1.2 RoofWright Programme - Phase 13 ready to plan
+**Current focus:** v1.2 RoofWright Programme - Phase 13 in progress
 
 ## Current Position
 
 Phase: 13 of 16 (Programme Enrolment)
-Plan: Ready to plan
-Status: Roadmap created, ready to plan Phase 13
-Last activity: 2026-02-10 — v1.2 roadmap created with 4 phases, 100% requirement coverage
+Plan: 1 of 4 complete
+Status: In progress
+Last activity: 2026-02-10 — Completed 13-01-PLAN.md (Schema, Types, Application Flow)
 
-Progress: [████████░░] 76% (38/50 total plans across all milestones)
+Progress: [████████░░] 78% (39/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -30,8 +30,9 @@ Progress: [████████░░] 76% (38/50 total plans across all mil
 
 **v1.2 Milestone (in progress):**
 - Total plans: 11 (estimated)
+- Plans completed: 1
 - Phases: 4
-- Status: Roadmap complete, ready to plan Phase 13
+- Status: Phase 13 Plan 01 complete
 
 ## Accumulated Context
 
@@ -45,6 +46,11 @@ Recent v1.2 design decisions:
 - Team composition Phase 15 uses micro-credential data for qualification tracking
 - Client checklists Phase 16 integrates with existing Project Evidence system
 
+Phase 13 Plan 01 decisions:
+- Programme nav placed after CAPA in sidebar (last in primary nav before secondary)
+- Re-application deletes WITHDRAWN record then creates new one (unique constraint)
+- Notification mappings added in Task 1 to satisfy typecheck (plan had them in Task 2)
+
 ### Pending Todos
 
 None.
@@ -53,6 +59,7 @@ None.
 
 **Tech Debt (carried from v1.0):**
 - CRON_SECRET validated at runtime only, not build-time (medium severity)
+- `pnpm build` fails due to missing RESEND_API_KEY in .env (pre-existing, env config issue)
 
 **External Dependencies (not blockers):**
 - Clerk JWT template configuration (manual Dashboard step)
@@ -60,18 +67,12 @@ None.
 - Roofing Reports satellite app configuration
 - RoofWright micro-credential definitions need alignment with training provider (can build catalogue structure first)
 
-**v1.2 Readiness:**
-- All 25 requirements mapped to phases 13-16
-- Success criteria derived for all phases
-- 100% requirement coverage validated
-- Phase dependencies identified
-
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: v1.2 roadmap created, files written
+Stopped at: Completed 13-01-PLAN.md
 Resume file: None
-Next action: `/gsd:plan-phase 13` to begin Phase 13 Programme Enrolment planning
+Next action: Execute 13-02-PLAN.md (Admin Review)
 
 ---
-*Last updated: 2026-02-10 — v1.2 RoofWright Programme roadmap created*
+*Last updated: 2026-02-10 — Phase 13 Plan 01 complete*
