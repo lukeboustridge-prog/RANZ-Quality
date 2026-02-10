@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-10)
 ## Current Position
 
 Phase: 14 of 16 (Micro-credentials) - IN PROGRESS
-Plan: 1 of 4 complete
+Plan: 2 of 4 complete
 Status: In progress
-Last activity: 2026-02-10 — Completed 14-01-PLAN.md (Schema & Admin Definitions)
+Last activity: 2026-02-10 — Completed 14-02-PLAN.md (Staff Assignment & Status Tracking)
 
-Progress: [████████░░] 86% (43/50 total plans across all milestones)
+Progress: [████████░░] 88% (44/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -30,9 +30,9 @@ Progress: [████████░░] 86% (43/50 total plans across all mil
 
 **v1.2 Milestone (in progress):**
 - Total plans: 11 (estimated)
-- Plans completed: 5
+- Plans completed: 6
 - Phases: 4
-- Status: Phase 14 Plan 01 complete
+- Status: Phase 14 Plan 02 complete
 
 ## Accumulated Context
 
@@ -69,6 +69,11 @@ Phase 14 Plan 01 decisions:
 - Default definitions protected from deletion via isDefault flag and API-level guard
 - StaffMicroCredential uses @@unique([definitionId, memberId]) for one-per-staff
 
+Phase 14 Plan 02 decisions:
+- GET handler on assign route for org/member lookups (self-contained, avoids modifying existing endpoints)
+- Inline status editing in staff table (select + save/cancel) rather than modal dialogs
+- Credentials page as Server Component with direct Prisma queries (will convert to use client in Plan 03)
+
 ### Pending Todos
 
 None.
@@ -88,9 +93,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 14-01-PLAN.md
+Stopped at: Completed 14-02-PLAN.md
 Resume file: None
-Next action: Execute 14-02-PLAN.md (Staff Assignment & Status Tracking)
+Next action: Execute 14-03-PLAN.md (Evidence Upload & Certificate Management)
 
 ---
-*Last updated: 2026-02-10 — Phase 14 Plan 01 complete*
+*Last updated: 2026-02-10 — Phase 14 Plan 02 complete*
