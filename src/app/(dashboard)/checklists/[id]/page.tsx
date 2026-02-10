@@ -13,6 +13,8 @@ import {
   PenLine,
   StickyNote,
   ClipboardList,
+  Upload,
+  ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -102,6 +104,10 @@ export default function ChecklistDetailPage() {
 
   // Notes expansion
   const [expandedNotes, setExpandedNotes] = useState<Set<string>>(new Set());
+
+  // Photo upload state
+  const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null); // itemId
+  const [photoUrls, setPhotoUrls] = useState<Map<string, string>>(new Map());
 
   // Debounce timers for text/notes
   const debounceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
@@ -315,6 +321,84 @@ export default function ChecklistDetailPage() {
         })),
       };
     });
+  }
+
+  // --- Photo upload ---
+
+  async function handlePhotoUpload(itemId: string, file: File) {
+    if (!data) return;
+
+    setUploadingPhoto(itemId);
+    setError(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(
+        `/api/checklists/${id}/items/${itemId}/evidence`,
+        { method: "POST", body: formData }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        // Update local state: mark item as completed with photo
+        setData((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            sections: prev.sections.map((section) => ({
+              ...section,
+              items: section.items.map((item) =>
+                item.id === itemId
+                  ? {
+                      ...item,
+                      completion: {
+                        ...(item.completion || {
+                          id: "",
+                          textValue: null,
+                          notes: null,
+                        }),
+                        id: item.completion?.id || "",
+                        completed: true,
+                        completedAt: new Date().toISOString(),
+                        completedBy: "you",
+                        photoKey: result.storageKey,
+                        photoFileName: result.fileName,
+                      } as CompletionData,
+                    }
+                  : item
+              ),
+            })),
+          };
+        });
+        showSuccess("Photo uploaded successfully.");
+        // Refresh to get accurate stats
+        await fetchData();
+      } else {
+        const errData = await response.json();
+        setError(errData.error || "Failed to upload photo.");
+      }
+    } catch (err) {
+      console.error("Failed to upload photo:", err);
+      setError("An error occurred uploading the photo.");
+    } finally {
+      setUploadingPhoto(null);
+    }
+  }
+
+  async function loadPhotoUrl(itemId: string) {
+    if (photoUrls.has(itemId)) return;
+    try {
+      const response = await fetch(
+        `/api/checklists/${id}/items/${itemId}/evidence`
+      );
+      if (response.ok) {
+        const result = await response.json();
+        setPhotoUrls((prev) => new Map(prev).set(itemId, result.url));
+      }
+    } catch (err) {
+      console.error("Failed to load photo URL:", err);
+    }
   }
 
   // --- Mark checklist complete ---
@@ -587,7 +671,7 @@ export default function ChecklistDetailPage() {
                                   variant="outline"
                                   className="text-xs bg-amber-50 text-amber-700"
                                 >
-                                  Photo (coming soon)
+                                  {CHECKLIST_ITEM_TYPE_LABELS[item.itemType]}
                                 </Badge>
                               )}
                             </div>
@@ -596,6 +680,35 @@ export default function ChecklistDetailPage() {
                               <p className="text-xs text-slate-500 mt-0.5">
                                 {item.description}
                               </p>
+                            )}
+
+                            {/* PHOTO_REQUIRED: photo upload and display */}
+                            {item.itemType === "PHOTO_REQUIRED" && (
+                              <PhotoUploadField
+                                itemId={item.id}
+                                instanceId={id}
+                                completion={item.completion}
+                                uploading={uploadingPhoto === item.id}
+                                photoUrl={photoUrls.get(item.id)}
+                                onUpload={(file) =>
+                                  handlePhotoUpload(item.id, file)
+                                }
+                                onLoadUrl={() => loadPhotoUrl(item.id)}
+                              />
+                            )}
+
+                            {/* Optional photo upload for CHECKBOX items */}
+                            {item.itemType === "CHECKBOX" && (
+                              <OptionalPhotoUpload
+                                itemId={item.id}
+                                completion={item.completion}
+                                uploading={uploadingPhoto === item.id}
+                                photoUrl={photoUrls.get(item.id)}
+                                onUpload={(file) =>
+                                  handlePhotoUpload(item.id, file)
+                                }
+                                onLoadUrl={() => loadPhotoUrl(item.id)}
+                              />
                             )}
 
                             {/* TEXT_INPUT type: editable text field */}
@@ -701,6 +814,190 @@ export default function ChecklistDetailPage() {
           </Button>
         )}
       </div>
+    </div>
+  );
+}
+
+// --- Photo Upload Sub-Components ---
+
+function PhotoUploadField({
+  completion,
+  uploading,
+  photoUrl,
+  onUpload,
+  onLoadUrl,
+}: {
+  itemId: string;
+  instanceId: string;
+  completion: CompletionData | null;
+  uploading: boolean;
+  photoUrl: string | undefined;
+  onUpload: (file: File) => void;
+  onLoadUrl: () => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const hasPhoto = !!completion?.photoKey;
+
+  useEffect(() => {
+    if (hasPhoto && !photoUrl) {
+      onLoadUrl();
+    }
+  }, [hasPhoto, photoUrl, onLoadUrl]);
+
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      onUpload(file);
+      e.target.value = "";
+    }
+  }
+
+  return (
+    <div className="mt-2">
+      {hasPhoto && photoUrl && (
+        <div className="mb-2">
+          <a href={photoUrl} target="_blank" rel="noopener noreferrer">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photoUrl}
+              alt="Evidence photo"
+              className="max-w-xs max-h-40 rounded-md border border-slate-200 object-cover cursor-pointer hover:opacity-90"
+            />
+          </a>
+          <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
+            <ImageIcon className="h-3 w-3" />
+            <span>{completion?.photoFileName}</span>
+            {completion?.completedAt && (
+              <span>
+                -- Uploaded{" "}
+                {new Date(completion.completedAt).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+      {hasPhoto && !photoUrl && (
+        <div className="mb-2 flex items-center gap-2 text-xs text-slate-500">
+          <Loader2 className="h-3 w-3 animate-spin" />
+          <span>Loading photo...</span>
+        </div>
+      )}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploading}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 disabled:opacity-50 transition-colors"
+      >
+        {uploading ? (
+          <>
+            <Loader2 className="h-3 w-3 animate-spin" />
+            Uploading...
+          </>
+        ) : (
+          <>
+            <Upload className="h-3 w-3" />
+            {hasPhoto ? "Replace photo" : "Upload photo"}
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
+function OptionalPhotoUpload({
+  completion,
+  uploading,
+  photoUrl,
+  onUpload,
+  onLoadUrl,
+}: {
+  itemId: string;
+  completion: CompletionData | null;
+  uploading: boolean;
+  photoUrl: string | undefined;
+  onUpload: (file: File) => void;
+  onLoadUrl: () => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const hasPhoto = !!completion?.photoKey;
+  const [showUpload, setShowUpload] = useState(hasPhoto);
+
+  useEffect(() => {
+    if (hasPhoto && !photoUrl) {
+      onLoadUrl();
+    }
+  }, [hasPhoto, photoUrl, onLoadUrl]);
+
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      onUpload(file);
+      e.target.value = "";
+    }
+  }
+
+  if (!showUpload && !hasPhoto) {
+    return (
+      <div className="mt-1">
+        <button
+          onClick={() => setShowUpload(true)}
+          className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1"
+        >
+          <Camera className="h-3 w-3" />
+          Attach photo
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2">
+      {hasPhoto && photoUrl && (
+        <div className="mb-2">
+          <a href={photoUrl} target="_blank" rel="noopener noreferrer">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photoUrl}
+              alt="Evidence photo"
+              className="max-w-xs max-h-32 rounded-md border border-slate-200 object-cover cursor-pointer hover:opacity-90"
+            />
+          </a>
+          <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
+            <ImageIcon className="h-3 w-3" />
+            <span>{completion?.photoFileName}</span>
+          </div>
+        </div>
+      )}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploading}
+        className="inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+      >
+        {uploading ? (
+          <>
+            <Loader2 className="h-3 w-3 animate-spin" />
+            Uploading...
+          </>
+        ) : (
+          <>
+            <Upload className="h-3 w-3" />
+            {hasPhoto ? "Replace photo" : "Upload photo"}
+          </>
+        )}
+      </button>
     </div>
   );
 }

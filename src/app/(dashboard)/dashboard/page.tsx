@@ -10,6 +10,7 @@ import { StatsCards, getDefaultStats } from "@/components/dashboard/stats-cards"
 import { DimensionIndicators } from "@/components/dashboard/dimension-indicators";
 import { ProgrammeBadge } from "@/components/dashboard/programme-badge";
 import { TeamSummary } from "@/components/dashboard/team-summary";
+import { ChecklistSummary } from "@/components/dashboard/checklist-summary";
 
 export default async function DashboardPage() {
   const { orgId } = await auth();
@@ -63,6 +64,42 @@ export default async function DashboardPage() {
       hasQualifiedRoofer: t.members.some((m) => m.role === "QUALIFIED_ROOFER"),
       hasDesignatedLead: t.members.some((m) => m.isLead),
       projectLinked: !!t.project,
+    })),
+  };
+
+  // Fetch checklist instances for summary
+  const checklistInstances = await db.checklistInstance.findMany({
+    where: { organizationId: organization.id },
+    include: {
+      template: { select: { title: true } },
+      project: { select: { clientName: true, projectNumber: true } },
+      completions: {
+        select: { completed: true, item: { select: { isRequired: true } } },
+      },
+    },
+    orderBy: { startedAt: "desc" },
+  });
+
+  const checklistSummaryData = {
+    activeChecklists: checklistInstances.filter((ci) => !ci.completedAt).length,
+    completedChecklists: checklistInstances.filter((ci) => ci.completedAt)
+      .length,
+    checklists: checklistInstances.map((ci) => ({
+      id: ci.id,
+      projectName: `${ci.project.projectNumber} - ${ci.project.clientName}`,
+      templateName: ci.template.title,
+      percentage:
+        ci.completions.length > 0
+          ? Math.round(
+              (ci.completions.filter((c) => c.completed).length /
+                ci.completions.length) *
+                100
+            )
+          : 0,
+      completedItems: ci.completions.filter((c) => c.completed).length,
+      totalItems: ci.completions.length,
+      isComplete: !!ci.completedAt,
+      startedAt: ci.startedAt.toISOString(),
     })),
   };
 
@@ -134,6 +171,14 @@ export default async function DashboardPage() {
       <ActionItems items={actionItems} />
 
       <TeamSummary data={teamSummaryData.totalTeams > 0 ? teamSummaryData : null} />
+
+      <ChecklistSummary
+        data={
+          checklistSummaryData.checklists.length > 0
+            ? checklistSummaryData
+            : null
+        }
+      />
     </div>
   );
 }
