@@ -99,6 +99,110 @@ Export the member list as a CSV file for reporting. The export includes business
 
 ---
 
+## Programme Enrolment Management
+
+Navigate to **Programme** (`/admin/programme`) from the admin sidebar (Award icon, under Members).
+
+### Overview
+
+The programme enrolment page lists all RoofWright Programme applications and enrolments. Each row shows the organisation name, current status, application date, and available actions.
+
+### Filtering Applications
+
+Use the status filter tabs to narrow the list:
+- **All** -- Show all enrolments
+- **Pending** -- Applications awaiting review
+- **Active** -- Currently enrolled organisations
+- **Renewal Due** -- Organisations approaching their anniversary
+- **Suspended** -- Enrolments that have been paused
+- **Withdrawn** -- Rejected or withdrawn applications
+
+Use the search box to find specific organisations by name.
+
+### Reviewing Pending Applications
+
+1. Filter by **Pending** status to see applications awaiting review
+2. Review the organisation's compliance status and programme readiness
+3. Choose to **Approve** or **Reject** the application
+
+### Approving an Application
+
+1. Click **Approve** on the enrolment row
+2. Optionally add review notes in the prompt dialog
+3. Confirm the action
+
+**What happens on approval:**
+- Status changes to **Active**
+- `activeSince` is set to the current date
+- `anniversaryDate` is set to one year from activation
+- The organisation receives an email notification of the status change
+- The action is recorded in the audit trail
+
+### Rejecting an Application
+
+1. Click **Reject** on the enrolment row
+2. Add notes explaining the rejection reason (recommended)
+3. Confirm the action
+
+**What happens on rejection:**
+- Status changes to **Withdrawn**
+- The organisation receives an email notification with the decision
+- The action is recorded in the audit trail
+- The organisation can re-apply in the future
+
+### Suspending an Active Enrolment
+
+1. Click **Suspend** on an Active or Renewal Due enrolment
+2. Provide a reason for the suspension (required for audit purposes)
+3. Confirm the action
+
+**What happens on suspension:**
+- Status changes to **Suspended**
+- The suspension reason and date are recorded
+- The organisation receives an email notification
+- The programme badge is removed from their dashboard and public verification page
+- The action is recorded in the audit trail
+
+### Reinstating a Suspended Enrolment
+
+1. Click **Reinstate** on a Suspended enrolment
+2. Confirm the action
+
+**What happens on reinstatement:**
+- Status changes back to **Active**
+- The organisation receives an email notification
+- The programme badge reappears on their dashboard and public verification page
+- The action is recorded in the audit trail
+
+### Audit Trail
+
+All programme enrolment status changes are logged in the immutable audit trail with the following action types:
+- **ENROL_APPLY** -- Organisation submitted an application
+- **ENROL_APPROVE** -- Admin approved the application
+- **ENROL_REJECT** -- Admin rejected the application
+- **ENROL_SUSPEND** -- Admin suspended the enrolment
+- **ENROL_REINSTATE** -- Admin reinstated the enrolment
+
+### Notifications
+
+Organisations receive email notifications automatically on every status change via the `PROGRAMME_STATUS_CHANGE` notification type. These are system-critical notifications that cannot be opted out of.
+
+### Renewal Reminders
+
+The notification cron job automatically sends renewal reminders at 90, 60, and 30 days before each organisation's anniversary date. These reminders use the `PROGRAMME_RENEWAL` notification type. When the first reminder is sent, the enrolment status transitions from Active to Renewal Due.
+
+Alert flags (`renewalAlert90Sent`, `renewalAlert60Sent`, `renewalAlert30Sent`) prevent duplicate notifications from being sent.
+
+### Dashboard Stats
+
+The admin dashboard includes a programme enrolment stats card showing:
+- Total enrolments
+- Number of pending applications (with link to filter)
+- Number of active enrolments
+- Number of suspended enrolments
+
+---
+
 ## User Management
 
 Navigate to **Users** (`/admin/users`) from the admin sidebar.

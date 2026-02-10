@@ -684,6 +684,61 @@ Overdue CAPAs incur a -10 penalty on your Audit compliance dimension for each ov
 
 ---
 
+## RoofWright Programme
+
+Navigate to **Programme** (`/programme`) from the sidebar (Award icon, below CAPA).
+
+### What is the RoofWright Programme?
+
+The RoofWright Programme is RANZ's quality excellence programme for member businesses. Enrolment demonstrates your commitment to ongoing quality standards and makes your participation visible to consumers via the public verification page.
+
+### Applying for Enrolment
+
+1. Navigate to `/programme` from the sidebar
+2. Click **Apply to Enrol**
+3. Optionally add a message to support your application (up to 500 characters)
+4. Click **Submit Application**
+
+Your application is submitted to RANZ admin for review. You will receive an email notification when a decision is made.
+
+### Enrolment Statuses
+
+After applying, your enrolment will have one of the following statuses:
+
+| Status | Badge | Meaning |
+|--------|-------|---------|
+| **Pending Review** | Yellow | Application submitted, awaiting RANZ admin review |
+| **Active** | Green | Enrolled in the programme -- badge visible on dashboard and public verification page |
+| **Renewal Due** | Orange | Annual renewal is approaching, action may be needed |
+| **Suspended** | Red | Enrolment paused by RANZ admin -- contact RANZ for details |
+| **Withdrawn** | Grey | Application was rejected or enrolment was withdrawn -- you may re-apply |
+
+### Programme Badge
+
+When your enrolment is **Active** or **Renewal Due**, a programme badge appears at the top of your dashboard showing your current status and anniversary date.
+
+### Public Verification
+
+Active programme membership is visible on your public verification page (`/verify/[businessId]`). Consumers and other businesses can see that your organisation participates in the RoofWright Programme.
+
+### Renewal Reminders
+
+The system automatically sends email reminders before your annual anniversary date:
+
+| Reminder | When |
+|----------|------|
+| 90-day notice | 90 days before anniversary |
+| 60-day notice | 60 days before anniversary |
+| 30-day notice | 30 days before anniversary |
+
+When the first reminder is sent, your status transitions from **Active** to **Renewal Due** to indicate that renewal action may be needed.
+
+### Re-applying After Withdrawal
+
+If your application was rejected or your enrolment was withdrawn, you can re-apply at any time by visiting the Programme page and clicking **Apply to Enrol** again.
+
+---
+
 ## Settings
 
 Navigate to **Settings** (`/settings`) from the sidebar.
