@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Certified businesses become verifiable, insurable, and defensible in both market and legal contexts.
-**Current focus:** v1.2 RoofWright Programme - Phase 16 in progress (Client Checklists)
+**Current focus:** v1.2 RoofWright Programme - COMPLETE (all 4 phases delivered)
 
 ## Current Position
 
-Phase: 16 of 16 (Client Checklists) - IN PROGRESS
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-02-10 — Completed 16-02-PLAN.md (Org Template Cloning & Instance Creation)
+Phase: 16 of 16 (Client Checklists) - COMPLETE
+Plan: 3 of 3 complete
+Status: v1.2 Milestone complete
+Last activity: 2026-02-10 — Completed 16-03-PLAN.md (Photo Evidence & PDF Generation)
 
-Progress: [██████████] 100% (50/50 total plans across all milestones)
+Progress: [██████████] 100% (51/51 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -28,11 +28,10 @@ Progress: [██████████] 100% (50/50 total plans across all mi
 - Total plans completed: 9
 - Phases: 4
 
-**v1.2 Milestone (in progress):**
-- Total plans: 11 (estimated)
-- Plans completed: 11
-- Phases: 4
-- Status: Phase 16 Plan 02 complete, Plan 03 remaining
+**v1.2 Milestone (completed):**
+- Total plans completed: 12
+- Phases: 4 (Phase 13-16)
+- Status: All phases complete
 
 ## Accumulated Context
 
@@ -109,6 +108,13 @@ Phase 16 Plan 02 decisions:
 - Auto-complete instance when all required items done, auto-uncomplete when item unchecked
 - Org templates preferred over master for starting checklists, fallback to master if no org template
 
+Phase 16 Plan 03 decisions:
+- Photo upload auto-marks PHOTO_REQUIRED items as completed (upload = completion)
+- Optional photo attachment on CHECKBOX items (not required, but available)
+- PDF only generated for completed checklists (400 error if incomplete)
+- Procedure document references ISO Element 12 (Process Control)
+- ChecklistSummary follows TeamSummary null-data pattern (render nothing if no checklists)
+
 ### Pending Todos
 
 None.
@@ -128,9 +134,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 16-02-PLAN.md (Org Template Cloning & Instance Creation)
+Stopped at: Completed 16-03-PLAN.md (Photo Evidence & PDF Generation) -- v1.2 Milestone complete
 Resume file: None
-Next action: Execute 16-03-PLAN.md (Photo Evidence & PDF Generation)
+Next action: None -- all planned milestones (v1.0, v1.1, v1.2) are complete
 
 ---
-*Last updated: 2026-02-10 — Phase 16 Plan 02 complete*
+*Last updated: 2026-02-10 — Phase 16 Plan 03 complete, v1.2 Milestone complete*
