@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
       insuranceAlerts: 0,
       capaAlerts: 0,
       documentReviewAlerts: 0,
+      programmeRenewals: 0,
       auditsScheduled: 0,
       auditReminders: 0,
     };
@@ -41,10 +42,13 @@ export async function GET(req: NextRequest) {
     // 5. Check for document review due dates
     results.documentReviewAlerts = await checkDocumentReviewDueDates();
 
-    // 6. Auto-schedule audits based on tier frequency
+    // 6. Check for programme renewal dates
+    results.programmeRenewals = await checkProgrammeRenewals();
+
+    // 7. Auto-schedule audits based on tier frequency
     results.auditsScheduled = await checkAuditScheduling();
 
-    // 7. Send reminders for upcoming audits
+    // 8. Send reminders for upcoming audits
     results.auditReminders = await checkAuditReminders();
 
     return NextResponse.json({
@@ -257,6 +261,95 @@ async function checkDocumentReviewDueDates(): Promise<number> {
     } catch (error) {
       console.error(
         `Failed to send document review alert for document ${doc.id}:`,
+        error
+      );
+    }
+  }
+
+  return alertsSent;
+}
+
+async function checkProgrammeRenewals(): Promise<number> {
+  const now = new Date();
+  const in90Days = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+  let alertsSent = 0;
+
+  // Get ACTIVE enrolments with anniversary dates within 90 days
+  const enrolments = await db.programmeEnrolment.findMany({
+    where: {
+      status: "ACTIVE",
+      anniversaryDate: { lte: in90Days, gt: now },
+    },
+    include: {
+      organization: {
+        select: { id: true, name: true, email: true },
+      },
+    },
+  });
+
+  for (const enrolment of enrolments) {
+    if (!enrolment.anniversaryDate) continue;
+
+    const daysUntilAnniversary = Math.ceil(
+      (enrolment.anniversaryDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
+    );
+
+    const formattedDate = enrolment.anniversaryDate.toLocaleDateString("en-NZ", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    // Determine which alerts to send
+    const alertsToSend: { days: number; flag: "renewalAlert90Sent" | "renewalAlert60Sent" | "renewalAlert30Sent" }[] = [];
+
+    if (daysUntilAnniversary <= 90 && !enrolment.renewalAlert90Sent) {
+      alertsToSend.push({ days: 90, flag: "renewalAlert90Sent" });
+    }
+    if (daysUntilAnniversary <= 60 && !enrolment.renewalAlert60Sent) {
+      alertsToSend.push({ days: 60, flag: "renewalAlert60Sent" });
+    }
+    if (daysUntilAnniversary <= 30 && !enrolment.renewalAlert30Sent) {
+      alertsToSend.push({ days: 30, flag: "renewalAlert30Sent" });
+    }
+
+    if (alertsToSend.length === 0) continue;
+
+    try {
+      await db.$transaction(async (tx) => {
+        // Send a notification for each triggered alert tier
+        for (const alert of alertsToSend) {
+          await createNotification({
+            organizationId: enrolment.organizationId,
+            type: "PROGRAMME_RENEWAL",
+            channel: "EMAIL",
+            priority: daysUntilAnniversary <= 30 ? "HIGH" : "NORMAL",
+            title: "RoofWright Programme Renewal Reminder",
+            message: `Your RoofWright programme membership is due for renewal in ${daysUntilAnniversary} days (on ${formattedDate}). Please ensure your organisation remains compliant.`,
+            actionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/programme`,
+            recipient: enrolment.organization.email ?? undefined,
+          });
+
+          alertsSent++;
+        }
+
+        // Build update data: set all triggered alert flags
+        const updateData: Record<string, boolean | string> = {};
+        for (const alert of alertsToSend) {
+          updateData[alert.flag] = true;
+        }
+
+        // Transition ACTIVE to RENEWAL_DUE
+        updateData.status = "RENEWAL_DUE";
+
+        await tx.programmeEnrolment.update({
+          where: { id: enrolment.id },
+          data: updateData,
+        });
+      });
+    } catch (error) {
+      console.error(
+        `Failed to send programme renewal alert for enrolment ${enrolment.id}:`,
         error
       );
     }
