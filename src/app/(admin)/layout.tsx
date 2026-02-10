@@ -18,6 +18,7 @@ import {
   LogOut,
   Award,
   GraduationCap,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ const navigation = [
   { name: "Members", href: "/admin/members", icon: Users },
   { name: "Programme", href: "/admin/programme", icon: Award },
   { name: "Micro-credentials", href: "/admin/micro-credentials", icon: GraduationCap },
+  { name: "Checklists", href: "/admin/checklists", icon: ClipboardList },
   { name: "Audits", href: "/admin/audits", icon: ClipboardCheck },
   { name: "Reports", href: "/admin/reports", icon: BarChart3 },
   { name: "Audit Logs", href: "/admin/audit-logs", icon: FileText },
