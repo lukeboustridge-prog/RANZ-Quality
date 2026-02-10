@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-10)
 ## Current Position
 
 Phase: 14 of 16 (Micro-credentials) - IN PROGRESS
-Plan: 2 of 4 complete
+Plan: 3 of 4 complete
 Status: In progress
-Last activity: 2026-02-10 — Completed 14-02-PLAN.md (Staff Assignment & Status Tracking)
+Last activity: 2026-02-10 — Completed 14-03-PLAN.md (Evidence Upload & Certificate Management)
 
-Progress: [████████░░] 88% (44/50 total plans across all milestones)
+Progress: [█████████░] 90% (45/50 total plans across all milestones)
 
 ## Performance Metrics
 
@@ -30,9 +30,9 @@ Progress: [████████░░] 88% (44/50 total plans across all mil
 
 **v1.2 Milestone (in progress):**
 - Total plans: 11 (estimated)
-- Plans completed: 6
+- Plans completed: 7
 - Phases: 4
-- Status: Phase 14 Plan 02 complete
+- Status: Phase 14 Plan 03 complete
 
 ## Accumulated Context
 
@@ -74,6 +74,14 @@ Phase 14 Plan 02 decisions:
 - Inline status editing in staff table (select + save/cancel) rather than modal dialogs
 - Credentials page as Server Component with direct Prisma queries (will convert to use client in Plan 03)
 
+Phase 14 Plan 03 decisions:
+- Converted credentials page from Server Component to use client for evidence upload interactivity
+- Certificate evidence stored in R2 under credentials/{orgId}/{memberId}/{credId}/ path
+- Signed download URLs generated fresh per request (1 hour default expiry)
+- Cron sends notifications only, does NOT auto-transition to EXPIRED status
+- Coverage report: overall = orgs with awarded / total orgs, per-org = staff with awarded / total staff
+- Tab toggle on admin page rather than separate route for coverage report
+
 ### Pending Todos
 
 None.
@@ -93,9 +101,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 14-02-PLAN.md
+Stopped at: Completed 14-03-PLAN.md
 Resume file: None
-Next action: Execute 14-03-PLAN.md (Evidence Upload & Certificate Management)
+Next action: Execute 14-04-PLAN.md (Open Badges Integration)
 
 ---
-*Last updated: 2026-02-10 — Phase 14 Plan 02 complete*
+*Last updated: 2026-02-10 — Phase 14 Plan 03 complete*
