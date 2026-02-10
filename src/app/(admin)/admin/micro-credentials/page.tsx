@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   GraduationCap,
   Plus,
@@ -8,6 +9,7 @@ import {
   Trash2,
   X,
   Loader2,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -434,6 +436,12 @@ export default function AdminMicroCredentialsPage() {
                       </td>
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          <Link href={`/admin/micro-credentials/${def.id}`}>
+                            <Button size="sm" variant="outline">
+                              <Eye className="h-3.5 w-3.5 mr-1" />
+                              View
+                            </Button>
+                          </Link>
                           <Button
                             size="sm"
                             variant="outline"
