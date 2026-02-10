@@ -148,12 +148,12 @@ Plans:
 6. Dashboard shows checklist completion percentage for each project
 7. Completed checklists generate a company procedure document linked to ISO Element 12 (Process Control)
 
-**Plans:** TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 16-01: TBD
-- [ ] 16-02: TBD
-- [ ] 16-03: TBD
+- [ ] 16-01-PLAN.md — Schema, admin template CRUD, and default RoofWright checklist seed (CHKL-01, CHKL-02)
+- [ ] 16-02-PLAN.md — Org template customization, project checklist instances, and item completion (CHKL-03, CHKL-04)
+- [ ] 16-03-PLAN.md — Photo evidence, dashboard completion summary, and procedure document PDF (CHKL-05, CHKL-06, CHKL-07)
 
 ---
 
@@ -189,4 +189,4 @@ Phases execute in numeric order: 13 -> 14 -> 15 -> 16
 
 ---
 
-*Last updated: 2026-02-10 after Phase 15 planned (3 plans, 2 waves)*
+*Last updated: 2026-02-10 after Phase 16 planned (3 plans, 3 waves)*
