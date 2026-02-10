@@ -200,6 +200,15 @@ export const MICRO_CREDENTIAL_STATUS_LABELS: Record<MicroCredentialStatus, strin
   EXPIRED: "Expired",
 };
 
+// Team Composition Types (Phase 15)
+export type TeamRole = "QUALIFIED_ROOFER" | "ADVANCING_ROOFER" | "APPRENTICE";
+
+export const TEAM_ROLE_LABELS: Record<TeamRole, string> = {
+  QUALIFIED_ROOFER: "Qualified Roofer",
+  ADVANCING_ROOFER: "Advancing Roofer",
+  APPRENTICE: "Apprentice",
+};
+
 // Phase 3 Types
 export type ProjectType =
   | "NEW_BUILD"

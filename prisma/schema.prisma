@@ -57,6 +57,7 @@ model Organization {
   notificationPreference OrganizationNotificationPreference?
   approvedSuppliers      ApprovedSupplier[]
   programmeEnrolment     ProgrammeEnrolment?
+  teams                  Team[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -98,6 +99,7 @@ model OrganizationMember {
   qualifications   Qualification[]
   trainingRecords  TrainingRecord[]
   microCredentials StaffMicroCredential[]
+  teamMemberships  TeamMember[]
 
   @@unique([organizationId, email])
   @@unique([organizationId, clerkUserId])
@@ -747,6 +749,7 @@ model Project {
   documents    ProjectDocument[]
   productsUsed CertifiedProductUsage[]
   testimonial  Testimonial?
+  teams        Team[]
 
   @@unique([organizationId, projectNumber])
   @@index([organizationId])
@@ -992,6 +995,51 @@ model StaffMicroCredential {
   @@index([definitionId])
   @@index([status])
   @@index([expiryDate])
+}
+
+// ============================================================================
+// Phase 15: Team Composition
+// ============================================================================
+
+enum TeamRole {
+  QUALIFIED_ROOFER
+  ADVANCING_ROOFER
+  APPRENTICE
+}
+
+model Team {
+  id             String  @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  projectId      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  members      TeamMember[]
+  project      Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+}
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  memberId String
+  role     TeamRole
+  isLead   Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  team   Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  member OrganizationMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, memberId])
+  @@index([teamId])
+  @@index([memberId])
 }
 
 // ============================================================================
