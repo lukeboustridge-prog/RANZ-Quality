@@ -380,7 +380,7 @@ async function sendEmailNotification(notification: {
   }
 
   const result = await resend.emails.send({
-    from: process.env.EMAIL_FROM || "RANZ Portal <noreply@ranz.org.nz>",
+    from: process.env.EMAIL_FROM || "RANZ Portal <noreply@ranz.co.nz>",
     to: notification.recipient,
     subject: notification.title,
     html: generateEmailHtml(notification),
@@ -439,7 +439,7 @@ function generateEmailHtml(notification: {
   </div>
   <p style="color: #94a3b8; font-size: 12px; text-align: center;">
     This email was sent by the RANZ Certified Business Portal.<br>
-    <a href="https://portal.ranz.org.nz/settings/notifications" style="color: #64748b;">Manage notification preferences</a>
+    <a href="https://portal.ranz.co.nz/settings/notifications" style="color: #64748b;">Manage notification preferences</a>
   </p>
 </body>
 </html>

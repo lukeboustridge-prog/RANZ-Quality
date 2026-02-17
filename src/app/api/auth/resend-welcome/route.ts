@@ -148,7 +148,7 @@ export async function POST(request: Request): Promise<Response> {
     });
 
     // Build activation URL
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://portal.ranz.org.nz';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://portal.ranz.co.nz';
     const activationUrl = `${appUrl}/auth/activate?token=${activationToken}`;
 
     // Send welcome email

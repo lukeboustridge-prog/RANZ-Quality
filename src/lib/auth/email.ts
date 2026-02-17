@@ -11,7 +11,7 @@
  * await sendPasswordResetEmail({
  *   to: user.email,
  *   firstName: user.firstName,
- *   resetUrl: `https://portal.ranz.org.nz/reset-password?token=${token}`,
+ *   resetUrl: `https://portal.ranz.co.nz/reset-password?token=${token}`,
  * });
  * ```
  */
@@ -48,7 +48,7 @@ function getResendClient(): Resend {
 
 /** Default sender address for all auth emails */
 const FROM_ADDRESS =
-  process.env.EMAIL_FROM || 'RANZ Quality Program <noreply@ranz.org.nz>';
+  process.env.EMAIL_FROM || 'RANZ Quality Program <noreply@ranz.co.nz>';
 
 /**
  * Welcome email parameters.
@@ -116,7 +116,7 @@ export interface EmailSendResult {
  * const result = await sendWelcomeEmail({
  *   to: 'john@example.com',
  *   firstName: 'John',
- *   activationUrl: 'https://portal.ranz.org.nz/activate?token=abc123...',
+ *   activationUrl: 'https://portal.ranz.co.nz/activate?token=abc123...',
  * });
  *
  * if (result.error) {
@@ -167,7 +167,7 @@ export async function sendWelcomeEmail(
  * const result = await sendPasswordResetEmail({
  *   to: 'john@example.com',
  *   firstName: 'John',
- *   resetUrl: 'https://portal.ranz.org.nz/reset-password?token=abc123...',
+ *   resetUrl: 'https://portal.ranz.co.nz/reset-password?token=abc123...',
  *   requestedIp: '192.168.1.1',
  * });
  *

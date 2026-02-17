@@ -50,7 +50,7 @@ export interface BadgeInfo {
 // Configuration
 // ============================================================================
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://portal.ranz.org.nz";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://portal.ranz.co.nz";
 const CDN_URL = process.env.BADGE_CDN_URL || APP_URL;
 
 const TIER_CONFIG: Record<
@@ -226,7 +226,7 @@ export function generateBadgeSVG(
   <text x="100" y="185" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="${complianceScore >= COMPLIANCE_THRESHOLDS.COMPLIANT ? '#16a34a' : complianceScore >= COMPLIANCE_THRESHOLDS.AT_RISK ? '#ca8a04' : '#dc2626'}">${complianceScore}%</text>
 
   <!-- Verification Link -->
-  <text x="100" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#64748b">Click to verify at portal.ranz.org.nz</text>
+  <text x="100" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#64748b">Click to verify at portal.ranz.co.nz</text>
 </svg>`;
 }
 

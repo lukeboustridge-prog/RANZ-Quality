@@ -333,7 +333,7 @@ export async function POST(request: Request): Promise<Response> {
     });
 
     // Send welcome emails (outside transaction, fire-and-forget)
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://portal.ranz.org.nz';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://portal.ranz.co.nz';
     let emailsSent = 0;
     const emailErrors: Array<{ email: string; error: string }> = [];
 

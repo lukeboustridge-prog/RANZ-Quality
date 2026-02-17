@@ -26,7 +26,7 @@ export async function createAuditLog(input: AuditLogInput): Promise<void> {
   try {
     // Get actor information (userId from Clerk, or system for cron jobs)
     let actorId = "system:unknown";
-    let actorEmail = "system@ranz.org.nz";
+    let actorEmail = "system@ranz.co.nz";
     let actorRole = "system";
 
     try {
@@ -34,7 +34,7 @@ export async function createAuditLog(input: AuditLogInput): Promise<void> {
       if (authResult.userId) {
         actorId = authResult.userId;
         // In production, fetch email from Clerk. For now, use placeholder.
-        actorEmail = `user-${authResult.userId}@ranz.org.nz`;
+        actorEmail = `user-${authResult.userId}@ranz.co.nz`;
         actorRole = "org:member";
       }
     } catch {

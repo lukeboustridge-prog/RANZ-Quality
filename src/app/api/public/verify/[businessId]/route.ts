@@ -35,7 +35,7 @@ export async function GET(
             "GET /api/public/verify?nzbn=9429041234567",
             "GET /api/public/verify?name=Example%20Roofing%20Ltd"
           ],
-          documentation: "https://portal.ranz.org.nz/api-docs"
+          documentation: "https://portal.ranz.co.nz/api-docs"
         }
       },
       {

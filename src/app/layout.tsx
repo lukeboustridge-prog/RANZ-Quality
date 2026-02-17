@@ -44,7 +44,7 @@ export default function RootLayout({
 
   return (
     <ClerkProvider
-      allowedRedirectOrigins={["https://reports.ranz.org.nz"]}
+      allowedRedirectOrigins={["https://reports.ranz.co.nz"]}
     >
       {content}
     </ClerkProvider>

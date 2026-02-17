@@ -18,7 +18,7 @@ interface SendEmailParams {
 
 export async function sendEmail({ to, subject, html, text }: SendEmailParams) {
   const resend = getResend();
-  const EMAIL_FROM = process.env.EMAIL_FROM || "RANZ Portal <portal@ranz.org.nz>";
+  const EMAIL_FROM = process.env.EMAIL_FROM || "RANZ Portal <portal@ranz.co.nz>";
 
   const { data, error } = await resend.emails.send({
     from: EMAIL_FROM,
@@ -104,7 +104,7 @@ export function generateExpiryAlertEmail(params: {
 
     <p style="color: #9ca3af; font-size: 14px; text-align: center;">
       This is an automated message from the RANZ Certified Business Portal.<br>
-      If you have questions, please contact us at support@ranz.org.nz
+      If you have questions, please contact us at support@ranz.co.nz
     </p>
   </div>
 </body>
@@ -123,7 +123,7 @@ Update your insurance details at: ${process.env.NEXT_PUBLIC_APP_URL}/insurance
 
 ---
 This is an automated message from the RANZ Certified Business Portal.
-If you have questions, please contact us at support@ranz.org.nz
+If you have questions, please contact us at support@ranz.co.nz
     `,
   };
 }

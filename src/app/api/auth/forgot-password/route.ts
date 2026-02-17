@@ -97,7 +97,7 @@ export async function POST(request: Request): Promise<Response> {
       const { token, expiresAt } = await generatePasswordResetToken(user.id, ip);
 
       // Build reset URL
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://portal.ranz.org.nz';
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://portal.ranz.co.nz';
       const resetUrl = `${baseUrl}/auth/reset-password?token=${token}`;
 
       // Send password reset email

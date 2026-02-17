@@ -122,7 +122,7 @@ export interface TokenValidationResult {
  * await sendPasswordResetEmail({
  *   to: user.email,
  *   firstName: user.firstName,
- *   resetUrl: `https://portal.ranz.org.nz/reset-password?token=${token}`,
+ *   resetUrl: `https://portal.ranz.co.nz/reset-password?token=${token}`,
  * });
  * ```
  */
@@ -269,7 +269,7 @@ export async function consumePasswordResetToken(
  * await sendWelcomeEmail({
  *   to: newUser.email,
  *   firstName: newUser.firstName,
- *   activationUrl: `https://portal.ranz.org.nz/activate?token=${token}`,
+ *   activationUrl: `https://portal.ranz.co.nz/activate?token=${token}`,
  * });
  * ```
  */

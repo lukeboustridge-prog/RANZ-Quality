@@ -12,7 +12,7 @@ export interface JWTPayload {
   iat?: number;         // Issued at (Unix timestamp)
   exp?: number;         // Expiration (Unix timestamp)
   jti?: string;         // JWT ID (unique token identifier)
-  iss?: string;         // Issuer (https://portal.ranz.org.nz)
+  iss?: string;         // Issuer (https://portal.ranz.co.nz)
   aud?: string[];       // Audience (allowed domains)
 
   // Custom claims
@@ -92,10 +92,10 @@ export interface AuthConfig {
 
 // Default configuration
 export const DEFAULT_AUTH_CONFIG: AuthConfig = {
-  jwtIssuer: 'https://portal.ranz.org.nz',
-  jwtAudience: ['portal.ranz.org.nz', 'reports.ranz.org.nz'],
+  jwtIssuer: 'https://portal.ranz.co.nz',
+  jwtAudience: ['portal.ranz.co.nz', 'reports.ranz.co.nz'],
   accessTokenLifetime: '8h',
   bcryptRounds: 12,
   sessionCookieName: 'ranz_session',
-  sessionCookieDomain: '.ranz.org.nz',
+  sessionCookieDomain: '.ranz.co.nz',
 };
